@@ -57,7 +57,8 @@ struct ship_requests
         ship_info(&db),
         ship_armament(&db),
         armament_info(&db),
-        aircraft_info(&db)
+        aircraft_info(&db),
+        ship_event(&db)
     {}
 
     
@@ -199,12 +200,39 @@ struct ship_requests
         ship_database * db;
     };
 
+    
+    struct ship_event_t
+    {
+        ship_event_t (ship_database * _db) :
+            db(_db)
+        {}
+        
+        
+        struct classes;
+        std::vector <classes> get_classes (std::string_view where);
+        
+        struct event;
+        std::vector <event> get_event (std::string_view where);
+        
+        size_t count (std::string_view where);
+        
+        
+        ship_event_t (ship_event_t &&) = delete;
+        ship_event_t (ship_event_t const &) = delete;
+        ship_event_t & operator = (ship_event_t &&) = delete;
+        ship_event_t & operator = (ship_event_t const &) = delete;
+        
+    private:
+        ship_database * db;
+    };
+    
 
     ship_database db;
     ship_info_t ship_info;
     ship_armament_t ship_armament;
     armament_info_t armament_info;
     aircraft_info_t aircraft_info;
+    ship_event_t ship_event;
 };
 
 
