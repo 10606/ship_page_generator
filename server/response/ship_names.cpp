@@ -28,9 +28,7 @@ ship_names::response_t ship_names::response (std::vector <std::pair <int, std::c
         answer.row += std::string(table.new_line) + to_string(ship_year[i].second);
 
         size_t modernizations =
-            database->ship_event.count("where ship_id = " + std::to_string(ship_year[i].first) + 
-                                       " and  date_from <= " + to_string_sql(ship_year[i].second) +
-                                       " and  date_to > " + to_string_sql(ship_year[i].second) +
+            database->ship_event.count(where("ship_event_list", ship_year[i].first, ship_year[i].second) + 
                                        " and  class_id = 0");
         answer.modernization[i] = modernizations;
         if (modernizations)

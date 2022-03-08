@@ -17,4 +17,17 @@ std::string to_string_10 (double value)
         return std::to_string(tmp / 10) + '.' + std::to_string(tmp % 10);
 }
 
+std::string where
+(
+    std::string const & table_name,
+    int ship_id,
+    std::chrono::year_month_day const & date
+)
+{
+    return  std::string("where ") + 
+            table_name + ".ship_id = " + std::to_string(ship_id) + 
+            " and " + table_name + ".date_from <= " + to_string_sql(date) +
+            " and " + table_name + ".date_to > " + to_string_sql(date) + " ";
+}
+
 

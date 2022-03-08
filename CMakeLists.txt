@@ -28,8 +28,13 @@ add_executable(ship_server
     server/upgrade_to_https.cpp
     server/parse_query.cpp
     server/date_to_str.cpp
+    server/response/ship_armament/response_ship_armament.cpp
     server/response/ship_armament/guns.cpp
     server/response/ship_armament/torpedo.cpp
+    server/response/ship_armament/throwers.cpp
+    server/response/ship_armament/searchers.cpp
+    server/response/ship_armament/catapult.cpp
+    server/response/ship_armament/aircraft.cpp
     server/response/ship_names.cpp
     get_from_postgres/parse_response.cpp
     get_from_postgres/ship_armament.cpp

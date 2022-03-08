@@ -30,6 +30,9 @@ struct ship_requests::ship_armament_t::torpedo_tubes
 {
     torpedo_tubes (pqxx::row const & value);
     
+    int class_id;
+    std::optional <std::string> class_ru;
+    std::optional <std::string> class_en;
     int tube_id;
     std::optional <double> caliber;
     uint32_t tubes_count;

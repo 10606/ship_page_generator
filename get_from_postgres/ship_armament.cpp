@@ -52,17 +52,20 @@ std::vector <ship_requests::ship_armament_t::guns> ship_requests::ship_armament_
         
         
 ship_requests::ship_armament_t::torpedo_tubes::torpedo_tubes (pqxx::row const & value) :
-        tube_id     (value[0].as <int> ()),
-        caliber     (value[1].as <std::optional <double> > ()),
-        tubes_count (value[2].as <uint32_t> ()),
-        tube_ru     (value[3].as <std::optional <std::string> > ()),
-        tube_en     (value[4].as <std::optional <std::string> > ()),
-        mount_count (value[5].as <uint32_t> ()),
+        class_id    (value[0].as <int> ()),
+        class_ru    (value[1].as <std::optional <std::string> > ()),
+        class_en    (value[2].as <std::optional <std::string> > ()),
+        tube_id     (value[3].as <int> ()),
+        caliber     (value[4].as <std::optional <double> > ()),
+        tubes_count (value[5].as <uint32_t> ()),
+        tube_ru     (value[6].as <std::optional <std::string> > ()),
+        tube_en     (value[7].as <std::optional <std::string> > ()),
+        mount_count (value[8].as <uint32_t> ()),
         date_from(),
         date_to()
 {
-    std::optional <std::string> str_date_from = value[6].as <std::optional <std::string> > ();
-    std::optional <std::string> str_date_to   = value[7].as <std::optional <std::string> > ();
+    std::optional <std::string> str_date_from = value[ 9].as <std::optional <std::string> > ();
+    std::optional <std::string> str_date_to   = value[10].as <std::optional <std::string> > ();
     date_from = transform_optional(str_date_from, get_date);
     date_to   = transform_optional(str_date_to,   get_date);
 }
@@ -73,11 +76,13 @@ std::vector <ship_requests::ship_armament_t::torpedo_tubes> ship_requests::ship_
     (
         std::string
         (
-            "select torpedo_tubes.id, caliber, tubes_count, \
+            "select gun_class.id, gun_class.name_ru, gun_class.name_en, \
+                    torpedo_tubes.id, caliber, tubes_count, \
                     torpedo_tubes.name_ru, torpedo_tubes.name_en, \
                     amount, date_from, date_to \
              from ship_torpedo_tubes \
-             inner join torpedo_tubes on (ship_torpedo_tubes.tube_id = torpedo_tubes.id) "
+             inner join torpedo_tubes on (ship_torpedo_tubes.tube_id = torpedo_tubes.id) \
+             inner join gun_class on (torpedo_tubes.class_id = gun_class.id) "
         )
         +
         std::string(where)

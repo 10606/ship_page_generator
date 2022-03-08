@@ -10,10 +10,8 @@
 std::vector <ship_guns::response_t> ship_guns::response (int id, std::chrono::year_month_day date)
 {
     std::vector <ship_requests::ship_armament_t::guns> guns =
-        database->ship_armament.get_guns("where ship_guns.ship_id = " + std::to_string(id) + 
-                                        " and  ship_guns.date_from <= " + to_string_sql(date) +
-                                        " and  ship_guns.date_to > " + to_string_sql(date) +
-                                        "order by (gun_list.class_id, -caliber, gun_list.id)");
+        database->ship_armament.get_guns(where("ship_guns", id, date) +
+                                         "order by (gun_list.class_id, -caliber, gun_list.id)");
 
     std::vector <response_t> answer;
     answer.reserve(guns.size());

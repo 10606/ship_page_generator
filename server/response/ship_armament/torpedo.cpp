@@ -7,10 +7,8 @@
 std::vector <ship_torpedo_tubes::response_t> ship_torpedo_tubes::response (int id, std::chrono::year_month_day date)
 {
     std::vector <ship_requests::ship_armament_t::torpedo_tubes> torpedo_tubes =
-        database->ship_armament.get_torpedo_tubes("where ship_torpedo_tubes.ship_id = " + std::to_string(id) + 
-                                                  " and  ship_torpedo_tubes.date_from <= " + to_string_sql(date) +
-                                                  " and  ship_torpedo_tubes.date_to > " + to_string_sql(date) +
-                                                  "order by (-caliber, torpedo_tubes.id)");
+        database->ship_armament.get_torpedo_tubes(where("ship_torpedo_tubes", id, date) + 
+                                                  "order by (torpedo_tubes.class_id, -caliber, torpedo_tubes.id)");
 
     std::vector <response_t> answer;
     answer.reserve(torpedo_tubes.size());
@@ -19,7 +17,7 @@ std::vector <ship_torpedo_tubes::response_t> ship_torpedo_tubes::response (int i
     {
         response_t item;
         item.group = 0;
-        item.compare = 0;
+        item.compare = tube.class_id;;
         item.group_name = "торпедный аппарат";
         
         item.data += std::to_string(tube.mount_count) + "x" + std::to_string(tube.tubes_count) + " ";
