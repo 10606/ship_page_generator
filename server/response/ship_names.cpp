@@ -9,7 +9,7 @@ ship_names::response_t ship_names::response (std::vector <std::pair <int, std::c
     response_t answer = 
     {
         std::string(table.begin) + std::string(table.new_column),
-        std::vector <bool> (ship_year.size())
+        std::vector <uint8_t> (ship_year.size())
     };
 
     for (size_t i = 0; i != ship_year.size(); ++i)

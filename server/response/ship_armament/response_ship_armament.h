@@ -14,6 +14,7 @@
 #include "ship_requests.h"
 #include "ship_armament.h"
 #include "guns.h"
+#include "torpedo.h"
 #include "ship_names.h"
 
 
@@ -33,9 +34,9 @@ struct rows_table_template
     struct rowspan_t
     {
         // <begin> number <middle> text <end>
-        std::string_view begin = "<td rowspan=";
+        std::string_view begin = "<th rowspan=";
         std::string_view middle = ">"; 
-        std::string_view end = "</td>";
+        std::string_view end = "</th>";
     } rowspan = rowspan_t();
 };
 
@@ -58,7 +59,7 @@ struct ships_responser
     std::vector <std::string> response 
     (
         std::vector <std::pair <int, std::chrono::year_month_day> > ship_year,
-        std::vector <bool> modernization
+        std::vector <uint8_t> modernization
     )
     {
         using response_t = typename responser::response_t;
@@ -185,12 +186,36 @@ struct table_template
 };
 
 
+template <typename armament_type>
+std::string add_armament 
+(
+    ships_responser <armament_type> & armament, 
+    std::vector <std::pair <int, std::chrono::year_month_day> > ship_year,
+    std::vector <uint8_t> & modernizations,
+    std::string_view new_row
+)
+{
+    std::string answer(new_row);
+    try
+    {
+        std::vector <std::string> table_guns = armament.response(ship_year, modernizations);
+        for (auto const & s : table_guns)
+            answer += s;
+    }
+    catch (...)
+    {}
+    
+    return answer;
+}
+
+
 struct ship_armament
 {
     ship_armament (table_template _table, ship_requests * _database) :
         table(_table),
         names(header_column(), _database),
-        guns(rows_table_template(), _database, table.new_line)
+        guns(rows_table_template(), _database, table.new_line),
+        torpedo_tubes(rows_table_template(), _database, table.new_line)
     {}
 
     bool check (std::string_view uri)
@@ -208,15 +233,10 @@ struct ship_armament
             auto [header, modernizations] = names.response(ship_year);
             std::string answer = std::string(table.begin);
             
-            answer += header + std::string(table.new_row);
-            try
-            {
-                std::vector <std::string> table_guns = guns.response(ship_year, modernizations);
-                for (auto const & s : table_guns)
-                    answer += s;
-            }
-            catch (...)
-            {}
+            answer += header;
+            
+            answer += add_armament(guns, ship_year, modernizations, table.new_row);
+            answer += add_armament(torpedo_tubes, ship_year, modernizations, table.new_row);
             
             answer += std::string(table.end);
             return answer;
@@ -231,6 +251,7 @@ private:
     table_template table;
     ship_names names;
     ships_responser <ship_guns> guns;
+    ships_responser <ship_torpedo_tubes> torpedo_tubes;
 };
 
 

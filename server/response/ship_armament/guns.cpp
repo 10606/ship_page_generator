@@ -24,8 +24,7 @@ std::vector <ship_guns::response_t> ship_guns::response (int id, std::chrono::ye
         item.group = gun.class_id;
         item.group_name = gun.class_ru.value_or("");
         if (gun.caliber)
-            item.compare = std::numeric_limits <size_t> ::max() - 
-                static_cast <size_t> ((std::log(*gun.caliber + 1.) + 0.5) / 0.3);
+            item.compare = -std::floor((std::log(*gun.caliber + 1.) + 0.5) / 0.3);
         else
             item.compare = 0;
         
@@ -47,3 +46,4 @@ std::vector <ship_guns::response_t> ship_guns::response (int id, std::chrono::ye
     
     return answer;
 }
+

@@ -24,7 +24,7 @@ struct ship_names
     struct response_t
     {
         std::string row;
-        std::vector <bool> modernization;
+        std::vector <uint8_t> modernization;
     };
     
     response_t response (std::vector <std::pair <int, std::chrono::year_month_day> > ship_year);

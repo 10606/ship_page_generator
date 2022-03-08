@@ -1,5 +1,5 @@
-#ifndef SHIP_ARMAMENT_GUNS_H
-#define SHIP_ARMAMENT_GUNS_H
+#ifndef TORPEDO_H
+#define TORPEDO_H
 
 #include <vector>
 #include <chrono>
@@ -7,17 +7,17 @@
 #include "ship_requests.h"
 
 
-struct ship_guns
+struct ship_torpedo_tubes
 {
-    ship_guns (ship_requests * _database, std::string_view _new_line) :
+    ship_torpedo_tubes (ship_requests * _database, std::string_view _new_line) :
         database(_database),
         new_line(_new_line)
     {}
 
     struct response_t
     {
-        int group;
-        double compare;
+        bool group;
+        bool compare;
         std::string group_name;
         std::string data;
     };
