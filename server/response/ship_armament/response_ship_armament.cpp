@@ -129,12 +129,13 @@ std::string ship_armament::response (std::string_view query)
         
         answer += header;
         
-        answer += add_armament(guns, ship_year, modernizations, table.new_row);
-        answer += add_armament(torpedo_tubes, ship_year, modernizations, table.new_row);
-        answer += add_armament(throwers, ship_year, modernizations, table.new_row);
-        answer += add_armament(searchers, ship_year, modernizations, table.new_row);
-        answer += add_armament(catapult, ship_year, modernizations, table.new_row);
-        answer += add_armament(aircraft, ship_year, modernizations, table.new_row);
+        answer += add_armament(general,         ship_year, modernizations, table.new_row);
+        answer += add_armament(guns,            ship_year, modernizations, table.new_row);
+        answer += add_armament(torpedo_tubes,   ship_year, modernizations, table.new_row);
+        answer += add_armament(throwers,        ship_year, modernizations, table.new_row);
+        answer += add_armament(searchers,       ship_year, modernizations, table.new_row);
+        answer += add_armament(catapult,        ship_year, modernizations, table.new_row);
+        answer += add_armament(aircraft,        ship_year, modernizations, table.new_row);
         
         answer += std::string(table.end);
         return answer;

@@ -13,6 +13,7 @@
 #include "date_to_str.h"
 #include "ship_requests.h"
 #include "ship_armament.h"
+#include "general.h"
 #include "guns.h"
 #include "torpedo.h"
 #include "throwers.h"
@@ -111,6 +112,7 @@ struct ship_armament
     ship_armament (table_template _table, ship_requests * _database) :
         table(_table),
         names(header_column(), _database),
+        general(rows_table_template(), _database, table.new_line),
         guns(rows_table_template(), _database, table.new_line),
         torpedo_tubes(rows_table_template(), _database, table.new_line),
         throwers(rows_table_template(), _database, table.new_line),
@@ -129,6 +131,7 @@ struct ship_armament
 private:
     table_template table;
     ship_names names;
+    ships_responser <ship_general> general;
     ships_responser <ship_guns> guns;
     ships_responser <ship_torpedo_tubes> torpedo_tubes;
     ships_responser <ship_throwers> throwers;

@@ -29,6 +29,7 @@ add_executable(ship_server
     server/parse_query.cpp
     server/date_to_str.cpp
     server/response/ship_armament/response_ship_armament.cpp
+    server/response/ship_armament/general.cpp
     server/response/ship_armament/guns.cpp
     server/response/ship_armament/torpedo.cpp
     server/response/ship_armament/throwers.cpp
