@@ -37,6 +37,7 @@ add_executable(ship_server
     server/response/ship_armament/catapult.cpp
     server/response/ship_armament/aircraft.cpp
     server/response/ship_names.cpp
+    server/response/menu.cpp
     get_from_postgres/parse_response.cpp
     get_from_postgres/ship_armament.cpp
     get_from_postgres/ship_event.cpp

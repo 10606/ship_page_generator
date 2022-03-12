@@ -8,7 +8,7 @@ ship_names::response_t ship_names::response (std::vector <std::pair <int, std::c
 {
     response_t answer = 
     {
-        std::string(table.begin) + std::string(table.new_column),
+        std::string(table.begin).append(table.new_column),
         std::vector <uint8_t> (ship_year.size())
     };
 
@@ -39,6 +39,6 @@ ship_names::response_t ship_names::response (std::vector <std::pair <int, std::c
             answer.row += std::string(table.new_line) + "потоплен";
     }
 
-    answer.row += std::string(table.end);
+    answer.row += table.end;
     return answer;
 }

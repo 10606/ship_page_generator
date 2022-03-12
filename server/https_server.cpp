@@ -5,10 +5,11 @@
 #include <string>
 #include <thread>
 #include <utility>
-#include "mongoose.h"
+#include <mongoose.h>
 
 #include "upgrade_to_https.h"
 #include "response_ship_armament.h"
+#include "menu.h"
 
 
 struct https_server
@@ -20,7 +21,8 @@ struct https_server
         std::string const & https_port,
         std::string const & _response_value
     ) :
-        ship_arm(table_template(), &database),
+        ship_list(&database),
+        ship_arm(&database),
         stop(_stop),
         response_value(_response_value)
     {
@@ -76,7 +78,19 @@ struct https_server
             uint32_t code = 404;
             if (cur->ship_arm.check(std::string(http_msg->uri.p, http_msg->uri.len)))
             {
-                response = cur->ship_arm.response(std::string(http_msg->query_string.p, http_msg->query_string.len));
+                response.clear();
+                response += "<style> \
+                                .wrapper { display: flex; } \
+                             </style>";
+                response += "<div class = \"wrapper\">\
+                             <style> \
+                                .menu { display: inline; } \
+                                .main { display: inline; } \
+                             </style>";
+                response += 
+                    cur->ship_list.response() +
+                    cur->ship_arm.response(std::string(http_msg->query_string.p, http_msg->query_string.len));
+                response += "</div>";
                 code = 200;
             }
             
@@ -114,6 +128,7 @@ struct https_server
     
 private:
     ship_requests database;
+    menu ship_list;
     ship_armament ship_arm;
     
     std::atomic <bool> const & stop;

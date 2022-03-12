@@ -37,7 +37,7 @@ std::vector <std::string> ships_responser <responser> ::response
 
     
     std::vector <std::string> rows;
-    std::vector <std::pair <size_t, std::string> > gun_class = {{0, std::string(table.column.begin)}};
+    std::vector <std::pair <size_t, std::string> > gun_class = {{0, table.column.begin}};
     std::vector <size_t> positions(ship_year.size());
     // main part of table
     while (min)
@@ -105,11 +105,11 @@ std::vector <std::string> ships_responser <responser> ::response
     // gun classes
     for (size_t i = 0, pos = 0; i != gun_class.size(); ++i)
     {
-        std::string rowspan = std::string(table.rowspan.begin) + 
+        std::string rowspan = table.rowspan.begin + 
                               std::to_string(gun_class[i].first) + 
-                              std::string(table.rowspan.middle) + 
+                              table.rowspan.middle + 
                               gun_class[i].second + 
-                              std::string(table.rowspan.end);
+                              table.rowspan.end;
         rows[pos] = rowspan + rows[pos];
         pos += gun_class[i].first;
     }
@@ -125,19 +125,19 @@ std::string ship_armament::response (std::string_view query)
     try
     {
         auto [header, modernizations] = names.response(ship_year);
-        std::string answer = std::string(table.begin);
+        std::string answer = table.begin;
         
         answer += header;
         
-        answer += add_armament(general,         ship_year, modernizations, table.new_row);
-        answer += add_armament(guns,            ship_year, modernizations, table.new_row);
-        answer += add_armament(torpedo_tubes,   ship_year, modernizations, table.new_row);
-        answer += add_armament(throwers,        ship_year, modernizations, table.new_row);
-        answer += add_armament(searchers,       ship_year, modernizations, table.new_row);
-        answer += add_armament(catapult,        ship_year, modernizations, table.new_row);
-        answer += add_armament(aircraft,        ship_year, modernizations, table.new_row);
+        answer += add_armament(general,         ship_year, modernizations, table.new_row("class = \"general\""  ));
+        answer += add_armament(guns,            ship_year, modernizations, table.new_row("class = \"guns\""     ));
+        answer += add_armament(torpedo_tubes,   ship_year, modernizations, table.new_row("class = \"torpedo\""  ));
+        answer += add_armament(throwers,        ship_year, modernizations, table.new_row("class = \"throwers\"" ));
+        answer += add_armament(searchers,       ship_year, modernizations, table.new_row("class = \"searchers\""));
+        answer += add_armament(catapult,        ship_year, modernizations, table.new_row("class = \"catapult\"" ));
+        answer += add_armament(aircraft,        ship_year, modernizations, table.new_row("class = \"aircraft\"" ));
         
-        answer += std::string(table.end);
+        answer += table.end;
         return answer;
     }
     catch (...)

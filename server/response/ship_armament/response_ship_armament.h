@@ -25,23 +25,29 @@
 
 struct rows_table_template
 {
+    rows_table_template (std::string_view tr_class = std::string_view())
+    {
+        if (!tr_class.empty())
+            one_delimeter = group_delimeter = std::string("\n</tr>\n<tr ").append(tr_class).append(">\n");
+    }
+
     struct column_t
     {
-        std::string_view begin = "\n<td>\n";
-        std::string_view new_column = "\n</td>\n<td>\n";
-        std::string_view new_line = "<br>\n";
-        std::string_view end = "\n</td>\n";
+        std::string begin = "\n<td>\n";
+        std::string new_column = "\n</td>\n<td>\n";
+        std::string new_line = "<br>\n";
+        std::string end = "\n</td>\n";
     } column = column_t();
     
-    std::string_view one_delimeter = "\n</tr>\n<tr>\n";
-    std::string_view group_delimeter = "\n</tr>\n<tr>\n";
+    std::string one_delimeter = "\n</tr>\n<tr>\n";
+    std::string group_delimeter = "\n</tr>\n<tr>\n";
 
     struct rowspan_t
     {
         // <begin> number <middle> text <end>
-        std::string_view begin = "<th rowspan=";
-        std::string_view middle = ">"; 
-        std::string_view end = "</th>";
+        std::string begin = "<th rowspan=";
+        std::string middle = ">"; 
+        std::string end = "</th>";
     } rowspan = rowspan_t();
 };
 
@@ -77,10 +83,28 @@ private:
 
 struct table_template
 {
-    std::string_view begin = "<table border=1>\n<tr>\n";
-    std::string_view new_line = "<br>\n";
-    std::string_view new_row = "\n</tr>\n<tr>\n";
-    std::string_view end = "\n</tr>\n</table>\n";
+    table_template
+    (
+        std::string_view style = std::string_view(),
+        std::string_view tr_class = std::string_view()
+    )
+    {
+        if (!style.empty() || !tr_class.empty())
+            begin = std::string("<div class = \"main\">\n<table border=1>\n")
+                    .append(style)
+                    .append("<tr ")
+                    .append(tr_class)
+                    .append(">\n");
+    }
+
+    std::string begin = "<div class = \"main\">\n<table border=1>\n<tr>\n";
+    std::string new_line = "<br>\n";
+    std::string end = "\n</tr>\n</table>\n</div>";
+
+    std::string new_row (std::string_view tr_class = std::string_view())
+    {
+        return std::string("\n</tr>\n<tr ").append(tr_class).append(">\n");
+    };
 };
 
 
@@ -109,16 +133,16 @@ std::string add_armament
 
 struct ship_armament
 {
-    ship_armament (table_template _table, ship_requests * _database) :
+    ship_armament (ship_requests * _database, table_template _table = table_template(style, "class = \"header\"")) :
         table(_table),
         names(header_column(), _database),
-        general(rows_table_template(), _database, table.new_line),
-        guns(rows_table_template(), _database, table.new_line),
-        torpedo_tubes(rows_table_template(), _database, table.new_line),
-        throwers(rows_table_template(), _database, table.new_line),
-        searchers(rows_table_template(), _database, table.new_line),
-        catapult(rows_table_template(), _database, table.new_line),
-        aircraft(rows_table_template(), _database, table.new_line)
+        general      (rows_table_template("class = \"general\""  ), _database, table.new_line),
+        guns         (rows_table_template("class = \"guns\""     ), _database, table.new_line),
+        torpedo_tubes(rows_table_template("class = \"torpedo\""  ), _database, table.new_line),
+        throwers     (rows_table_template("class = \"throwers\"" ), _database, table.new_line),
+        searchers    (rows_table_template("class = \"searchers\""), _database, table.new_line),
+        catapult     (rows_table_template("class = \"catapult\"" ), _database, table.new_line),
+        aircraft     (rows_table_template("class = \"aircraft\"" ), _database, table.new_line)
     {}
 
     bool check (std::string_view uri)
@@ -131,13 +155,25 @@ struct ship_armament
 private:
     table_template table;
     ship_names names;
-    ships_responser <ship_general> general;
-    ships_responser <ship_guns> guns;
+    ships_responser <ship_general>       general;
+    ships_responser <ship_guns>          guns;
     ships_responser <ship_torpedo_tubes> torpedo_tubes;
-    ships_responser <ship_throwers> throwers;
-    ships_responser <ship_searchers> searchers;
-    ships_responser <ship_catapult> catapult;
-    ships_responser <ship_aircrafts> aircraft;
+    ships_responser <ship_throwers>      throwers;
+    ships_responser <ship_searchers>     searchers;
+    ships_responser <ship_catapult>      catapult;
+    ships_responser <ship_aircrafts>     aircraft;
+    
+    static const constexpr std::string_view style = 
+        "<style type = \"text/css\"> \
+            TR.header    { background: #fff8dc; } \
+            TR.general   { background: #f8ffdc; } \
+            TR.guns      { background: #f8ffff; } \
+            TR.torpedo   { background: #fff8dc; } \
+            TR.throwers  { background: #f8ffdc; } \
+            TR.searchers { background: #f8ffff; } \
+            TR.catapult  { background: #fff8dc; } \
+            TR.aircraft  { background: #f8ffdc; } \
+        </style>";
 };
 
 
