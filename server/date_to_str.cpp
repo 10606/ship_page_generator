@@ -26,8 +26,8 @@ std::string where
 {
     return  std::string("where ") + 
             table_name + ".ship_id = " + std::to_string(ship_id) + 
-            " and " + table_name + ".date_from <= " + to_string_sql(date) +
-            " and " + table_name + ".date_to > " + to_string_sql(date) + " ";
+            " and (" + table_name + ".date_from <= " + to_string_sql(date) + " or " + table_name + ".date_from is null)" +
+            " and (" + table_name + ".date_to > " + to_string_sql(date) + " or " + table_name + ".date_to is null)";
 }
 
 

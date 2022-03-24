@@ -8,7 +8,7 @@ ship_names::response_t ship_names::response (std::vector <std::pair <int, std::c
 {
     response_t answer = 
     {
-        std::string(table.begin).append(table.new_column),
+        std::string(table.begin),
         std::vector <uint8_t> (ship_year.size())
     };
 
@@ -23,22 +23,30 @@ ship_names::response_t ship_names::response (std::vector <std::pair <int, std::c
             continue;
         
         answer.row += ship[0].ship_ru.value_or("");
-        if (ship[0].type_ru)
-            answer.row += std::string(table.new_line) + "(тип " + *(ship[0].type_ru) + ")";
-        answer.row += std::string(table.new_line) + to_string(ship_year[i].second);
+        if (ship[0].class_ru || ship[0].type_ru)
+        {
+            answer.row.append(table.new_line).append("(");
+            if (ship[0].class_ru)
+                answer.row.append(*ship[0].class_ru).append(" "); 
+            if (ship[0].type_ru)
+                answer.row.append("типа ").append(*(ship[0].type_ru));
+            answer.row.append(")");
+        }
+        answer.row.append(table.new_line).append(to_string(ship_year[i].second));
 
         size_t modernizations =
             database->ship_event.count(where("ship_event_list", ship_year[i].first, ship_year[i].second) + 
                                        " and  class_id = 0");
         answer.modernization[i] = modernizations;
         if (modernizations)
-            answer.row += std::string(table.new_line) + "на модернизации";
+            answer.row.append(table.new_line).append("на модернизации");
         if (ship[0].commissioned && ship_year[i].second < *ship[0].commissioned)
-            answer.row += std::string(table.new_line) + "еще не введен в строй";
+            answer.row.append(table.new_line).append("еще не введен в строй");
         if (ship[0].sunk_date && ship_year[i].second > *ship[0].sunk_date)
-            answer.row += std::string(table.new_line) + "потоплен";
+            answer.row.append(table.new_line).append("потоплен");
     }
 
     answer.row += table.end;
     return answer;
 }
+

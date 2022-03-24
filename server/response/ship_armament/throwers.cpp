@@ -19,12 +19,13 @@ std::vector <ship_throwers::response_t> ship_throwers::response (int id, std::ch
     for (auto thrower : throwers)
     {
         response_t item;
-        item.group = thrower.class_id;
-        item.group_name = thrower.class_ru.value_or("");
+        item.group = 0;
+        item.group_name = "противолодочное вооружение";
         item.compare = 0;
         
         item.data += std::to_string(thrower.mount_count) + "x" + std::to_string(thrower.tubes_count) + " ";
         item.data += (thrower.caliber? (to_string_10(*thrower.caliber) + "мм  ") : "  ");
+        item.data += (thrower.class_ru? *thrower.class_ru + "  ": "");
         item.data += thrower.thrower_ru.value_or("  ");
 
         answer.push_back(item);

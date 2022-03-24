@@ -8,7 +8,7 @@
 
 struct header_column
 {
-    std::string_view begin = "\n<th>\n";
+    std::string_view begin = "\n<th>\n</th>\n<th>\n";
     std::string_view new_column = "\n</th>\n<th>\n";
     std::string_view new_line = "<br>\n";
     std::string_view end = "\n</th>\n";

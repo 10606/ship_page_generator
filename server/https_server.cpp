@@ -62,21 +62,20 @@ struct https_server
                 return;
             
             std::string request(io->buf, io->len);
-            std::string response = 
-                cur->response_value + "\r\n" +
-                std::string(http_msg->uri.p, http_msg->uri.len) + "\r\n" + 
-                //std::string(http_msg->body.p, http_msg->body.len) + "\r\n" +
-                std::string(http_msg->query_string.p, http_msg->query_string.len) + "\r\n";
-                //std::string(http_msg->message.p, http_msg->message.len);
+            std::string response = cur->response_value.append("\r\n")
+                .append(http_msg->uri.p, http_msg->uri.len).append("\r\n") 
+                .append(http_msg->query_string.p, http_msg->query_string.len).append("\r\n");
+                //.append(http_msg->body.p, http_msg->body.len).append("\r\n")
+                //.append(http_msg->message.p, http_msg->message.len);
             
             for (size_t i = 0; i != 40; ++i)
             {
-                response += std::string(http_msg->header_names[i].p, http_msg->header_names[i].len) + " ";
-                response += std::string(http_msg->header_values[i].p, http_msg->header_values[i].len) + "\r\n";
+                response.append(http_msg->header_names[i].p, http_msg->header_names[i].len).append(" ");
+                response.append(http_msg->header_values[i].p, http_msg->header_values[i].len).append("\r\n");
             }
             
             uint32_t code = 404;
-            if (cur->ship_arm.check(std::string(http_msg->uri.p, http_msg->uri.len)))
+            if (cur->ship_arm.check(std::string_view(http_msg->uri.p, http_msg->uri.len)))
             {
                 response.clear();
                 response += "<style> \
@@ -89,7 +88,7 @@ struct https_server
                              </style>";
                 response += 
                     cur->ship_list.response() +
-                    cur->ship_arm.response(std::string(http_msg->query_string.p, http_msg->query_string.len));
+                    cur->ship_arm.response(std::string_view(http_msg->query_string.p, http_msg->query_string.len));
                 response += "</div>";
                 code = 200;
             }
@@ -177,7 +176,7 @@ private:
 
 int main ()
 {
-    server_starter server("127.0.0.1:8080", "127.0.0.1:8443", "________");
+    server_starter server("0.0.0.0:8080", "0.0.0.0:8443", "________");
     while (1)
     {
         sleep(10);
