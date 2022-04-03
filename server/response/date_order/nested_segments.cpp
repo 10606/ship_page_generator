@@ -4,32 +4,46 @@
 #include <algorithm>
 #include "dekart_tree.h"
 
-
 template <typename T>
-std::strong_ordering compare_null_first (std::optional <T> const & a, std::optional <T> const & b)
+std::strong_ordering compare_null
+(
+    std::optional <T> const & a, std::optional <T> const & b, 
+    std::strong_ordering not_a, std::strong_ordering not_b
+)
 {
     if (!a && !b)
         return std::strong_ordering::equal;
     if (a && b)
         return *a <=> *b;
     if (!a)
-        return std::strong_ordering::less;
+        return not_a;
     if (!b)
-        return std::strong_ordering::greater;
+        return not_b;
+    return std::strong_ordering::equal; // just for aviod warning...
+}
+
+template <typename T>
+std::strong_ordering compare_null_first (std::optional <T> const & a, std::optional <T> const & b)
+{
+    return compare_null(a, b, std::strong_ordering::less, std::strong_ordering::greater);
+}
+
+template <typename T>
+std::strong_ordering compare_null_last (std::optional <T> const & a, std::optional <T> const & b)
+{
+    return compare_null(a, b, std::strong_ordering::greater, std::strong_ordering::less);
 }
 
 // for sort
 auto comparator_bEi = [] (segment const & a, segment const & b) -> bool 
 { 
-    if (a.begin < b.begin)
-        return 1;
-    if (b.begin < a.begin)
-        return 0;
+    std::strong_ordering begin = compare_null_first(a.begin, b.begin);
+    if (begin != std::strong_ordering::equal)
+        return is_lt(begin);
     
-    if (a.end < b.end) // longest should be first
-        return 0;
-    if (b.end < a.end)
-        return 1;
+    std::strong_ordering end = compare_null_last(a.end, b.end);
+    if (end != std::strong_ordering::equal) // longest should be first
+        return is_gt(end);
     
     return a.index < b.index;
 };
@@ -37,10 +51,9 @@ auto comparator_bEi = [] (segment const & a, segment const & b) -> bool
 // for tree
 auto comparator_ei = [] (segment const & a, segment const & b) -> bool
 {
-    if (a.end < b.end)
-        return 1;
-    if (b.end < a.end)
-        return 0;
+    std::strong_ordering end = compare_null_last(a.end, b.end);
+    if (end != std::strong_ordering::equal)
+        return is_lt(end);
     
     return a.index < b.index;
 };
@@ -48,15 +61,13 @@ auto comparator_ei = [] (segment const & a, segment const & b) -> bool
 // for accumulate from tree
 auto calc_min_Bei = [] (segment const & a, segment const & b) -> segment
 {
-    if (a.begin < b.begin)
-        return b;
-    if (b.begin < a.begin)
-        return a;
+    std::strong_ordering begin = compare_null_first(a.begin, b.begin);
+    if (begin != std::strong_ordering::equal)
+        return is_lt(begin)? b : a;
     
-    if (a.end < b.end)
-        return a;
-    if (b.end < a.end)
-        return b;
+    std::strong_ordering end = compare_null_last(a.end, b.end);
+    if (end != std::strong_ordering::equal)
+        return is_lt(end)? a : b;
     
     return (a.index < b.index)? a : b;
 };
@@ -98,9 +109,7 @@ nested_segments
     
     dekart_tree_seg tree(updater);
 
-    std::chrono::year_month_day ymd_min(std::chrono::year::min(), std::chrono::month(1),  std::chrono::day(1));
-    std::chrono::year_month_day ymd_max(std::chrono::year::max(), std::chrono::month(12), std::chrono::day(31));
-    segment max_Bei = {ymd_min, ymd_max, std::numeric_limits <size_t> ::max()};
+    segment max_Bei = {std::nullopt, std::nullopt, std::numeric_limits <size_t> ::max()};
     
     for (size_t i = 0; i != values.size(); )
     {

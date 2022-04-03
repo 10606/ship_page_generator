@@ -8,8 +8,8 @@
 
 struct segment
 {
-    std::chrono::year_month_day begin;
-    std::chrono::year_month_day end;
+    std::optional <std::chrono::year_month_day> begin;
+    std::optional <std::chrono::year_month_day> end;
     size_t index;
 };
 

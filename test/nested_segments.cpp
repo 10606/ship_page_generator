@@ -31,3 +31,22 @@ TEST(segment, simple)
     EXPECT_EQ(nested, etalon);
 }
 
+TEST(segment, null)
+{
+    std::vector <segment> segments =
+    {
+        {std::nullopt,  std::nullopt,  0},
+        {ymd(42, 4, 3), std::nullopt,  1},
+        {std::nullopt,  ymd(44, 5, 3), 2},
+        {ymd(42, 9, 5), ymd(43, 8, 4), 3}
+    };
+
+    std::vector <std::vector <size_t> > nested =
+        nested_segments(segments);
+    
+    std::vector <std::vector <size_t> > etalon =
+        {{2, 1}, {3}, {}, {}};
+    
+    EXPECT_EQ(nested, etalon);
+}
+
