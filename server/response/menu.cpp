@@ -143,93 +143,100 @@ struct inserter_t
 
 std::string menu::response ()
 {
-    // graph for classes
-    std::vector <int> classes_root;
-    std::map <int, std::vector <int> > classes_graph;
-    
-    std::vector <ship_requests::ship_info_t::classes> class_list =
-            database->ship_info.get_classes("order by (id)");
-    for (auto const & cur_class : class_list)
+    try
     {
-        if (!cur_class.parent_id)
-            classes_root.push_back(cur_class.class_id);
-        else
-            classes_graph[*cur_class.parent_id].push_back(cur_class.class_id);
-    }
-    
-    
+        // graph for classes
+        std::vector <int> classes_root;
+        std::map <int, std::vector <int> > classes_graph;
+        
+        std::vector <ship_requests::ship_info_t::classes> class_list =
+                database->ship_info.get_classes("order by (id)");
+        for (auto const & cur_class : class_list)
+        {
+            if (!cur_class.parent_id)
+                classes_root.push_back(cur_class.class_id);
+            else
+                classes_graph[*cur_class.parent_id].push_back(cur_class.class_id);
+        }
+        
+        
 
-    std::vector <ship_requests::ship_info_t::list> ships =
-            database->ship_info.get_list("order by (ship_list.class_id, ship_list.type_id, \
-                                                    commissioned, ship_list.name_ru,  ship_list.id)");
- 
-    std::map <int, cur_class_t> classes;
-    cur_class_t cur_class;
-    cur_type_t cur_type;
-    
-    auto add_type = [&cur_class, &cur_type] () -> void
-    {
-        cur_class.types.push_back(std::move(cur_type));
-        cur_type.reset();
-    };
-    
-    for (size_t i = 0; i != ships.size(); ++i)
-    {
-        auto const & ship = ships[i];
+        std::vector <ship_requests::ship_info_t::list> ships =
+                database->ship_info.get_list("order by (ship_list.class_id, ship_list.type_id, \
+                                                        commissioned, ship_list.name_ru,  ship_list.id)");
+     
+        std::map <int, cur_class_t> classes;
+        cur_class_t cur_class;
+        cur_type_t cur_type;
         
-        if (!cur_class.id || *cur_class.id != ship.class_id)
+        auto add_type = [&cur_class, &cur_type] () -> void
         {
-            // new class
-            if (cur_class.id)
+            cur_class.types.push_back(std::move(cur_type));
+            cur_type.reset();
+        };
+        
+        for (size_t i = 0; i != ships.size(); ++i)
+        {
+            auto const & ship = ships[i];
+            
+            if (!cur_class.id || *cur_class.id != ship.class_id)
             {
-                add_type();
-                cur_class.sort();
-                classes.insert({*cur_class.id, std::move(cur_class)});
+                // new class
+                if (cur_class.id)
+                {
+                    add_type();
+                    cur_class.sort();
+                    classes.insert({*cur_class.id, std::move(cur_class)});
+                }
+                cur_class.reset(ship.class_id);
+                
+                cur_class.class_descr.append(menu_item.new_class.begin)
+                                     .append(ship.class_ru.value_or(" -- "))
+                                     .append(menu_item.new_class.end);
             }
-            cur_class.reset(ship.class_id);
             
-            cur_class.class_descr.append(menu_item.new_class.begin)
-                                 .append(ship.class_ru.value_or(" -- "))
-                                 .append(menu_item.new_class.end);
+            if (!cur_type.id || *cur_type.id != ship.type_id)
+            {
+                // new type
+                if (cur_type.id)
+                    add_type();
+                cur_type.id = ship.type_id;
+                
+                cur_type.type_descr.append(menu_item.new_type.begin)
+                                   .append(ship.type_ru.value_or(" -- "));
+                
+                if (i + 1 != ships.size() && 
+                    ships[i].type_id != ships[i + 1].type_id &&
+                    ship.ship_ru &&
+                    (!ship.type_ru || *ship.ship_ru != *ship.type_ru))
+                    cur_type.type_descr.append(" (").append(*ship.ship_ru).append(")");
+                
+                cur_type.type_descr.append(menu_item.new_type.end);
+            }
+            
+            {
+                // new ship
+                if (ship.commissioned)
+                    if (!cur_type.min_date || *cur_type.min_date < *ship.commissioned)
+                        cur_type.min_date = ship.commissioned;
+                
+                cur_type.type_descr.append(menu_item.new_ship.begin)
+                                   .append(ship.ship_ru.value_or(" --- "))
+                                   .append(menu_item.new_ship.end);
+            }
         }
         
-        if (!cur_type.id || *cur_type.id != ship.type_id)
-        {
-            // new type
-            if (cur_type.id)
-                add_type();
-            cur_type.id = ship.type_id;
-            
-            cur_type.type_descr.append(menu_item.new_type.begin)
-                               .append(ship.type_ru.value_or(" -- "));
-            
-            if (i + 1 != ships.size() && 
-                ships[i].type_id != ships[i + 1].type_id &&
-                ship.ship_ru &&
-                (!ship.type_ru || *ship.ship_ru != *ship.type_ru))
-                cur_type.type_descr.append(" (").append(*ship.ship_ru).append(")");
-            
-            cur_type.type_descr.append(menu_item.new_type.end);
-        }
+        std::string answer(menu_item.all.begin);
+        inserter_t inserter(classes_graph, classes, answer);
+        for (int root : classes_root)
+            inserter(root);
+        answer.append(menu_item.all.end);
         
-        {
-            // new ship
-            if (ship.commissioned)
-                if (!cur_type.min_date || *cur_type.min_date < *ship.commissioned)
-                    cur_type.min_date = ship.commissioned;
-            
-            cur_type.type_descr.append(menu_item.new_ship.begin)
-                               .append(ship.ship_ru.value_or(" --- "))
-                               .append(menu_item.new_ship.end);
-        }
+        return answer;
     }
-    
-    std::string answer(menu_item.all.begin);
-    inserter_t inserter(classes_graph, classes, answer);
-    for (int root : classes_root)
-        inserter(root);
-    answer.append(menu_item.all.end);
-    
-    return answer;
-};
+    catch (...)
+    {
+        return "";
+    }
+}
 

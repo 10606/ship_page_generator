@@ -119,11 +119,11 @@ std::vector <std::string> ships_responser <responser> ::response
 
 std::string ship_armament::response (std::string_view query)
 {
-    std::vector <std::pair <int, std::chrono::year_month_day> > ship_year =
-        parse_query__ship_year(query);
-    
     try
     {
+        std::vector <std::pair <int, std::chrono::year_month_day> > ship_year =
+            parse_query__ship_year(query);
+    
         auto [header, modernizations] = names.response(ship_year);
         std::string answer = table.begin;
         
