@@ -12,7 +12,7 @@ set(compile_flags
      -g --pedantic -Wall -ftemplate-depth=10000 -std=c++20"
 )
 
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${release_flags}")
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${compile_flags}")
 
 message("CMAKE_CXX_FLAGS" ${CMAKE_CXX_FLAGS})
 
@@ -20,6 +20,7 @@ include_directories(
     server/
     server/response
     server/response/ship_armament
+    server/response/date_order
     get_from_postgres
 )
 
@@ -44,6 +45,17 @@ add_executable(ship_server
     get_from_postgres/ship_info.cpp
     get_from_postgres/armament_info.cpp
     get_from_postgres/aircraft_info.cpp
+)
+
+add_executable(tests
+    test/main.cpp
+    test/dekart_tree.cpp
+    server/response/date_order/nested_segments.cpp
+    test/nested_segments.cpp
+)
+
+target_link_libraries(tests
+    gtest
 )
 
 target_link_libraries(ship_server
