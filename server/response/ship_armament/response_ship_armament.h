@@ -97,9 +97,9 @@ struct table_template
                     .append(">\n");
     }
 
-    std::string begin = "<div class = \"main\">\n<table border=1>\n<tr>\n";
+    std::string begin = "<table border=1>\n<tr>\n";
     std::string new_line = "<br>\n";
-    std::string end = "\n</tr>\n</table>\n</div>";
+    std::string end = "\n</tr>\n</table>\n";
 
     std::string new_row (std::string_view tr_class = std::string_view())
     {

@@ -36,9 +36,9 @@ TEST(segment, null)
     std::vector <segment> segments =
     {
         {std::nullopt,  std::nullopt,  0},
-        {ymd(42, 4, 3), std::nullopt,  1},
-        {std::nullopt,  ymd(44, 5, 3), 2},
-        {ymd(42, 9, 5), ymd(43, 8, 4), 3}
+        {ymd(42, 4, 3), std::nullopt,  1}, // 0
+        {std::nullopt,  ymd(44, 5, 3), 2}, // 0
+        {ymd(42, 9, 5), ymd(43, 8, 4), 3}  // 0 1
     };
 
     std::vector <std::vector <size_t> > nested =

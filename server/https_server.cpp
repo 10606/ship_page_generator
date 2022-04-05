@@ -9,7 +9,8 @@
 
 #include "upgrade_to_https.h"
 #include "response_ship_armament.h"
-#include "menu.h"
+#include "response_torpedo.h"
+#include "response.h"
 
 
 struct https_server
@@ -21,8 +22,8 @@ struct https_server
         std::string const & https_port,
         std::string const & _response_value
     ) :
-        ship_list(&database),
-        ship_arm(&database),
+        database(),
+        resp(&database),
         stop(_stop),
         response_value(_response_value)
     {
@@ -45,6 +46,10 @@ struct https_server
         mg_set_protocol_http_websocket(nc_https);
 
         mg_mgr_poll(&mgr, 100);
+
+        
+        resp.reg <ship_armament> ("/ship/armament", &database);
+        resp.reg <torpedo> ("/armament/torpedo", &database);
     }
 
     static const char * s_ssl_cert;
@@ -75,21 +80,15 @@ struct https_server
             }
             
             uint32_t code = 404;
-            if (cur->ship_arm.check(std::string_view(http_msg->uri.p, http_msg->uri.len)))
+            std::optional <std::string> answer = 
+                cur->resp.response
+                (
+                    std::string_view(http_msg->uri.p, http_msg->uri.len),
+                    std::string_view(http_msg->query_string.p, http_msg->query_string.len)
+                );
+            if (answer)
             {
-                response.clear();
-                response += "<style> \
-                                .wrapper { display: flex; } \
-                             </style>";
-                response += "<div class = \"wrapper\">\
-                             <style> \
-                                .menu { display: inline; } \
-                                .main { display: inline; } \
-                             </style>";
-                response += 
-                    cur->ship_list.response() +
-                    cur->ship_arm.response(std::string_view(http_msg->query_string.p, http_msg->query_string.len));
-                response += "</div>";
+                response = *answer;
                 code = 200;
             }
             
@@ -127,8 +126,7 @@ struct https_server
     
 private:
     ship_requests database;
-    menu ship_list;
-    ship_armament ship_arm;
+    responser resp;
     
     std::atomic <bool> const & stop;
     std::string response_value;

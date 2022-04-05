@@ -21,6 +21,7 @@ include_directories(
     server/response
     server/response/ship_armament
     server/response/date_order
+    server/response/armament
     get_from_postgres
 )
 
@@ -37,6 +38,8 @@ add_executable(ship_server
     server/response/ship_armament/searchers.cpp
     server/response/ship_armament/catapult.cpp
     server/response/ship_armament/aircraft.cpp
+    server/response/armament/parse_query.cpp
+    server/response/armament/response_torpedo.cpp
     server/response/ship_names.cpp
     server/response/menu.cpp
     get_from_postgres/parse_response.cpp
