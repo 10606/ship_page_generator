@@ -7,45 +7,7 @@
 #include <optional>
 #include <map>
 #include <chrono>
-
-
-template <typename T>
-std::partial_ordering 
-compare_null_last 
-(
-    std::optional <T> const & a, 
-    std::optional <T> const & b
-)
-{
-    if (!a && !b)
-        return std::partial_ordering::equivalent;
-    if (a && b)
-        return *a <=> *b;
-    if (!a)
-        return std::partial_ordering::greater;
-    if (!b)
-        return std::partial_ordering::less;
-    return std::partial_ordering::equivalent; // just for aviod warning
-}
-
-
-std::partial_ordering 
-compare_date_10th 
-(
-    std::optional <std::chrono::year_month_day> const & a, 
-    std::optional <std::chrono::year_month_day> const & b
-)
-{
-    if (!a && !b)
-        return std::partial_ordering::equivalent;
-    if (a && b)
-        return (static_cast <int> (a->year()) / 10) <=> (static_cast <int> (b->year()) / 10);
-    if (!a)
-        return std::partial_ordering::greater;
-    if (!b)
-        return std::partial_ordering::less;
-    return std::partial_ordering::equivalent; // just for aviod warning
-}
+#include <span>
 
 
 template <typename T>
@@ -101,10 +63,52 @@ private:
 
 
 template <typename T>
+struct filter
+{
+    filter 
+    (
+        std::function <bool (T const &)> _predicate,
+        std::unique_ptr <filter <T> > _next
+    ) :
+        predicate(std::move(_predicate)),
+        next(std::move(_next))
+    {}
+    
+    bool operator () (T const & value)
+    {
+        return predicate(value) && 
+               (!next || next->operator () (value));
+    }
+
+private:
+    std::function <bool (T const &)> predicate;
+    std::unique_ptr <filter <T> > next;
+};
+
+
+template <typename T>
+struct filter_for_sort
+{
+    filter_for_sort (filter <T> * _predicate) :
+        predicate(std::move(_predicate))
+    {}
+    
+    bool operator () (T const & value)
+    {
+        return predicate? predicate->operator () (value) : 1;
+    }
+
+private:
+    filter <T> * predicate;
+};
+
+
+template <typename T>
 std::vector <std::vector <T> > 
 group_and_sort 
 (
     std::vector <T> && values,
+    filter_for_sort <T> predicate,
     comparator_for_sort <T> group_cmp,
     comparator_for_sort <T> sort_cmp
 )
@@ -113,10 +117,12 @@ group_and_sort
         return {};
     
     std::vector <std::vector <T> > answer;
-    std::sort(values.begin(), values.end(), group_cmp);
+
+    typename std::vector <T> ::iterator end = std::partition(values.begin(), values.end(), predicate);
+    std::sort(values.begin(), end, group_cmp);
     
     bool group_start = 1;
-    for (size_t i = 0; i != values.size(); )
+    for (ptrdiff_t i = 0; i != end - values.begin(); )
     {
         if (group_start)
         {
@@ -139,52 +145,6 @@ group_and_sort
 
     return answer;
 }
-
-
-template <typename T>
-struct registrator
-{
-    typedef std::function <std::partial_ordering (T const &, T const &)> func_t;
-    
-    registrator (std::vector <std::pair <std::string, func_t> > func_list)
-    {
-        for (auto & func : func_list)
-            functions.insert(std::move(func));
-    }
-    
-    void reg (std::string name, func_t func)
-    {
-        functions.insert({std::move(name), std::move(func)});
-    }
-    
-    std::unique_ptr <comparator <T> > 
-    get 
-    (
-        std::string_view name, 
-        std::unique_ptr <comparator <T> > cmp
-    )
-    {
-        typename std::map <std::string, func_t> :: iterator it = functions.find(std::string(name));
-        if (it == functions.end())
-            return cmp;
-        return std::make_unique <comparator <T> > (it->second, std::move(cmp));
-    }
-    
-    std::unique_ptr <comparator <T> > 
-    get
-    (
-        std::vector <std::string_view> const & names,
-        std::unique_ptr <comparator <T> > answer
-    )
-    {
-        for (size_t i = names.size(); i--; )
-            answer = get(names[i], std::move(answer));
-        return answer;
-    }
-       
-private:
-    std::map <std::string, func_t> functions;
-};
 
 
 #endif
