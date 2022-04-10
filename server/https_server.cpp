@@ -11,7 +11,25 @@
 #include "response_ship_armament.h"
 #include "response_torpedo.h"
 #include "response_guns.h"
+#include "response_torpedo_tubes.h"
 #include "response.h"
+
+
+std::string_view get_resp_code_str (uint32_t code)
+{
+    static const std::map <uint32_t, std::string_view> answer = 
+    {
+        {200, "OK"},
+        {403, "Forbidden"},
+        {404, "Not found"},
+        {405, "Method not allowed"},
+    };
+    
+    std::map <uint32_t, std::string_view> ::const_iterator it = answer.find(code);
+    if (it == answer.end())
+        return "";
+    return it->second;
+}
 
 
 struct https_server
@@ -49,9 +67,10 @@ struct https_server
         mg_mgr_poll(&mgr, 100);
 
         
-        resp.reg <ship_armament> ("/ship/armament", &database);
-        resp.reg <torpedo> ("/armament/torpedo", &database);
-        resp.reg <guns> ("/armament/guns", &database);
+        resp.reg <ship_armament>    ("/ship/armament", &database);
+        resp.reg <torpedo>          ("/armament/torpedo", &database);
+        resp.reg <guns>             ("/armament/guns", &database);
+        resp.reg <torpedo_tubes>    ("/armament/torpedo_tubes", &database);
     }
 
     static const char * s_ssl_cert;
@@ -65,41 +84,58 @@ struct https_server
             http_message * http_msg = reinterpret_cast <http_message *> (ev_data);
             https_server * cur = reinterpret_cast <https_server *> (nc->user_data);
             
-            if (upgrade_if_need(nc, http_msg, "8443"))
+            uint32_t code;
+            std::string response;
+            
+            if (std::string_view(http_msg->method.p, http_msg->method.len) != "GET")
+            {
+                response = "??";
+                code = 405;
+            }
+            else if (upgrade_if_need(nc, http_msg, "8443"))
                 return;
+            else
+            {
+                std::optional <std::string> answer = 
+                    cur->resp.response
+                    (
+                        std::string_view(http_msg->uri.p, http_msg->uri.len),
+                        std::string_view(http_msg->query_string.p, http_msg->query_string.len)
+                    );
+                if (answer)
+                {
+                    response = std::move(*answer);
+                    code = 200;
+                }
+                else
+                {
+                    response = "Not found";
+                    code = 404;
+                }
+            }
             
+            /*
             std::string request(io->buf, io->len);
-            std::string response = cur->response_value.append("\r\n")
+            response = cur->response_value.append("\r\n")
                 .append(http_msg->uri.p, http_msg->uri.len).append("\r\n") 
-                .append(http_msg->query_string.p, http_msg->query_string.len).append("\r\n");
-                //.append(http_msg->body.p, http_msg->body.len).append("\r\n")
-                //.append(http_msg->message.p, http_msg->message.len);
+                .append(http_msg->query_string.p, http_msg->query_string.len).append("\r\n")
+                .append(http_msg->body.p, http_msg->body.len).append("\r\n")
+                .append(http_msg->message.p, http_msg->message.len);
             
+            // history
             for (size_t i = 0; i != 40; ++i)
             {
                 response.append(http_msg->header_names[i].p, http_msg->header_names[i].len).append(" ");
                 response.append(http_msg->header_values[i].p, http_msg->header_values[i].len).append("\r\n");
             }
+            */
             
-            uint32_t code = 404;
-            std::optional <std::string> answer = 
-                cur->resp.response
-                (
-                    std::string_view(http_msg->uri.p, http_msg->uri.len),
-                    std::string_view(http_msg->query_string.p, http_msg->query_string.len)
-                );
-            if (answer)
-            {
-                response = *answer;
-                code = 200;
-            }
-            
-            mg_printf(nc, "HTTP/1.1 %u Not Found\r\n"
-                        "Server: MyWebServer\r\n"
+            mg_printf(nc, "HTTP/1.1 %u %s\r\n"
+                        "Server: japan_ships\r\n"
                         "Content-Type: text/html; charset=utf-8\r\n"
                         "Content-Length: %lu\r\n"
                         "Connection: close\r\n"
-                        "\r\n", code, response.size());
+                        "\r\n", code, get_resp_code_str(code).data(), response.size());
             mg_send
             (
                 nc, 
@@ -116,7 +152,6 @@ struct https_server
     {
         while (!stop.load()) 
         {
-            //std::cout << "server run\n";
             mg_mgr_poll(&mgr, 100);
         }
     }
