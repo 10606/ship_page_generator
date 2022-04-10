@@ -13,6 +13,7 @@
 #include "response_guns.h"
 #include "response_torpedo_tubes.h"
 #include "response_mines_charges.h"
+#include "response_catapult.h"
 #include "response.h"
 
 
@@ -73,6 +74,7 @@ struct https_server
         resp.reg <guns>             ("/armament/guns", &database);
         resp.reg <torpedo_tubes>    ("/armament/torpedo_tubes", &database);
         resp.reg <mines_charges>    ("/armament/mines_charges", &database);
+        resp.reg <catapult>         ("/armament/catapult", &database);
     }
 
     static const char * s_ssl_cert;
