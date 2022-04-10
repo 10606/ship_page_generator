@@ -68,9 +68,10 @@ registrator_pred <guns::guns_t> & guns_cmp::filter ()
     static registrator_pred <guns::guns_t> answer;
     if (answer.empty())
     {
-        answer.reg <year_filter <guns::guns_t> > ("in_service");
-        answer.reg <caliber_filter <guns::guns_t> > ("caliber");
-        answer.reg <class_filter <guns::guns_t> > ("class");
+        answer.reg <year_filter     <guns::guns_t> > ("in_service");
+        answer.reg <caliber_filter  <guns::guns_t> > ("caliber");
+        answer.reg <class_filter    <guns::guns_t> > ("class");
+        answer.reg <id_filter       <guns::guns_t> > ("id");
     }
     
     return answer;

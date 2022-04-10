@@ -159,5 +159,28 @@ private:
 };   
 
 
+template <typename T>
+struct id_filter
+{
+    id_filter (std::span <std::string_view const> values)
+    {
+        for (std::string_view id : values)
+        {
+            std::optional <int> parsed = parse_number <int> (id);
+            if (parsed)
+                ids.insert(*parsed);
+        }
+    }
+
+    bool operator () (T const & value)
+    {
+        return ids.find(value.id) != ids.end();
+    }
+
+private:
+    std::set <int> ids;
+};   
+
+
 #endif
 

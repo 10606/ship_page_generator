@@ -63,8 +63,9 @@ registrator_pred <mines_charges::mines_charges_t> & mines_charges_cmp::filter ()
     static registrator_pred <mines_charges::mines_charges_t> answer;
     if (answer.empty())
     {
-        answer.reg <year_filter <mines_charges::mines_charges_t> > ("in_service");
+        answer.reg <year_filter  <mines_charges::mines_charges_t> > ("in_service");
         answer.reg <class_filter <mines_charges::mines_charges_t> > ("class");
+        answer.reg <id_filter    <mines_charges::mines_charges_t> > ("id");
     }
     
     return answer;

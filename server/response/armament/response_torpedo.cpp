@@ -63,8 +63,9 @@ registrator_pred <torpedo::torpedo_t> & torpedo_cmp::filter ()
     static registrator_pred <torpedo::torpedo_t> answer;
     if (answer.empty())
     {
-        answer.reg <year_filter <torpedo::torpedo_t> > ("in_service");
-        answer.reg <caliber_filter <torpedo::torpedo_t> > ("caliber");
+        answer.reg <year_filter     <torpedo::torpedo_t> > ("in_service");
+        answer.reg <caliber_filter  <torpedo::torpedo_t> > ("caliber");
+        answer.reg <id_filter       <torpedo::torpedo_t> > ("id");
     }
     
     return answer;

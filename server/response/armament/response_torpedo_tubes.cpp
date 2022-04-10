@@ -68,9 +68,10 @@ registrator_pred <torpedo_tubes::torpedo_tubes_t> & torpedo_tubes_cmp::filter ()
     static registrator_pred <torpedo_tubes::torpedo_tubes_t> answer;
     if (answer.empty())
     {
-        answer.reg <year_filter <torpedo_tubes::torpedo_tubes_t> > ("in_service");
-        answer.reg <caliber_filter <torpedo_tubes::torpedo_tubes_t> > ("caliber");
-        answer.reg <class_filter <torpedo_tubes::torpedo_tubes_t> > ("class");
+        answer.reg <year_filter     <torpedo_tubes::torpedo_tubes_t> > ("in_service");
+        answer.reg <caliber_filter  <torpedo_tubes::torpedo_tubes_t> > ("caliber");
+        answer.reg <class_filter    <torpedo_tubes::torpedo_tubes_t> > ("class");
+        answer.reg <id_filter       <torpedo_tubes::torpedo_tubes_t> > ("id");
     }
     
     return answer;

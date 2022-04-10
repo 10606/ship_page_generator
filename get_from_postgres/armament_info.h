@@ -8,7 +8,7 @@ struct ship_requests::armament_info_t::torpedo
 {
     torpedo (pqxx::row const & value);
 
-    int torpedo_id;
+    int id;
     std::optional <std::string> torpedo_ru;
     std::optional <std::string> torpedo_en;
     std::optional <double> caliber; /* мм */
@@ -25,7 +25,7 @@ struct ship_requests::armament_info_t::torpedo_tubes
 {
     torpedo_tubes (pqxx::row const & value);
     
-    int tube_id;
+    int id;
     int class_id;
     std::optional <std::string> tube_ru;
     std::optional <std::string> tube_en;
@@ -53,7 +53,7 @@ struct ship_requests::armament_info_t::list
 {
     list (pqxx::row const & value);
     
-    int gun_id;
+    int id;
     int class_id;
     std::optional <std::string> gun_ru;
     std::optional <std::string> gun_en;
@@ -74,7 +74,7 @@ struct ship_requests::armament_info_t::mount
 {
     mount (pqxx::row const & value);
     
-    int mount_id;
+    int id;
     int gun_id;
     int class_id;
     std::optional <std::string> mount_ru;
@@ -97,7 +97,7 @@ struct ship_requests::armament_info_t::mines_charges
 {
     mines_charges (pqxx::row const & value);
     
-    int mine_id;
+    int id;
     int class_id;
     std::optional <std::string> mine_ru;
     std::optional <std::string> mine_en;
@@ -115,7 +115,7 @@ struct ship_requests::armament_info_t::throwers
 {
     throwers (pqxx::row const & value);
     
-    int thrower_id;
+    int id;
     int class_id;
     std::optional <std::string> thrower_ru;
     std::optional <std::string> thrower_en;
@@ -132,7 +132,7 @@ struct ship_requests::armament_info_t::catapult
 {
     catapult (pqxx::row const & value);
     
-    int catapult_id;
+    int id;
     int class_id;
     std::optional <std::string> catapult_ru;
     std::optional <std::string> catapult_en;
@@ -152,7 +152,7 @@ struct ship_requests::armament_info_t::searchers
 {
     searchers (pqxx::row const & value);
     
-    int searcher_id;
+    int id;
     int class_id;
     std::optional <std::string> searcher_ru;
     std::optional <std::string> searcher_en;

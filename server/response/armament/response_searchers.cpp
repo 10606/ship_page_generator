@@ -68,8 +68,9 @@ registrator_pred <searcher::searcher_t> & searcher_cmp::filter ()
     static registrator_pred <searcher::searcher_t> answer;
     if (answer.empty())
     {
-        answer.reg <year_filter <searcher::searcher_t> > ("in_service");
+        answer.reg <year_filter  <searcher::searcher_t> > ("in_service");
         answer.reg <class_filter <searcher::searcher_t> > ("class");
+        answer.reg <id_filter    <searcher::searcher_t> > ("id");
     }
     
     return answer;

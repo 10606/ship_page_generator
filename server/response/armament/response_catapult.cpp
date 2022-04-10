@@ -73,8 +73,9 @@ registrator_pred <catapult::catapult_t> & catapult_cmp::filter ()
     static registrator_pred <catapult::catapult_t> answer;
     if (answer.empty())
     {
-        answer.reg <year_filter <catapult::catapult_t> > ("in_service");
+        answer.reg <year_filter  <catapult::catapult_t> > ("in_service");
         answer.reg <class_filter <catapult::catapult_t> > ("class");
+        answer.reg <id_filter    <catapult::catapult_t> > ("id");
     }
     
     return answer;

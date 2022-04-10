@@ -3,7 +3,7 @@
 
 
 ship_requests::armament_info_t::torpedo::torpedo (pqxx::row const & value) :
-    torpedo_id(value[0].as <int> ()),
+    id        (value[0].as <int> ()),
     torpedo_ru(value[1].as <std::optional <std::string> > ()),
     torpedo_en(value[2].as <std::optional <std::string> > ()),
     caliber (value[3].as <std::optional <double> > ()), /* мм */
@@ -40,7 +40,7 @@ std::vector <ship_requests::armament_info_t::torpedo> ship_requests::armament_in
 
 
 ship_requests::armament_info_t::torpedo_tubes::torpedo_tubes (pqxx::row const & value) :
-    tube_id (value[0].as <int> ()),
+    id      (value[0].as <int> ()),
     class_id(value[1].as <int> ()),
     tube_ru (value[2].as <std::optional <std::string> > ()),
     tube_en (value[3].as <std::optional <std::string> > ()),
@@ -102,7 +102,7 @@ std::vector <ship_requests::armament_info_t::classes> ship_requests::armament_in
 
 
 ship_requests::armament_info_t::list::list (pqxx::row const & value) :
-    gun_id  (value[0].as <int> ()),
+    id      (value[0].as <int> ()),
     class_id(value[1].as <int> ()),
     gun_ru  (value[2].as <std::optional <std::string> > ()),
     gun_en  (value[3].as <std::optional <std::string> > ()),
@@ -146,7 +146,7 @@ std::vector <ship_requests::armament_info_t::list> ship_requests::armament_info_
 
     
 ship_requests::armament_info_t::mount::mount (pqxx::row const & value) :
-    mount_id(value[0].as <int> ()),
+    id      (value[0].as <int> ()),
     gun_id  (value[1].as <int> ()),
     class_id(value[2].as <int> ()),
     mount_ru(value[3].as <std::optional <std::string> > ()),
@@ -191,7 +191,7 @@ std::vector <ship_requests::armament_info_t::mount> ship_requests::armament_info
 
 
 ship_requests::armament_info_t::mines_charges::mines_charges (pqxx::row const & value) :
-    mine_id (value[0].as <int> ()),
+    id      (value[0].as <int> ()),
     class_id(value[1].as <int> ()),
     mine_ru (value[2].as <std::optional <std::string> > ()),
     mine_en (value[3].as <std::optional <std::string> > ()),
@@ -231,7 +231,7 @@ std::vector <ship_requests::armament_info_t::mines_charges> ship_requests::armam
 
 
 ship_requests::armament_info_t::throwers::throwers (pqxx::row const & value) :
-    thrower_id(value[0].as <int> ()),
+    id        (value[0].as <int> ()),
     class_id  (value[1].as <int> ()),
     thrower_ru(value[2].as <std::optional <std::string> > ()),
     thrower_en(value[3].as <std::optional <std::string> > ()),
@@ -270,7 +270,7 @@ std::vector <ship_requests::armament_info_t::throwers> ship_requests::armament_i
 
 
 ship_requests::armament_info_t::catapult::catapult (pqxx::row const & value) :
-    catapult_id (value[0].as <int> ()),
+    id          (value[0].as <int> ()),
     class_id    (value[1].as <int> ()),
     catapult_ru (value[2].as <std::optional <std::string> > ()),
     catapult_en (value[3].as <std::optional <std::string> > ()),
@@ -314,7 +314,7 @@ std::vector <ship_requests::armament_info_t::catapult> ship_requests::armament_i
 
 
 ship_requests::armament_info_t::searchers::searchers (pqxx::row const & value) :
-    searcher_id(value[0].as <int> ()),
+    id         (value[0].as <int> ()),
     class_id   (value[1].as <int> ()),
     searcher_ru(value[2].as <std::optional <std::string> > ()),
     searcher_en(value[3].as <std::optional <std::string> > ()),
