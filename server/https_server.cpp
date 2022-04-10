@@ -39,14 +39,12 @@ struct https_server
 {
     https_server 
     (
-        std::atomic <bool> const & _stop, 
         std::string const & http_port,
         std::string const & https_port,
         std::string const & _response_value
     ) :
         database(),
         resp(&database),
-        stop(_stop),
         response_value(_response_value)
     {
         mg_mgr_init(&mgr, NULL);
@@ -156,10 +154,7 @@ struct https_server
 
     void main () 
     {
-        while (!stop.load()) 
-        {
-            mg_mgr_poll(&mgr, 100);
-        }
+        mg_mgr_poll(&mgr, 100);
     }
 
     ~https_server ()
@@ -171,7 +166,6 @@ private:
     ship_requests database;
     responser resp;
     
-    std::atomic <bool> const & stop;
     std::string response_value;
 
     struct mg_mgr mgr;
@@ -184,43 +178,43 @@ private:
 const char * https_server::s_ssl_cert = "server/keys/server.pem";
 const char * https_server::s_ssl_key = "server/keys/server.key";
 
-void start_server (https_server & server)
+
+volatile bool run = 1;
+
+void handler_exit (int)
 {
-    server.main();
+    run = 0;
 }
 
-struct server_starter 
+void set_sig_handler (int sig_num, void (* handler) (int))
 {
-    server_starter (std::string const & http_port, std::string const & https_port, std::string const & response) : 
-        stop_server(0),
-        server
-        (
-            stop_server, 
-            http_port, 
-            https_port, 
-            response
-        ),
-        t_server(start_server, std::ref(server))
-    {}
+    struct sigaction act;
+    act.sa_handler = handler;
+    act.sa_flags = 0;
+    sigemptyset(&act.sa_mask);
+    int ret = sigaction(sig_num, &act, NULL);
+    if (ret)
+        std::runtime_error("can't set signal handler");
+}
 
-    ~server_starter ()
-    {
-        stop_server.store(1);
-        t_server.join();
-    }
-
-private:
-    std::atomic <bool> stop_server;
-    https_server server;
-    std::thread t_server;
-};
 
 int main ()
 {
-    server_starter server("0.0.0.0:8080", "0.0.0.0:8443", "________");
-    while (1)
+    try
     {
-        sleep(10);
-    };
+        set_sig_handler(SIGTERM, handler_exit);
+        set_sig_handler(SIGINT, handler_exit);
+        https_server server("0.0.0.0:8080", "0.0.0.0:8443", "________");
+        while (run)
+        {
+            server.main();
+        };
+    }
+    catch (std::exception const & e)
+    {
+        std::cerr << e.what();
+    }
+    catch (...)
+    {}
 }
 

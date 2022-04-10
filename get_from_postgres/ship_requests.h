@@ -28,12 +28,12 @@ private:
                 throw std::runtime_error("can't connect");
             conn.set_client_encoding("UTF-8");
         }
-    
+        
         pqxx::connection conn;
     };
     
     conn_wrapper conn;
-    pqxx::work work;
+    pqxx::read_transaction work;
 };
 
 
