@@ -9,50 +9,50 @@
 
 menu_item_template::item const menu_item_template::all_template =
 {
-    "<div class = \"menu\"> \
-        <style> \
-            .collapsible { \
-              background-color: #777777; \
-              color: white; \
-              cursor: pointer; \
-              padding: 6px; \
-              border: none; \
-              text-align: left; \
-              outline: none; \
-              font-size: 15px; \
-            } \
-            \
-            .active, .collapsible:hover { \
-              background-color: #555555; \
-            } \
-            \
-            .content { \
-              padding: 0px 20px; \
-              display: none; \
-              overflow: hidden; \
-              background-color: #ffffff; \
-            } \
-        </style>\
-        <div><div>",
+    "<div class = \"menu\"> \n\
+        <style> \n\
+            .collapsible { \n\
+              background-color: #777777; \n\
+              color: white; \n\
+              cursor: pointer; \n\
+              padding: 6px; \n\
+              border: none; \n\
+              text-align: left; \n\
+              outline: none; \n\
+              font-size: 15px; \n\
+            } \n\
+            \n\
+            .active, .collapsible:hover { \n\
+              background-color: #555555; \n\
+            } \n\
+            \n\
+            .content { \n\
+              padding: 0px 20px; \n\
+              display: none; \n\
+              overflow: hidden; \n\
+              background-color: #ffffff; \n\
+            } \n\
+        </style>\n\
+        <div><div>\n",
         
-        "</div></div>\
-        <script>\
-            var coll = document.getElementsByClassName(\"collapsible\");\
-            var i;\
-            \
-            for (i = 0; i < coll.length; i++) {\
-                coll[i].addEventListener(\"click\", function() {\
-                    this.classList.toggle(\"active\");\
-                    var content = this.nextElementSibling.nextElementSibling;\
-                    if (content.style.display === \"block\") {\
-                        content.style.display = \"none\";\
-                    } else {\
-                        content.style.display = \"block\";\
-                    }\
-                });\
-            }\
-        </script>\
-    </div>"
+        "</div></div>\n\
+        <script>\n\
+            var coll = document.getElementsByClassName(\"collapsible\");\n\
+            var i;\n\
+            \n\
+            for (i = 0; i < coll.length; i++) {\n\
+                coll[i].addEventListener(\"click\", function() {\n\
+                    this.classList.toggle(\"active\");\n\
+                    var content = this.nextElementSibling.nextElementSibling;\n\
+                    if (content.style.display === \"block\") {\n\
+                        content.style.display = \"none\";\n\
+                    } else {\n\
+                        content.style.display = \"block\";\n\
+                    }\n\
+                });\n\
+            }\n\
+        </script>\n\
+    </div>\n"
 };
 
 
