@@ -28,6 +28,7 @@ compare_null_last
 }
 
 
+inline
 std::partial_ordering 
 compare_date_10th 
 (
@@ -93,11 +94,15 @@ private:
 };
 
 
-inline std::optional <double> parse_double (std::string_view value)
+template <typename T>
+concept number = std::numeric_limits <T> ::is_integer || std::is_floating_point_v <T>;
+
+template <number T>
+inline std::optional <T> parse_number (std::string_view value)
 {
     if (value.empty())
         return std::nullopt;
-    double answer;
+    T answer;
     std::from_chars_result res = std::from_chars(value.begin(), value.end(), answer);
     if (res.ec == std::errc())
         return answer;
@@ -113,7 +118,7 @@ struct caliber_filter
     {
         for (std::string_view year : values)
         {
-            std::optional <double> parsed = parse_double(year);
+            std::optional <double> parsed = parse_number <double> (year);
             if (parsed)
                 years.insert(*parsed);
         }
@@ -129,6 +134,30 @@ struct caliber_filter
 private:
     std::set <double> years;
 };   
+
+
+template <typename T>
+struct class_filter
+{
+    class_filter (std::span <std::string_view const> values)
+    {
+        for (std::string_view class_id : values)
+        {
+            std::optional <int> parsed = parse_number <int> (class_id);
+            if (parsed)
+                classes.insert(*parsed);
+        }
+    }
+
+    bool operator () (T const & value)
+    {
+        return classes.find(value.class_id) != classes.end();
+    }
+
+private:
+    std::set <int> classes;
+};   
+
 
 #endif
 

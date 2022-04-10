@@ -21,10 +21,6 @@ struct torpedo
     std::string response (std::string_view query);
     
 private:
-    std::vector <std::vector <torpedo_t> >
-    torpedo_group_and_sort
-    (std::string_view query);
-
     ship_requests * database;
 };
 

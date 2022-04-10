@@ -10,6 +10,7 @@
 #include "upgrade_to_https.h"
 #include "response_ship_armament.h"
 #include "response_torpedo.h"
+#include "response_guns.h"
 #include "response.h"
 
 
@@ -50,6 +51,7 @@ struct https_server
         
         resp.reg <ship_armament> ("/ship/armament", &database);
         resp.reg <torpedo> ("/armament/torpedo", &database);
+        resp.reg <guns> ("/armament/guns", &database);
     }
 
     static const char * s_ssl_cert;

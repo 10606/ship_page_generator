@@ -8,6 +8,7 @@
 #include <map>
 #include <chrono>
 #include <span>
+#include "parse_query.h"
 
 
 template <typename T>
@@ -144,6 +145,40 @@ group_and_sort
         std::sort(group.begin(), group.end(), sort_cmp);
 
     return answer;
+}
+
+
+template <typename T, typename cmp_location>
+std::vector <std::vector <T> >
+parse_group_and_sort
+(
+    std::vector <T> torpedoes,
+    std::string_view query
+)
+{
+    std::vector <group> parsed = parse_query(query);
+    
+    std::unique_ptr <filter <T> > predicate;
+    std::unique_ptr <comparator <T> > group_cmp;
+    std::unique_ptr <comparator <T> > sort_cmp;
+    
+    for (group const & cur_gr : parsed)
+    {
+        if (cur_gr.key == "group")
+            group_cmp = cmp_location::group.get(cur_gr.values, std::move(group_cmp));
+        if (cur_gr.key == "sort")
+            sort_cmp = cmp_location::sort.get(cur_gr.values, std::move(sort_cmp));
+        if (cur_gr.key == "filter")
+            predicate = cmp_location::filter().get(cur_gr.values, std::move(predicate));
+    }
+
+    return  group_and_sort
+    (
+        std::move(torpedoes), 
+        filter_for_sort <T> (predicate.get()),
+        comparator_for_sort <T> (group_cmp.get()), 
+        comparator_for_sort <T> (sort_cmp.get())
+    );
 }
 
 

@@ -40,6 +40,7 @@ add_executable(ship_server
     server/response/ship_armament/aircraft.cpp
     server/response/armament/parse_query.cpp
     server/response/armament/response_torpedo.cpp
+    server/response/armament/response_guns.cpp
     server/response/ship_names.cpp
     server/response/menu.cpp
     get_from_postgres/parse_response.cpp
