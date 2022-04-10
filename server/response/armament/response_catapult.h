@@ -12,7 +12,7 @@ struct catapult
     
     typedef ship_requests::armament_info_t::catapult catapult_t;
  
-    // https://127.0.0.1:8443/armament/catapult?sort=in_service,mass_ex&group=class
+    // https://127.0.0.1:8443/armament/catapult?sort=in_service,launch_mass&group=class
     std::string response (std::string_view query);
     
 private:

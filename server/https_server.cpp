@@ -14,6 +14,7 @@
 #include "response_torpedo_tubes.h"
 #include "response_mines_charges.h"
 #include "response_catapult.h"
+#include "response_searchers.h"
 #include "response.h"
 
 
@@ -69,12 +70,13 @@ struct https_server
         mg_mgr_poll(&mgr, 100);
 
         
-        resp.reg <ship_armament>    ("/ship/armament", &database);
-        resp.reg <torpedo>          ("/armament/torpedo", &database);
-        resp.reg <guns>             ("/armament/guns", &database);
+        resp.reg <ship_armament>    ("/ship/armament",          &database);
+        resp.reg <torpedo>          ("/armament/torpedo",       &database);
+        resp.reg <guns>             ("/armament/guns",          &database);
         resp.reg <torpedo_tubes>    ("/armament/torpedo_tubes", &database);
         resp.reg <mines_charges>    ("/armament/mines_charges", &database);
-        resp.reg <catapult>         ("/armament/catapult", &database);
+        resp.reg <catapult>         ("/armament/catapult",      &database);
+        resp.reg <searcher>         ("/armament/searcher",      &database);
     }
 
     static const char * s_ssl_cert;

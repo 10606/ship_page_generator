@@ -12,7 +12,7 @@ set(compile_flags
      -g --pedantic -Wall -ftemplate-depth=10000 -std=c++20"
 )
 
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${compile_flags}")
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${release_flags}")
 
 message("CMAKE_CXX_FLAGS" ${CMAKE_CXX_FLAGS})
 
@@ -44,6 +44,7 @@ add_executable(ship_server
     server/response/armament/response_torpedo_tubes.cpp
     server/response/armament/response_mines_charges.cpp
     server/response/armament/response_catapult.cpp
+    server/response/armament/response_searchers.cpp
     server/response/ship_names.cpp
     server/response/menu.cpp
     get_from_postgres/parse_response.cpp
