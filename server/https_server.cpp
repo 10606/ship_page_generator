@@ -15,6 +15,7 @@
 #include "response_mines_charges.h"
 #include "response_catapult.h"
 #include "response_searchers.h"
+#include "response_aircraft.h"
 #include "response.h"
 
 
@@ -75,6 +76,7 @@ struct https_server
         resp.reg <mines_charges>    ("/armament/mines_charges", &database);
         resp.reg <catapult>         ("/armament/catapult",      &database);
         resp.reg <searcher>         ("/armament/searcher",      &database);
+        resp.reg <aircraft>         ("/aircraft",               &database);
     }
 
     static const char * s_ssl_cert;

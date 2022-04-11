@@ -77,7 +77,7 @@ std::vector <ship_requests::aircraft_info_t::types> ship_requests::aircraft_info
 
 
 ship_requests::aircraft_info_t::list::list (pqxx::row const & value) :
-    aircraft_id (value[0].as <int> ()),
+    id (value[0].as <int> ()),
     type_id     (value[1].as <int> ()),
     class_id    (value[2].as <int> ()),
     
@@ -88,7 +88,7 @@ ship_requests::aircraft_info_t::list::list (pqxx::row const & value) :
     class_ru    (value[7].as <std::optional <std::string> > ()),
     class_en    (value[8].as <std::optional <std::string> > ()),
 
-    crew        (value[ 9].as <std::optional <double> > ()),
+    crew        (value[ 9].as <std::optional <uint32_t> > ()),
     mass        (value[10].as <std::optional <double> > ()),
     max_mass    (value[11].as <std::optional <double> > ()),
     engine_power(value[12].as <std::optional <double> > ()),

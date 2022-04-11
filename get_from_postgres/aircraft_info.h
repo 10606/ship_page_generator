@@ -43,7 +43,7 @@ struct ship_requests::aircraft_info_t::list
 {
     list (pqxx::row const & value);
     
-    int aircraft_id;
+    int id;
     int type_id;
     int class_id;
     std::optional <std::string> aircraft_ru;

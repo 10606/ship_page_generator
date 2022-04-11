@@ -22,6 +22,7 @@ include_directories(
     server/response/ship_armament
     server/response/date_order
     server/response/armament
+    server/response/aircraft
     get_from_postgres
 )
 
@@ -45,6 +46,7 @@ add_executable(ship_server
     server/response/armament/response_mines_charges.cpp
     server/response/armament/response_catapult.cpp
     server/response/armament/response_searchers.cpp
+    server/response/aircraft/response_aircraft.cpp
     server/response/ship_names.cpp
     server/response/menu.cpp
     get_from_postgres/parse_response.cpp

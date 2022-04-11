@@ -136,6 +136,8 @@ private:
 };   
 
 
+// it may be macros...
+// BUT I HATE IT
 template <typename T>
 struct class_filter
 {
@@ -156,6 +158,29 @@ struct class_filter
 
 private:
     std::set <int> classes;
+};   
+
+
+template <typename T>
+struct type_filter
+{
+    type_filter (std::span <std::string_view const> values)
+    {
+        for (std::string_view type_id : values)
+        {
+            std::optional <int> parsed = parse_number <int> (type_id);
+            if (parsed)
+                types.insert(*parsed);
+        }
+    }
+
+    bool operator () (T const & value)
+    {
+        return types.find(value.type_id) != types.end();
+    }
+
+private:
+    std::set <int> types;
 };   
 
 
