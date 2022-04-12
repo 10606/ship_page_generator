@@ -16,16 +16,15 @@ struct menu_item_template
     
     item all = all_template;
     
-    item new_class = {"</div></div>\n\
-                       <button type = \"button\" class = \"collapsible\">\n", 
-                      "</button><br>\n\
-                       <div class = \"content\"><div>\n"};
+    item new_class = {"<button type = \"button\" class = \"collapsible\">\n", 
+                      "</button><br><div class = \"content\">\n"};
     
-    item new_type = {"</div>\n\
-                      <button type = \"button\" class = \"collapsible\">\n", 
-                     "</button><br>\n\
-                      <div class = \"content\">\n"};
+    item new_type = {"<button type = \"button\" class = \"collapsible\">\n", 
+                     "</button><br><div class = \"content\">\n"};
     
+    std::string_view close_type = "</div>";
+    std::string_view close_class = "</div>";
+
     item new_ship = {"", "<br>"};
     
 private:

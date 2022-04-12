@@ -32,11 +32,9 @@ menu_item_template::item const menu_item_template::all_template =
               overflow: hidden; \n\
               background-color: #ffffff; \n\
             } \n\
-        </style>\n\
-        <div><div>\n",
+        </style>\n",
         
-        "</div></div>\n\
-        <script>\n\
+        "<script>\n\
             var coll = document.getElementsByClassName(\"collapsible\");\n\
             var i;\n\
             \n\
@@ -103,6 +101,7 @@ struct cur_class_t
     std::optional <int> id;
     std::string class_descr;
     std::vector <cur_type_t> types;
+    std::string_view close_class;
 };
 
 struct inserter_t
@@ -129,10 +128,18 @@ struct inserter_t
             answer.append(cur_type.type_descr);
         
         std::map <int, std::vector <int> > :: const_iterator it_graph = classes_graph.find(class_id);
-        if (it_graph == classes_graph.end())
-            return;
-        for (int child : it_graph->second)
-            operator () (child);
+        
+        // one column...
+        answer.append(it_class->second.close_class);
+        
+        if (it_graph != classes_graph.end())
+        {
+            for (int child : it_graph->second)
+                operator () (child);
+        }
+        
+        // tree like
+        //answer.append(it_class->second.close_class);
     };
     
     std::map <int, std::vector <int> > const & classes_graph;
@@ -169,8 +176,11 @@ std::string menu::response ()
         cur_class_t cur_class;
         cur_type_t cur_type;
         
-        auto add_type = [&cur_class, &cur_type] () -> void
+        cur_class.close_class = menu_item.close_class;
+        
+        auto add_type = [close_type = menu_item.close_type, &cur_class, &cur_type] () -> void
         {
+            cur_type.type_descr.append(close_type);
             cur_class.types.push_back(std::move(cur_type));
             cur_type.reset();
         };

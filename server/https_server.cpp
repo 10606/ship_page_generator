@@ -45,7 +45,7 @@ struct https_server
         std::string const & _response_value
     ) :
         database(),
-        resp(&database),
+        resp(database + 0),
         response_value(_response_value)
     {
         mg_mgr_init(&mgr, NULL);
@@ -56,6 +56,7 @@ struct https_server
         nc_http = mg_bind_opt(&mgr, http_port.c_str(), ev_handler, this, bind_opts);
         if (nc_http == NULL)
             throw std::runtime_error("can't bind");
+        nc_http->recv_mbuf_limit = 65536;
         mg_set_protocol_http_websocket(nc_http);
 
         bind_opts.ssl_cert = s_ssl_cert;
@@ -64,19 +65,20 @@ struct https_server
         nc_https = mg_bind_opt(&mgr, https_port.c_str(), ev_handler, this, bind_opts);
         if (nc_https == NULL)
             throw std::runtime_error("can't bind");
+        nc_https->recv_mbuf_limit = 65536;
         mg_set_protocol_http_websocket(nc_https);
 
         mg_mgr_poll(&mgr, 100);
 
         
-        resp.reg <ship_armament>    ("/ship/armament",          &database);
-        resp.reg <torpedo>          ("/armament/torpedo",       &database);
-        resp.reg <guns>             ("/armament/guns",          &database);
-        resp.reg <torpedo_tubes>    ("/armament/torpedo_tubes", &database);
-        resp.reg <mines_charges>    ("/armament/mines_charges", &database);
-        resp.reg <catapult>         ("/armament/catapult",      &database);
-        resp.reg <searcher>         ("/armament/searcher",      &database);
-        resp.reg <aircraft>         ("/aircraft",               &database);
+        resp.reg <ship_armament>    ("/ship/armament",          database + 1);
+        resp.reg <torpedo>          ("/armament/torpedo",       database + 2);
+        resp.reg <guns>             ("/armament/guns",          database + 3);
+        resp.reg <torpedo_tubes>    ("/armament/torpedo_tubes", database + 4);
+        resp.reg <mines_charges>    ("/armament/mines_charges", database + 0);
+        resp.reg <catapult>         ("/armament/catapult",      database + 1);
+        resp.reg <searcher>         ("/armament/searcher",      database + 2);
+        resp.reg <aircraft>         ("/aircraft",               database + 3);
     }
 
     static const char * s_ssl_cert;
@@ -165,7 +167,7 @@ struct https_server
     }
     
 private:
-    ship_requests database;
+    ship_requests database[5];
     responser resp;
     
     std::string response_value;
@@ -199,7 +201,6 @@ void set_sig_handler (int sig_num, void (* handler) (int))
         std::runtime_error("can't set signal handler");
 }
 
-
 int main ()
 {
     try
@@ -207,10 +208,9 @@ int main ()
         set_sig_handler(SIGTERM, handler_exit);
         set_sig_handler(SIGINT, handler_exit);
         https_server server("0.0.0.0:8080", "0.0.0.0:8443", "________");
+
         while (run)
-        {
             server.main();
-        };
     }
     catch (std::exception const & e)
     {

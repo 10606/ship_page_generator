@@ -7,13 +7,13 @@
 struct ship_database
 {
     ship_database () :
-        conn("dbname=japan hostaddr=127.0.0.1"),
-        work(conn.conn)
+        conn("dbname=japan hostaddr=127.0.0.1")
     {};
 
     template <typename ... T>
     auto exec (T && ... args)
     {
+        pqxx::read_transaction work(conn.conn);
         return work.exec(std::forward <T> (args) ...);
     }
 
@@ -33,7 +33,6 @@ private:
     };
     
     conn_wrapper conn;
-    pqxx::read_transaction work;
 };
 
 
