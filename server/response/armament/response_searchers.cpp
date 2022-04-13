@@ -80,9 +80,12 @@ registrator_pred <searcher::searcher_t> & searcher_cmp::filter ()
 std::string searcher::response (std::string_view query)
 {
     std::string answer;
+    answer.reserve(10000);
+    
+    static std::vector <searcher_t> searcher_cache = database->armament_info.get_searchers();
     
     std::vector <std::vector <searcher_t> > list_group = 
-         parse_group_and_sort <searcher_t, searcher_cmp> (database->armament_info.get_searchers(), query);
+         parse_group_and_sort <searcher_t, searcher_cmp> (searcher_cache, query);
 
     for (std::vector <searcher_t> const & list : list_group)
     {

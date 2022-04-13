@@ -14,7 +14,12 @@ std::string to_string_10 (double value)
     if (tmp % 10 == 0)
         return std::to_string(tmp / 10);
     else
-        return std::to_string(tmp / 10) + '.' + std::to_string(tmp % 10);
+    {
+        std::string answer = std::to_string(tmp / 10);
+        answer.push_back('.');
+        answer.push_back(tmp % 10 + '0');
+        return answer;
+    }
 }
 
 std::string where

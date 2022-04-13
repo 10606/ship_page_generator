@@ -85,9 +85,12 @@ registrator_pred <catapult::catapult_t> & catapult_cmp::filter ()
 std::string catapult::response (std::string_view query)
 {
     std::string answer;
+    answer.reserve(10000);
+    
+    static std::vector <catapult_t> catapult_cache = database->armament_info.get_catapult();
     
     std::vector <std::vector <catapult_t> > list_group = 
-         parse_group_and_sort <catapult_t, catapult_cmp> (database->armament_info.get_catapult(), query);
+         parse_group_and_sort <catapult_t, catapult_cmp> (catapult_cache, query);
 
     for (std::vector <catapult_t> const & list : list_group)
     {

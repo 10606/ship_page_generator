@@ -108,22 +108,26 @@ template <typename T>
 std::vector <std::vector <T> > 
 group_and_sort 
 (
-    std::vector <T> && values,
+    std::vector <T> const & values_unfiltered,
     filter_for_sort <T> predicate,
     comparator_for_sort <T> group_cmp,
     comparator_for_sort <T> sort_cmp
 )
 {
-    if (values.empty())
+    if (values_unfiltered.empty())
         return {};
+
+    std::vector <T> values;
+    for (T const & value : values_unfiltered)
+        if (predicate(value))
+            values.push_back(value);
     
     std::vector <std::vector <T> > answer;
 
-    typename std::vector <T> ::iterator end = std::partition(values.begin(), values.end(), predicate);
-    std::sort(values.begin(), end, group_cmp);
+    std::sort(values.begin(), values.end(), group_cmp);
     
     bool group_start = 1;
-    for (ptrdiff_t i = 0; i != end - values.begin(); )
+    for (size_t i = 0; i != values.size(); )
     {
         if (group_start)
         {
@@ -152,7 +156,7 @@ template <typename T, typename cmp_location>
 std::vector <std::vector <T> >
 parse_group_and_sort
 (
-    std::vector <T> torpedoes,
+    std::vector <T> const & torpedoes,
     std::string_view query
 )
 {
@@ -172,9 +176,9 @@ parse_group_and_sort
             predicate = cmp_location::filter().get(cur_gr.values, std::move(predicate));
     }
 
-    return  group_and_sort
+    return group_and_sort
     (
-        std::move(torpedoes), 
+        torpedoes, 
         filter_for_sort <T> (predicate.get()),
         comparator_for_sort <T> (group_cmp.get()), 
         comparator_for_sort <T> (sort_cmp.get())

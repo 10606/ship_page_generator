@@ -50,7 +50,7 @@ struct responser
     
     std::optional <std::string> response (std::string_view uri, std::string_view query)
     {
-        std::map <std::string, std::unique_ptr <resp_base> > :: iterator it =
+        std::unordered_map <std::string, std::unique_ptr <resp_base> > :: iterator it =
             resp.find(std::string(uri));
         if (it == resp.end())
             return std::nullopt;
@@ -78,7 +78,7 @@ struct responser
 private:
     ship_requests * database;
     menu ship_list;
-    std::map <std::string, std::unique_ptr <resp_base> > resp;
+    std::unordered_map <std::string, std::unique_ptr <resp_base> > resp;
 };
 
 

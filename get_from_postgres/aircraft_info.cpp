@@ -77,7 +77,7 @@ std::vector <ship_requests::aircraft_info_t::types> ship_requests::aircraft_info
 
 
 ship_requests::aircraft_info_t::list::list (pqxx::row const & value) :
-    id (value[0].as <int> ()),
+    id          (value[0].as <int> ()),
     type_id     (value[1].as <int> ()),
     class_id    (value[2].as <int> ()),
     

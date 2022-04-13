@@ -148,7 +148,7 @@ struct inserter_t
 };
 
 
-std::string menu::response ()
+std::string menu::response_impl ()
 {
     try
     {
@@ -249,4 +249,12 @@ std::string menu::response ()
         return "";
     }
 }
+
+
+std::string menu::response ()
+{
+    static std::string answer = response_impl();
+    return answer;
+}
+
 

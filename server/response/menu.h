@@ -41,6 +41,8 @@ struct menu
     std::string response ();
     
 private:
+    std::string response_impl ();
+    
     menu_item_template menu_item;
     ship_requests * database;
 };

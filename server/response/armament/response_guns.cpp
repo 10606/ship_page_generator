@@ -81,9 +81,12 @@ registrator_pred <guns::guns_t> & guns_cmp::filter ()
 std::string guns::response (std::string_view query)
 {
     std::string answer;
+    answer.reserve(10000);
+    
+    static std::vector <guns_t> guns_cache = database->armament_info.get_list();
     
     std::vector <std::vector <guns_t> > list_group = 
-         parse_group_and_sort <guns_t, guns_cmp> (database->armament_info.get_list(), query);
+         parse_group_and_sort <guns_t, guns_cmp> (guns_cache, query);
 
     for (std::vector <guns_t> const & list : list_group)
     {

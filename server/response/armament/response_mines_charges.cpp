@@ -75,9 +75,12 @@ registrator_pred <mines_charges::mines_charges_t> & mines_charges_cmp::filter ()
 std::string mines_charges::response (std::string_view query)
 {
     std::string answer;
+    answer.reserve(10000);
+    
+    static std::vector <mines_charges_t> mines_charges_cache = database->armament_info.get_mines_charges();
     
     std::vector <std::vector <mines_charges_t> > list_group = 
-         parse_group_and_sort <mines_charges_t, mines_charges_cmp> (database->armament_info.get_mines_charges(), query);
+         parse_group_and_sort <mines_charges_t, mines_charges_cmp> (mines_charges_cache, query);
 
     for (std::vector <mines_charges_t> const & list : list_group)
     {

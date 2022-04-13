@@ -81,9 +81,12 @@ registrator_pred <torpedo_tubes::torpedo_tubes_t> & torpedo_tubes_cmp::filter ()
 std::string torpedo_tubes::response (std::string_view query)
 {
     std::string answer;
+    answer.reserve(10000);
+    
+    static std::vector <torpedo_tubes_t> torpedo_tubes_cache = database->armament_info.get_torpedo_tubes();
     
     std::vector <std::vector <torpedo_tubes_t> > list_group = 
-         parse_group_and_sort <torpedo_tubes_t, torpedo_tubes_cmp> (database->armament_info.get_torpedo_tubes(), query);
+         parse_group_and_sort <torpedo_tubes_t, torpedo_tubes_cmp> (torpedo_tubes_cache, query);
 
     for (std::vector <torpedo_tubes_t> const & list : list_group)
     {

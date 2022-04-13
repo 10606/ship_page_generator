@@ -100,7 +100,7 @@ registrator_pred <aircraft::aircraft_t> & aircraft_cmp::filter ()
     {
         answer.reg <year_filter  <aircraft::aircraft_t> > ("in_service");
         answer.reg <class_filter <aircraft::aircraft_t> > ("class");
-        answer.reg <type_filter <aircraft::aircraft_t> > ("type");
+        answer.reg <type_filter  <aircraft::aircraft_t> > ("type");
         answer.reg <id_filter    <aircraft::aircraft_t> > ("id");
     }
     
@@ -111,9 +111,12 @@ registrator_pred <aircraft::aircraft_t> & aircraft_cmp::filter ()
 std::string aircraft::response (std::string_view query)
 {
     std::string answer;
+    answer.reserve(10000);
+    
+    static std::vector <aircraft_t> aircraft_cache = database->aircraft_info.get_list("");
     
     std::vector <std::vector <aircraft_t> > list_group = 
-         parse_group_and_sort <aircraft_t, aircraft_cmp> (database->aircraft_info.get_list(""), query);
+         parse_group_and_sort <aircraft_t, aircraft_cmp> (aircraft_cache, query);
 
     for (std::vector <aircraft_t> const & list : list_group)
     {
