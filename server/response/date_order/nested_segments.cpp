@@ -4,35 +4,6 @@
 #include <algorithm>
 #include "dekart_tree.h"
 
-template <typename T>
-std::strong_ordering compare_null
-(
-    std::optional <T> const & a, std::optional <T> const & b, 
-    std::strong_ordering not_a, std::strong_ordering not_b
-)
-{
-    if (!a && !b)
-        return std::strong_ordering::equal;
-    if (a && b)
-        return *a <=> *b;
-    if (!a)
-        return not_a;
-    if (!b)
-        return not_b;
-    return std::strong_ordering::equal; // just for aviod warning...
-}
-
-template <typename T>
-std::strong_ordering compare_null_first (std::optional <T> const & a, std::optional <T> const & b)
-{
-    return compare_null(a, b, std::strong_ordering::less, std::strong_ordering::greater);
-}
-
-template <typename T>
-std::strong_ordering compare_null_last (std::optional <T> const & a, std::optional <T> const & b)
-{
-    return compare_null(a, b, std::strong_ordering::greater, std::strong_ordering::less);
-}
 
 // for sort
 auto comparator_bEi = [] (segment const & a, segment const & b) -> bool 

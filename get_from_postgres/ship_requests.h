@@ -55,6 +55,7 @@ struct ship_requests
         db(),
         ship_info(&db),
         ship_armament(&db),
+        ship_armament_lt(&db),
         armament_info(&db),
         aircraft_info(&db),
         ship_event(&db)
@@ -88,8 +89,8 @@ struct ship_requests
     private:
         ship_database * db;
     };
-    
 
+    
     struct ship_armament_t
     {
         ship_armament_t (ship_database * _db) :
@@ -119,6 +120,41 @@ struct ship_requests
         ship_armament_t (ship_armament_t const &) = delete;
         ship_armament_t & operator = (ship_armament_t &&) = delete;
         ship_armament_t & operator = (ship_armament_t const &) = delete;
+
+    private:
+        ship_database * db;
+    };
+    
+
+    struct ship_armament_lt_t
+    {
+        ship_armament_lt_t (ship_database * _db) :
+            db(_db)
+        {}
+    
+        struct guns;
+        std::vector <guns> get_guns (std::string_view where);
+
+        struct torpedo_tubes;
+        std::vector <torpedo_tubes> get_torpedo_tubes (std::string_view where);
+
+        struct throwers;
+        std::vector <throwers> get_throwers (std::string_view where);
+        
+        struct searchers;
+        std::vector <searchers> get_searchers (std::string_view where);
+        
+        struct catapult;
+        std::vector <catapult> get_catapult (std::string_view where);
+        
+        struct aircraft;
+        std::vector <aircraft> get_aircraft (std::string_view where);
+        
+        
+        ship_armament_lt_t (ship_armament_lt_t &&) = delete;
+        ship_armament_lt_t (ship_armament_lt_t const &) = delete;
+        ship_armament_lt_t & operator = (ship_armament_lt_t &&) = delete;
+        ship_armament_lt_t & operator = (ship_armament_lt_t const &) = delete;
 
     private:
         ship_database * db;
@@ -213,6 +249,9 @@ struct ship_requests
         struct event;
         std::vector <event> get_event (std::string_view where);
         
+        struct event_lt;
+        std::vector <event_lt> get_event_lt (std::string_view where = "");
+        
         size_t count (std::string_view where);
         
         
@@ -229,6 +268,7 @@ struct ship_requests
     ship_database db;
     ship_info_t ship_info;
     ship_armament_t ship_armament;
+    ship_armament_lt_t ship_armament_lt;
     armament_info_t armament_info;
     aircraft_info_t aircraft_info;
     ship_event_t ship_event;

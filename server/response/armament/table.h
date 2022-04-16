@@ -5,7 +5,15 @@
 
 struct table
 {
-    static constexpr std::string_view begin = "<table border=1><td>\n";
+    static constexpr std::string_view begin = "<style type = \"text/css\"> \n\
+                                                    table \n\
+                                                    {\n\
+                                                        table-layout: fixed;\n\
+                                                        width: 100%;\n\
+                                                        border-collapse: collapse;\n\
+                                                    } \n\
+                                                </style>\n\
+                                                <table border=1><td>\n";
     static constexpr std::string_view end = "</td></table>\n";
     
     static constexpr std::string_view new_column = "</td>\n<td>\n";

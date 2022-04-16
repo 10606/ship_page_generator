@@ -88,7 +88,7 @@ struct ship_requests::armament_info_t::mount
     std::optional <double> length;  /* калибров */
     std::optional <double> rate_of_fire;
     std::optional <double> effective_range; /* м */
-    std::optional <uint32_t> gun_count;
+    uint32_t gun_count;
     std::optional <double> angle;
 };
 

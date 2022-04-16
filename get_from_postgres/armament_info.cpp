@@ -157,10 +157,10 @@ ship_requests::armament_info_t::mount::mount (pqxx::row const & value) :
     class_en(value[8].as <std::optional <std::string> > ()),
     caliber (value[9].as <std::optional <double> > ()),
     length  (value[10].as <std::optional <double> > ()),
-    rate_of_fire(value[11].as <std::optional <double> > ()),
+    rate_of_fire   (value[11].as <std::optional <double> > ()),
     effective_range(value[12].as <std::optional <double> > ()),
-    gun_count(value[13].as <std::optional <uint32_t> > ()),
-    angle(value[14].as <std::optional <uint32_t> > ())
+    gun_count(value[13].as <uint32_t> ()),
+    angle    (value[14].as <std::optional <uint32_t> > ())
 {}
 
 std::vector <ship_requests::armament_info_t::mount> ship_requests::armament_info_t::get_mount (std::string_view where)

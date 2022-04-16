@@ -58,6 +58,34 @@ std::vector <ship_requests::ship_event_t::event> ship_requests::ship_event_t::ge
 };
 
 
+ship_requests::ship_event_t::event_lt::event_lt (pqxx::row const & value) :
+    ship_id  (value[0].as <int> ()),
+    date_from(),
+    date_to  ()
+{
+    std::optional <std::string> str_date_from = value[1].as <std::optional <std::string> > ();
+    date_from = transform_optional(str_date_from, get_date);
+    std::optional <std::string> str_date_to   = value[2].as <std::optional <std::string> > ();
+    date_to   = transform_optional(str_date_to, get_date);
+}
+
+std::vector <ship_requests::ship_event_t::event_lt> ship_requests::ship_event_t::get_event_lt (std::string_view where)
+{
+    pqxx::result response = db->exec
+    (
+        std::string("select ship_id,  date_from, date_to \
+                     from ship_event_list ")
+        +
+        std::string(where)
+    );
+    std::vector <event_lt> answer;
+    
+    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
+        answer.emplace_back(*row);  
+    return answer;
+};
+
+
 size_t ship_requests::ship_event_t::count (std::string_view where)
 {
     pqxx::result response = db->exec

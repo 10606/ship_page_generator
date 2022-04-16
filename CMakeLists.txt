@@ -51,6 +51,7 @@ add_executable(ship_server
     server/response/menu.cpp
     get_from_postgres/parse_response.cpp
     get_from_postgres/ship_armament.cpp
+    get_from_postgres/ship_armament_lt.cpp
     get_from_postgres/ship_event.cpp
     get_from_postgres/ship_info.cpp
     get_from_postgres/armament_info.cpp

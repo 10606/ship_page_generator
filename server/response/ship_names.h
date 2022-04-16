@@ -3,6 +3,8 @@
 
 #include <string_view>
 #include <vector>
+#include "ship_info.h"
+#include "ship_event.h"
 #include "ship_requests.h"
 
 
@@ -16,10 +18,7 @@ struct header_column
 
 struct ship_names
 {
-    ship_names (header_column _table, ship_requests * _database) :
-        table(_table),
-        database(_database)
-    {}
+    ship_names (header_column _table, ship_requests * _database);
 
     struct response_t
     {
@@ -30,6 +29,14 @@ struct ship_names
     response_t response (std::vector <std::pair <int, std::chrono::year_month_day> > ship_year);
 
 private:
+    typedef ship_requests::ship_info_t::list ship_t;
+    std::unordered_map <int, ship_t> ship_list_cache;
+
+    typedef ship_requests::ship_event_t::event_lt event_t;
+    std::unordered_map <int, std::vector <event_t> > ship_events;
+    
+    bool on_modernization (int ship_id, std::chrono::year_month_day date);
+
     header_column table;
     ship_requests * database;
 };

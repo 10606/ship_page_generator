@@ -28,5 +28,15 @@ struct ship_requests::ship_event_t::event
 };
 
 
+struct ship_requests::ship_event_t::event_lt
+{
+    event_lt (pqxx::row const & value);
+    
+    int ship_id;
+    std::optional <std::chrono::year_month_day> date_from;
+    std::optional <std::chrono::year_month_day> date_to;
+};
+
+
 #endif
 
