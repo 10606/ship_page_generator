@@ -13,11 +13,11 @@ ship_throwers::ship_throwers (ship_requests * _database, std::string_view _new_l
     database(_database),
     new_line(_new_line)
 {
-    std::vector <ship_throwers_t> tube_list =
+    std::vector <ship_throwers_t> thrower_list =
         database->ship_armament_lt.get_throwers("");
 
-    for (ship_throwers_t & tube : tube_list)
-        ship_throwers_list[tube.ship_id].push_back(std::move(tube));
+    for (ship_throwers_t & thrower : thrower_list)
+        ship_throwers_list[thrower.ship_id].push_back(std::move(thrower));
 
     // sorting
     {
@@ -75,6 +75,7 @@ std::vector <ship_throwers::response_t> ship_throwers::response (int id, std::ch
             response_t item = throwers[thrower.throwers_id];
             item.data = std::to_string(thrower.mount_count) + item.data;
             answer.push_back(item);
+            answer.back().group_name = "противолодочное вооружение";
         }
     }
     
@@ -85,7 +86,6 @@ ship_throwers::response_t ship_throwers::partial_response (throwers_t const & th
 {
     response_t item;
     item.group = 0;
-    item.group_name = "противолодочное вооружение";
     item.compare = 0;
     
     item.data += "x" + (thrower.tubes_count? std::to_string(*thrower.tubes_count) : "") + " ";

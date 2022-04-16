@@ -36,7 +36,7 @@ ship_guns::ship_guns (ship_requests * _database, std::string_view _new_line) :
         auto guns_order = 
             [&mounts_full] (ship_guns_t const & a, ship_guns_t const & b) -> bool
             {
-                // class_id, -caliber, gun_id, gun_count, mount_id
+                // class_id, -caliber, gun_id, -gun_count, mount_id
                 mount_t const & a_info = mounts_full.at(a.mount_id);
                 mount_t const & b_info = mounts_full.at(b.mount_id);
                 
@@ -57,7 +57,7 @@ ship_guns::ship_guns (ship_requests * _database, std::string_view _new_line) :
                 
                 std::strong_ordering cnt_cmp = a_info.gun_count <=> b_info.gun_count;
                 if (cnt_cmp != std::strong_ordering::equal)
-                    return std::is_lt(cnt_cmp);
+                    return std::is_gt(cnt_cmp);
                     
                 return a.mount_id < b.mount_id;
             };

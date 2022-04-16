@@ -73,6 +73,7 @@ std::vector <ship_torpedo_tubes::response_t> ship_torpedo_tubes::response (int i
             response_t item = torpedo_tubes[tube.tube_id];
             item.data = std::to_string(tube.mount_count) + item.data;
             answer.push_back(item);
+            answer.back().group_name = "торпедный аппарат";
         }
     }
     
@@ -84,7 +85,6 @@ ship_torpedo_tubes::response_t ship_torpedo_tubes::partial_response (tube_t cons
     response_t item;
     item.group = 0;
     item.compare = tube.class_id;;
-    item.group_name = "торпедный аппарат";
     
     item.data += "x" + (tube.tubes_count? std::to_string(*tube.tubes_count) : "") + " ";
     item.data += (tube.caliber? (to_string_10(*tube.caliber) + "мм  ") : "  ");

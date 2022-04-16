@@ -6,30 +6,57 @@
 #include "ship_requests.h"
 #include "ship_info.h"
 #include "date_to_str.h"
+#include "ship_armament_utils.h"
+
+
+ship_general::ship_general (ship_requests * _database, std::string_view _new_line) :
+    database(_database),
+    new_line(_new_line)
+{
+    std::vector <ship_requests::ship_info_t::general> general_list =
+        database->ship_info.get_general("");
+
+    for (general_t & general : general_list)
+        ship_general_list[general.ship_id].push_back(partial_response(std::move(general)));
+}
+
 
 std::vector <ship_general::response_t> ship_general::response (int id, std::chrono::year_month_day date)
 {
-    std::vector <ship_requests::ship_info_t::general> general =
-        database->ship_info.get_general(where("general", id, date));
+    std::unordered_map <int, std::vector <response_with_time_label> > :: iterator it = ship_general_list.find(id);
+    if (it == ship_general_list.end())
+        return std::vector <response_t> ();
+    for (response_with_time_label const & response_with_time : it->second)
+    {
+        if (between(response_with_time.date_from, date, response_with_time.date_to))
+        {
+            std::vector <response_t> answer = response_with_time.answer;
+            for (response_t & item : answer)
+                item.group_name = "характеристики";
+            return answer;
+        }
+    }
+    
+    return std::vector <response_t> ();
+}
 
+
+ship_general::response_with_time_label ship_general::partial_response (general_t const & general)
+{
     std::vector <response_t> answer;
     answer.reserve(5);
 
-    if (general.empty())
-        return answer;
-    
     {
         response_t item;
         item.group = 0;
-        item.group_name = "характеристики";
         item.compare = 0;
         
-        if (general[0].displacement_standart)
-            item.data += to_string_10(*general[0].displacement_standart) + "т";
-        if (general[0].displacement_standart || general[0].displacement_full)
+        if (general.displacement_standart)
+            item.data += to_string_10(*general.displacement_standart) + "т";
+        if (general.displacement_standart || general.displacement_full)
             item.data += " .. ";
-        if (general[0].displacement_full)
-            item.data += to_string_10(*general[0].displacement_full) + "т";
+        if (general.displacement_full)
+            item.data += to_string_10(*general.displacement_full) + "т";
         answer.push_back(item);
     }
     
@@ -39,13 +66,13 @@ std::vector <ship_general::response_t> ship_general::response (int id, std::chro
         item.group_name = "характеристики";
         item.compare = 1;
         
-        if (general[0].length || general[0].width || general[0].draft)
+        if (general.length || general.width || general.draft)
         {
-            item.data += (general[0].length? to_string_10(*general[0].length) + "м" : "??");
+            item.data += (general.length? to_string_10(*general.length) + "м" : "??");
             item.data += " x ";
-            item.data += (general[0].width?  to_string_10(*general[0].width)  + "м" : "??");
+            item.data += (general.width?  to_string_10(*general.width)  + "м" : "??");
             item.data += " x ";
-            item.data += (general[0].draft?  to_string_10(*general[0].draft)  + "м" : "??");
+            item.data += (general.draft?  to_string_10(*general.draft)  + "м" : "??");
         }
         answer.push_back(item);
     }
@@ -56,8 +83,8 @@ std::vector <ship_general::response_t> ship_general::response (int id, std::chro
         item.group_name = "характеристики";
         item.compare = 2;
         
-        if (general[0].crew)
-            item.data += std::to_string(*general[0].crew) + "чел";
+        if (general.crew)
+            item.data += std::to_string(*general.crew) + "чел";
         answer.push_back(item);
     }
     
@@ -67,8 +94,8 @@ std::vector <ship_general::response_t> ship_general::response (int id, std::chro
         item.group_name = "характеристики";
         item.compare = 3;
         
-        if (general[0].speed_max)
-            item.data += to_string_10(*general[0].speed_max) + "узлов";
+        if (general.speed_max)
+            item.data += to_string_10(*general.speed_max) + "узлов";
         answer.push_back(item);
     }
     
@@ -78,13 +105,13 @@ std::vector <ship_general::response_t> ship_general::response (int id, std::chro
         item.group_name = "характеристики";
         item.compare = 4;
         
-        if (general[0].speed_cruise)
-            item.data += to_string_10(*general[0].speed_cruise) + "узлов ";
-        if (general[0].range)
-            item.data += to_string_10(*general[0].range) + "км";
+        if (general.speed_cruise)
+            item.data += to_string_10(*general.speed_cruise) + "узлов ";
+        if (general.range)
+            item.data += to_string_10(*general.range) + "км";
         answer.push_back(item);
     }
     
-    return answer;
+    return response_with_time_label{std::move(answer), general.date_from, general.date_to};
 }
 
