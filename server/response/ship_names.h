@@ -30,12 +30,20 @@ struct ship_names
 
 private:
     typedef ship_requests::ship_info_t::list ship_t;
-    std::unordered_map <int, ship_t> ship_list_cache;
+    struct cache_info
+    {
+        std::string answer;
+        std::optional <std::chrono::year_month_day> commissioned;
+        std::optional <std::chrono::year_month_day> sunk_date;
+    };
+    std::unordered_map <int, cache_info> ship_list_cache;
 
     typedef ship_requests::ship_event_t::event_lt event_t;
     std::unordered_map <int, std::vector <event_t> > ship_events;
     
     bool on_modernization (int ship_id, std::chrono::year_month_day date);
+    
+    std::string ship_info (ship_t const & ship);
 
     header_column table;
     ship_requests * database;

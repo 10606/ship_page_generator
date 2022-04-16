@@ -35,7 +35,7 @@ struct ship_requests::ship_armament_t::torpedo_tubes
     std::optional <std::string> class_en;
     int tube_id;
     std::optional <double> caliber;
-    uint32_t tubes_count;
+    std::optional <uint32_t> tubes_count;
     std::optional <std::string> tube_ru;
     std::optional <std::string> tube_en;
     uint32_t mount_count;
@@ -53,7 +53,7 @@ struct ship_requests::ship_armament_t::throwers
     std::optional <std::string> class_en;
     int throwers_id;
     std::optional <double> caliber;
-    uint32_t tubes_count;
+    std::optional <uint32_t> tubes_count;
     std::optional <std::string> thrower_ru;
     std::optional <std::string> thrower_en;
     uint32_t mount_count;

@@ -14,7 +14,7 @@ ship_names::ship_names (header_column _table, ship_requests * _database) :
     for (ship_t & ship : ships)   
     {
         int ship_id = ship.ship_id;
-        ship_list_cache.insert({ship_id, std::move(ship)});
+        ship_list_cache.insert({ship_id, cache_info{ship_info(ship), ship.commissioned, ship.sunk_date}});
     }
     
     std::vector <event_t> events =
@@ -40,6 +40,24 @@ bool ship_names::on_modernization (int ship_id, std::chrono::year_month_day date
     return 0;
 }
 
+std::string ship_names::ship_info (ship_t const & ship)
+{
+    std::string answer;
+    
+    answer += ship.ship_ru.value_or("");
+    if (ship.class_ru || ship.type_ru)
+    {
+        answer.append(table.new_line).append("(");
+        if (ship.class_ru)
+            answer.append(*ship.class_ru).append(" "); 
+        if (ship.type_ru)
+            answer.append("типа ").append(*(ship.type_ru));
+        answer.append(")");
+    }
+
+    return answer;
+}
+
 ship_names::response_t ship_names::response (std::vector <std::pair <int, std::chrono::year_month_day> > ship_year)
 {
     response_t answer = 
@@ -53,20 +71,12 @@ ship_names::response_t ship_names::response (std::vector <std::pair <int, std::c
         if (i != 0)
             answer.row += table.new_column;
         
-        std::unordered_map <int, ship_t> :: iterator ship = ship_list_cache.find(ship_year[i].first);
+        std::unordered_map <int, cache_info> :: iterator ship = ship_list_cache.find(ship_year[i].first);
         if (ship == ship_list_cache.end())
             continue;
         
-        answer.row += ship->second.ship_ru.value_or("");
-        if (ship->second.class_ru || ship->second.type_ru)
-        {
-            answer.row.append(table.new_line).append("(");
-            if (ship->second.class_ru)
-                answer.row.append(*ship->second.class_ru).append(" "); 
-            if (ship->second.type_ru)
-                answer.row.append("типа ").append(*(ship->second.type_ru));
-            answer.row.append(")");
-        }
+        answer.row += ship->second.answer;
+        
         answer.row.append(table.new_line).append(to_string(ship_year[i].second));
 
         bool modernizations = on_modernization(ship_year[i].first, ship_year[i].second);

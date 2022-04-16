@@ -3,10 +3,11 @@
 #include <vector>
 #include <chrono>
 #include <cmath>
-#include "nested_segments.h"
 #include "ship_requests.h"
 #include "ship_armament.h"
+#include "ship_armament_lt.h"
 #include "date_to_str.h"
+#include "ship_armament_utils.h"
 
 
 ship_guns::ship_guns (ship_requests * _database, std::string_view _new_line) :
@@ -20,6 +21,7 @@ ship_guns::ship_guns (ship_requests * _database, std::string_view _new_line) :
     for (ship_guns_t & gun : guns_list)
         ship_guns_list[gun.ship_id].push_back(std::move(gun));
 
+    // sorting
     {
         std::vector <mount_t> mounts_list =
             database->armament_info.get_mount();
@@ -69,10 +71,13 @@ ship_guns::ship_guns (ship_requests * _database, std::string_view _new_line) :
 std::vector <ship_guns::response_t> ship_guns::response (int id, std::chrono::year_month_day date)
 {
     std::vector <response_t> answer;
-    for (ship_guns_t const & value : ship_guns_list[id])
+
+    std::unordered_map <int, std::vector <ship_guns_t> > :: iterator it = ship_guns_list.find(id);
+    if (it == ship_guns_list.end())
+        return answer;
+    for (ship_guns_t const & value : it->second)
     {
-        if ((!value.date_from || *value.date_from <= date) &&
-            (!value.date_to   || date < *value.date_to))
+        if (between(value.date_from, date, value.date_to))
         {
             response_t item = mounts[value.mount_id];
             item.data = std::to_string(value.mount_count) + item.data;

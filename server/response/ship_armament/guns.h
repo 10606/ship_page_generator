@@ -11,9 +11,6 @@
 
 struct ship_guns
 {
-    typedef ship_requests::armament_info_t::mount mount_t;
-    typedef ship_requests::ship_armament_lt_t::guns ship_guns_t;
-    
     ship_guns (ship_requests * _database, std::string_view _new_line);
 
     struct response_t
@@ -27,6 +24,9 @@ struct ship_guns
     std::vector <response_t> response (int id, std::chrono::year_month_day date);
 
 private:
+    typedef ship_requests::ship_armament_lt_t::guns ship_guns_t;
+    typedef ship_requests::armament_info_t::mount mount_t;
+    
     std::unordered_map <int, std::vector <ship_guns_t> > ship_guns_list;
     std::unordered_map <int, response_t> mounts;
 
