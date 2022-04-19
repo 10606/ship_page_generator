@@ -5,7 +5,7 @@
 #include <string>
 #include <thread>
 #include <utility>
-#include <mongoose.h>
+#include "mongoose.h"
 
 #include "upgrade_to_https.h"
 #include "response_ship_armament.h"
@@ -45,57 +45,67 @@ struct https_server
         std::string const & _response_value
     ) :
         database(),
-        resp(database + 0),
-        response_value(_response_value)
+        resp(&database),
+        response_value(_response_value),
+        http_mark{this, 0},
+        https_mark{this, 1}
     {
-        mg_mgr_init(&mgr, NULL);
-        memset(&bind_opts, 0, sizeof(bind_opts));
-        bind_opts.user_data = this;
-        bind_opts.error_string = &err;
-
-        nc_http = mg_bind_opt(&mgr, http_port.c_str(), ev_handler, this, bind_opts);
-        if (nc_http == NULL)
-            throw std::runtime_error("can't bind");
-        nc_http->recv_mbuf_limit = 65536;
-        mg_set_protocol_http_websocket(nc_http);
-
-        bind_opts.ssl_cert = s_ssl_cert;
-        bind_opts.ssl_key = s_ssl_key;
-
-        nc_https = mg_bind_opt(&mgr, https_port.c_str(), ev_handler, this, bind_opts);
-        if (nc_https == NULL)
-            throw std::runtime_error("can't bind");
-        nc_https->recv_mbuf_limit = 65536;
-        mg_set_protocol_http_websocket(nc_https);
-
+        mg_mgr_init(&mgr);
+        nc_http  = mg_http_listen(&mgr, http_port.c_str(),  ev_handler, &http_mark);
+        nc_https = mg_http_listen(&mgr, https_port.c_str(), ev_handler, &https_mark);
+        
         mg_mgr_poll(&mgr, 100);
+        mg_log_set("0");
 
         
-        resp.reg <ship_armament>    ("/ship/armament",          database + 1);
-        resp.reg <torpedo>          ("/armament/torpedo",       database + 2);
-        resp.reg <guns>             ("/armament/guns",          database + 3);
-        resp.reg <torpedo_tubes>    ("/armament/torpedo_tubes", database + 4);
-        resp.reg <mines_charges>    ("/armament/mines_charges", database + 0);
-        resp.reg <catapult>         ("/armament/catapult",      database + 1);
-        resp.reg <searcher>         ("/armament/searcher",      database + 2);
-        resp.reg <aircraft>         ("/aircraft",               database + 3);
+        resp.reg <ship_armament>    ("/ship/armament",          &database);
+        resp.reg <torpedo>          ("/armament/torpedo",       &database);
+        resp.reg <guns>             ("/armament/guns",          &database);
+        resp.reg <torpedo_tubes>    ("/armament/torpedo_tubes", &database);
+        resp.reg <mines_charges>    ("/armament/mines_charges", &database);
+        resp.reg <catapult>         ("/armament/catapult",      &database);
+        resp.reg <searcher>         ("/armament/searcher",      &database);
+        resp.reg <aircraft>         ("/aircraft",               &database);
     }
 
     static const char * s_ssl_cert;
     static const char * s_ssl_key;
+    
+    static void fn (mg_connection * nc, int ev, void * ev_data, void *)
+    {
+        mg_http_message * http_msg = reinterpret_cast <mg_http_message *> (ev_data);
+        mg_http_serve_opts opts = {.root_dir = "."};   // Serve local dir
+        if (ev == MG_EV_HTTP_MSG) 
+            mg_http_serve_dir(nc, http_msg, &opts);
+    }
 
     static void ev_handler (mg_connection * nc, int ev, void * ev_data, void *)
     {
-        if (ev == MG_EV_HTTP_REQUEST)
+        std::pair <https_server *, bool> * mark = 
+            reinterpret_cast <std::pair <https_server *, bool> *> (nc->fn_data);
+        https_server * cur = mark->first;
+        
+        if (ev == MG_EV_ACCEPT && mark->second)
         {
-            mbuf * io = &nc->recv_mbuf;
-            http_message * http_msg = reinterpret_cast <http_message *> (ev_data);
-            https_server * cur = reinterpret_cast <https_server *> (nc->user_data);
+            mg_tls_opts opts = 
+            {
+                .cert = s_ssl_cert,
+                .certkey = s_ssl_key
+            };
+            mg_tls_init(nc, &opts);
+            return;
+        }
+        //fn(nc, ev, ev_data, NULL);
+        //return;
+        
+        if (ev == MG_EV_HTTP_MSG)
+        {
+            mg_http_message * http_msg = reinterpret_cast <mg_http_message *> (ev_data);
             
             uint32_t code;
             std::string response;
             
-            if (std::string_view(http_msg->method.p, http_msg->method.len) != "GET")
+            if (std::string_view(http_msg->method.ptr, http_msg->method.len) != "GET")
             {
                 response = "??";
                 code = 405;
@@ -107,8 +117,8 @@ struct https_server
                 std::optional <std::string> answer = 
                     cur->resp.response
                     (
-                        std::string_view(http_msg->uri.p, http_msg->uri.len),
-                        std::string_view(http_msg->query_string.p, http_msg->query_string.len)
+                        std::string_view(http_msg->uri.ptr, http_msg->uri.len),
+                        std::string_view(http_msg->query.ptr, http_msg->query.len)
                     );
                 if (answer)
                 {
@@ -123,6 +133,7 @@ struct https_server
             }
             
             /*
+            mbuf * io = &nc->recv_mbuf;
             std::string request(io->buf, io->len);
             response = cur->response_value.append("\r\n")
                 .append(http_msg->uri.p, http_msg->uri.len).append("\r\n") 
@@ -150,8 +161,9 @@ struct https_server
                 response.c_str(), 
                 response.size()
             );
-            mbuf_remove(io, io->len);
-            nc->flags |= MG_F_SEND_AND_CLOSE;
+            mg_iobuf_del(&nc->recv, 0, nc->recv.len);
+            nc->recv.len = 0;
+            nc->is_draining = 1;
         }
     }
 
@@ -167,7 +179,7 @@ struct https_server
     }
     
 private:
-    ship_requests database[5];
+    ship_requests database;
     responser resp;
     
     std::string response_value;
@@ -175,8 +187,9 @@ private:
     struct mg_mgr mgr;
     struct mg_connection * nc_http;
     struct mg_connection * nc_https;
-    struct mg_bind_opts bind_opts;
     const char * err;
+    std::pair <https_server *, bool> http_mark;
+    std::pair <https_server *, bool> https_mark;
 };
 
 const char * https_server::s_ssl_cert = "server/keys/server.pem";
@@ -207,7 +220,7 @@ int main ()
     {
         set_sig_handler(SIGTERM, handler_exit);
         set_sig_handler(SIGINT, handler_exit);
-        https_server server("0.0.0.0:8080", "0.0.0.0:8443", "________");
+        https_server server("http://0.0.0.0:8080", "https://0.0.0.0:8443", "________");
 
         while (run)
             server.main();

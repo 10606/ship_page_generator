@@ -12,7 +12,9 @@ set(compile_flags
      -g --pedantic -Wall -ftemplate-depth=10000 -std=c++20"
 )
 
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${release_flags}")
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${release_flags} -DMG_ENABLE_OPENSSL=1")
+set(CMAKE_C_FLAGS    "${CMAKE_C_FLAGS}  -Os -flto -march=native \
+                                        -DNDEBUG -DMG_ENABLE_OPENSSL=1")
 
 message("CMAKE_CXX_FLAGS" ${CMAKE_CXX_FLAGS})
 
@@ -31,6 +33,7 @@ add_executable(ship_server
     server/upgrade_to_https.cpp
     server/parse_query.cpp
     server/date_to_str.cpp
+    server/mongoose.c
     server/response/ship_armament/response_ship_armament.cpp
     server/response/ship_armament/general.cpp
     server/response/ship_armament/guns.cpp
@@ -72,7 +75,8 @@ target_link_libraries(tests
 target_link_libraries(ship_server
     pqxx
     pthread
-    mongoose
+    ssl
+    crypto
     -static-libstdc++
     -static-libgcc
 )
