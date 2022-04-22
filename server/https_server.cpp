@@ -7,6 +7,7 @@
 #include <utility>
 #include "mongoose.h"
 
+#include "validate_path.h"
 #include "upgrade_to_https.h"
 #include "response_ship_armament.h"
 #include "response_torpedo.h"
@@ -71,12 +72,12 @@ struct https_server
     static const char * s_ssl_cert;
     static const char * s_ssl_key;
     
-    static void fn (mg_connection * nc, int ev, void * ev_data, void *)
+    static void send_file (mg_connection * nc, int ev, void * ev_data, char const * path)
     {
         mg_http_message * http_msg = reinterpret_cast <mg_http_message *> (ev_data);
-        mg_http_serve_opts opts = {.root_dir = "."};   // Serve local dir
-        if (ev == MG_EV_HTTP_MSG) 
-            mg_http_serve_dir(nc, http_msg, &opts);
+        mg_http_serve_opts opts = {.root_dir = "."};
+        if (ev == MG_EV_HTTP_MSG)
+            mg_http_serve_file(nc, http_msg, path, &opts);
     }
 
     static void ev_handler (mg_connection * nc, int ev, void * ev_data, void *)
@@ -95,8 +96,6 @@ struct https_server
             mg_tls_init(nc, &opts);
             return;
         }
-        //fn(nc, ev, ev_data, NULL);
-        //return;
         
         if (ev == MG_EV_HTTP_MSG)
         {
@@ -114,10 +113,11 @@ struct https_server
                 return;
             else
             {
+                std::string_view uri(http_msg->uri.ptr, http_msg->uri.len);
                 std::optional <std::string> answer = 
                     cur->resp.response
                     (
-                        std::string_view(http_msg->uri.ptr, http_msg->uri.len),
+                        uri,
                         std::string_view(http_msg->query.ptr, http_msg->query.len)
                     );
                 if (answer)
@@ -127,8 +127,14 @@ struct https_server
                 }
                 else
                 {
-                    response = "Not found";
-                    code = 404;
+                    std::string path = filesystem_check(uri);
+                    if (!path.empty())
+                    {
+                        send_file(nc, ev, ev_data, path.c_str());
+                        return;
+                    }
+                    else
+                        code = 403;
                 }
             }
             

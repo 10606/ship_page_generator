@@ -33,6 +33,7 @@ add_executable(ship_server
     server/upgrade_to_https.cpp
     server/parse_query.cpp
     server/date_to_str.cpp
+    server/validate_path.cpp
     server/mongoose.c
     server/response/ship_armament/response_ship_armament.cpp
     server/response/ship_armament/general.cpp
