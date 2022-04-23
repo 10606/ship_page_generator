@@ -18,6 +18,24 @@ struct dekart_tree
 {
     struct node
     {
+        node 
+        (
+            std::unique_ptr <node> _left,
+            std::unique_ptr <node> _right,
+            
+            T _key,
+            U _additional,
+            size_t _priority
+        ) :
+            left(std::move(_left)),
+            right(std::move(_right)),
+            
+            key(std::move(_key)),
+            additional(std::move(_additional)),
+            priority(_priority)
+        {}
+            
+    
         std::unique_ptr <node> left;
         std::unique_ptr <node> right;
         
@@ -74,7 +92,23 @@ private:
         V init,
         F_left && accumulator_left,
         F_right && accumulator_right
-    ) const;
+    ) const
+    {
+        while (tree)
+        {
+            if (comparator(tree->key, key)) // go to right
+            {
+                init = accumulator_right(std::move(init), tree);
+                tree = tree->right.get();
+            }
+            else // go to left
+            {
+                init = accumulator_left(std::move(init), tree);
+                tree = tree->left.get();
+            }
+        }
+        return std::move(init);
+    }
 
     ptr_type insert (ptr_type tree, T key, U additional, size_t priority);
 };
@@ -126,37 +160,6 @@ dekart_tree <T, U, C> ::insert
         tree->left = insert(std::move(tree->left), std::move(key), std::move(additional), priority);
     tree->additional = updater(tree.get());
     return tree;
-}
-
-
-template <typename T, typename U, std::predicate <T, T> C>
-template <typename V,
-          Accumulator <V, typename dekart_tree <T, U, C> ::node> F_left, 
-          Accumulator <V, typename dekart_tree <T, U, C> ::node> F_right>
-V
-dekart_tree <T, U, C> ::accumulate
-(
-    typename dekart_tree <T, U, C> ::node const * tree,
-    T key, 
-    V init,
-    F_left && accumulator_left,
-    F_right && accumulator_right
-) const
-{
-    while (tree)
-    {
-        if (comparator(tree->key, key)) // go to right
-        {
-            init = accumulator_right(std::move(init), tree);
-            tree = tree->right.get();
-        }
-        else // go to left
-        {
-            init = accumulator_left(std::move(init), tree);
-            tree = tree->left.get();
-        }
-    }
-    return std::move(init);
 }
 
 

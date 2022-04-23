@@ -6,6 +6,15 @@
 
 struct group
 {
+    group
+    (
+        std::string_view _key,
+        std::vector <std::string_view> _values
+    ) :
+        key(_key),
+        values(std::move(_values))
+    {}
+
     std::string_view key;
     std::vector <std::string_view> values;
 };

@@ -193,7 +193,6 @@ private:
     struct mg_mgr mgr;
     struct mg_connection * nc_http;
     struct mg_connection * nc_https;
-    const char * err;
     std::pair <https_server *, bool> http_mark;
     std::pair <https_server *, bool> https_mark;
 };
