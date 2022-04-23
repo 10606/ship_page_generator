@@ -4,8 +4,8 @@
 template <typename responser>
 std::vector <std::string> ships_responser <responser> ::response 
 (
-    std::vector <std::pair <int, std::chrono::year_month_day> > ship_year,
-    std::vector <uint8_t> modernization
+    std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year,
+    std::vector <uint8_t> const & modernization
 )
 {
     using response_t = typename responser::response_t;
@@ -43,6 +43,7 @@ std::vector <std::string> ships_responser <responser> ::response
     while (min)
     {
         rows.emplace_back(table.column.begin);
+        rows.back().reserve(1000);
         bool have_one_delimeter = 0;
         bool have_group_delimeter = 0;
         key_t expect = *min;
@@ -105,11 +106,11 @@ std::vector <std::string> ships_responser <responser> ::response
     // gun classes
     for (size_t i = 0, pos = 0; i != gun_class.size(); ++i)
     {
-        std::string rowspan = table.rowspan.begin + 
-                              std::to_string(gun_class[i].first) + 
-                              table.rowspan.middle + 
-                              gun_class[i].second + 
-                              table.rowspan.end;
+        std::string rowspan = std::string(table.rowspan.begin)
+                                .append(std::to_string(gun_class[i].first))
+                                .append(table.rowspan.middle)
+                                .append(gun_class[i].second)
+                                .append(table.rowspan.end);
         rows[pos] = rowspan + rows[pos];
         pos += gun_class[i].first;
     }

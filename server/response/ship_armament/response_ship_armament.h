@@ -69,8 +69,8 @@ struct ships_responser
     
     std::vector <std::string> response 
     (
-        std::vector <std::pair <int, std::chrono::year_month_day> > ship_year,
-        std::vector <uint8_t> modernization
+        std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year,
+        std::vector <uint8_t> const & modernization
     );
     
 
@@ -112,8 +112,8 @@ template <typename armament_type>
 std::string add_armament 
 (
     ships_responser <armament_type> & armament, 
-    std::vector <std::pair <int, std::chrono::year_month_day> > ship_year,
-    std::vector <uint8_t> & modernizations,
+    std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year,
+    std::vector <uint8_t> const & modernizations,
     std::string_view new_row
 )
 {
