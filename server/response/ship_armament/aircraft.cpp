@@ -51,18 +51,19 @@ ship_aircrafts::ship_aircrafts (ship_requests * _database, std::string_view _new
     }
 }
 
-std::vector <ship_aircrafts::response_t> ship_aircrafts::response (int id, std::chrono::year_month_day date)
+std::vector <ship_aircrafts::response_t> ship_aircrafts::response (int id, std::chrono::year_month_day date) const
 {
     std::vector <response_t> answer;
 
-    std::unordered_map <int, std::vector <ship_aircrafts_t> > :: iterator it = ship_aircrafts_list.find(id);
+    std::unordered_map <int, std::vector <ship_aircrafts_t> > :: const_iterator it = ship_aircrafts_list.find(id);
     if (it == ship_aircrafts_list.end())
         return answer;
     for (ship_aircrafts_t const & aircraft : it->second)
     {
         if (between(aircraft.date_from, date, aircraft.date_to))
         {
-            response_t item = aircrafts[aircraft.aircraft_id];
+            std::unordered_map <int, response_t> :: const_iterator air_it = aircrafts.find(aircraft.aircraft_id);
+            response_t item = (air_it != aircrafts.end())? air_it->second : response_t();
             item.data = std::to_string(aircraft.count) + " " + item.data;
             answer.push_back(item);
             answer.back().group_name = "авиагруппа";

@@ -19,7 +19,7 @@ struct ship_general
         std::string data;
     };
 
-    std::vector <response_t> response (int id, std::chrono::year_month_day date);
+    std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
 
 private:
     struct response_with_time_label

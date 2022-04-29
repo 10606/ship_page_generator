@@ -1,12 +1,14 @@
 #include "response_ship_armament.h"
 
+#include <future>
+
 
 template <typename responser>
 std::vector <std::string> ships_responser <responser> ::response 
 (
     std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year,
     std::vector <uint8_t> const & modernization
-)
+) const
 {
     using response_t = typename responser::response_t;
     std::vector <std::vector <response_t> > values;

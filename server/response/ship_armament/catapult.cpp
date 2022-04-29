@@ -50,18 +50,19 @@ ship_catapult::ship_catapult (ship_requests * _database, std::string_view _new_l
     }
 }
 
-std::vector <ship_catapult::response_t> ship_catapult::response (int id, std::chrono::year_month_day date)
+std::vector <ship_catapult::response_t> ship_catapult::response (int id, std::chrono::year_month_day date) const
 {
     std::vector <response_t> answer;
 
-    std::unordered_map <int, std::vector <ship_catapults_t> > :: iterator it = ship_catapults_list.find(id);
+    std::unordered_map <int, std::vector <ship_catapults_t> > :: const_iterator it = ship_catapults_list.find(id);
     if (it == ship_catapults_list.end())
         return answer;
     for (ship_catapults_t const & catapult : it->second)
     {
         if (between(catapult.date_from, date, catapult.date_to))
         {
-            response_t item = catapults[catapult.catapult_id];
+            std::unordered_map <int, response_t> :: const_iterator catapults_it = catapults.find(catapult.catapult_id);
+            response_t item = (catapults_it != catapults.end())? catapults_it->second : response_t();
             item.data = std::to_string(catapult.count) + " " + item.data;
             answer.push_back(item);
             answer.back().group_name = "катапульта";

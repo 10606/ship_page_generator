@@ -21,9 +21,9 @@ ship_general::ship_general (ship_requests * _database, std::string_view _new_lin
 }
 
 
-std::vector <ship_general::response_t> ship_general::response (int id, std::chrono::year_month_day date)
+std::vector <ship_general::response_t> ship_general::response (int id, std::chrono::year_month_day date) const
 {
-    std::unordered_map <int, std::vector <response_with_time_label> > :: iterator it = ship_general_list.find(id);
+    std::unordered_map <int, std::vector <response_with_time_label> > :: const_iterator it = ship_general_list.find(id);
     if (it == ship_general_list.end())
         return std::vector <response_t> ();
     for (response_with_time_label const & response_with_time : it->second)

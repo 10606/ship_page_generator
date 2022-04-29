@@ -59,18 +59,19 @@ ship_torpedo_tubes::ship_torpedo_tubes (ship_requests * _database, std::string_v
     }
 }
 
-std::vector <ship_torpedo_tubes::response_t> ship_torpedo_tubes::response (int id, std::chrono::year_month_day date)
+std::vector <ship_torpedo_tubes::response_t> ship_torpedo_tubes::response (int id, std::chrono::year_month_day date) const
 {
     std::vector <response_t> answer;
 
-    std::unordered_map <int, std::vector <ship_tubes_t> > :: iterator it = ship_tubes_list.find(id);
+    std::unordered_map <int, std::vector <ship_tubes_t> > :: const_iterator it = ship_tubes_list.find(id);
     if (it == ship_tubes_list.end())
         return answer;
     for (ship_tubes_t const & tube : it->second)
     {
         if (between(tube.date_from, date, tube.date_to))
         {
-            response_t item = torpedo_tubes[tube.tube_id];
+            std::unordered_map <int, response_t> :: const_iterator torpedo_it = torpedo_tubes.find(tube.tube_id);
+            response_t item = (torpedo_it != torpedo_tubes.end())? torpedo_it->second : response_t();
             item.data = std::to_string(tube.mount_count) + item.data;
             answer.push_back(item);
             answer.back().group_name = "торпедный аппарат";

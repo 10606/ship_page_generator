@@ -50,18 +50,19 @@ ship_searchers::ship_searchers (ship_requests * _database, std::string_view _new
     }
 }
 
-std::vector <ship_searchers::response_t> ship_searchers::response (int id, std::chrono::year_month_day date)
+std::vector <ship_searchers::response_t> ship_searchers::response (int id, std::chrono::year_month_day date) const
 {
     std::vector <response_t> answer;
 
-    std::unordered_map <int, std::vector <ship_searchers_t> > :: iterator it = ship_searchers_list.find(id);
+    std::unordered_map <int, std::vector <ship_searchers_t> > :: const_iterator it = ship_searchers_list.find(id);
     if (it == ship_searchers_list.end())
         return answer;
     for (ship_searchers_t const & searcher : it->second)
     {
         if (between(searcher.date_from, date, searcher.date_to))
         {
-            response_t item = searchers[searcher.searcher_id];
+            std::unordered_map <int, response_t> :: const_iterator searcher_it = searchers.find(searcher.searcher_id);
+            response_t item = (searcher_it != searchers.end())? searcher_it->second : response_t();
             item.data = std::to_string(searcher.count) + " " + item.data;
             answer.push_back(item);
         }

@@ -21,7 +21,7 @@ struct ship_throwers
         std::string data;
     };
 
-    std::vector <response_t> response (int id, std::chrono::year_month_day date);
+    std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
 
 private:
     typedef ship_requests::ship_armament_lt_t::throwers ship_throwers_t;

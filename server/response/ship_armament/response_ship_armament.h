@@ -67,11 +67,11 @@ struct ships_responser
         resp(_database, std::forward <T> (args) ...)
     {}
     
-    std::vector <std::string> response 
+    std::vector <std::string> response
     (
         std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year,
         std::vector <uint8_t> const & modernization
-    );
+    ) const;
     
 
 private:
@@ -111,7 +111,7 @@ struct table_template
 template <typename armament_type>
 std::string add_armament 
 (
-    ships_responser <armament_type> & armament, 
+    ships_responser <armament_type> const & armament, 
     std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year,
     std::vector <uint8_t> const & modernizations,
     std::string_view new_row

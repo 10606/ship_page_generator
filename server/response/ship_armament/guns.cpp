@@ -68,18 +68,19 @@ ship_guns::ship_guns (ship_requests * _database, std::string_view _new_line) :
 }
 
 
-std::vector <ship_guns::response_t> ship_guns::response (int id, std::chrono::year_month_day date)
+std::vector <ship_guns::response_t> ship_guns::response (int id, std::chrono::year_month_day date) const
 {
     std::vector <response_t> answer;
 
-    std::unordered_map <int, std::vector <ship_guns_t> > :: iterator it = ship_guns_list.find(id);
+    std::unordered_map <int, std::vector <ship_guns_t> > :: const_iterator it = ship_guns_list.find(id);
     if (it == ship_guns_list.end())
         return answer;
     for (ship_guns_t const & value : it->second)
     {
         if (between(value.date_from, date, value.date_to))
         {
-            response_t item = mounts[value.mount_id];
+            std::unordered_map <int, response_t> :: const_iterator mounts_it = mounts.find(value.mount_id);
+            response_t item = (mounts_it != mounts.end())? mounts_it->second : response_t();
             item.data = std::to_string(value.mount_count) + item.data;
             answer.push_back(item);
         }
@@ -101,7 +102,12 @@ ship_guns::response_t ship_guns::partial_response (T const & mount)
         item.compare = 0;
     
     item.data += "x" + std::to_string(mount.gun_count) + " ";
-    item.data += (mount.caliber? (to_string_10(*mount.caliber) + "мм  ") : "  ");
+    if (mount.caliber)
+        item.data.append(to_string_10(*mount.caliber) + "мм");
+    if (mount.length)
+        item.data.append("/")
+                 .append(to_string_10(*mount.length));
+    item.data.append("  ");
     item.data += mount.gun_ru.value_or("  ") + new_line;
     if (mount.mount_ru || mount.angle)
     {

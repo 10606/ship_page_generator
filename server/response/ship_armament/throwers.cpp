@@ -61,18 +61,19 @@ ship_throwers::ship_throwers (ship_requests * _database, std::string_view _new_l
     }
 }
 
-std::vector <ship_throwers::response_t> ship_throwers::response (int id, std::chrono::year_month_day date)
+std::vector <ship_throwers::response_t> ship_throwers::response (int id, std::chrono::year_month_day date) const
 {
     std::vector <response_t> answer;
 
-    std::unordered_map <int, std::vector <ship_throwers_t> > :: iterator it = ship_throwers_list.find(id);
+    std::unordered_map <int, std::vector <ship_throwers_t> > :: const_iterator it = ship_throwers_list.find(id);
     if (it == ship_throwers_list.end())
         return answer;
     for (ship_throwers_t const & thrower : it->second)
     {
         if (between(thrower.date_from, date, thrower.date_to))
         {
-            response_t item = throwers[thrower.throwers_id];
+            std::unordered_map <int, response_t> :: const_iterator thrower_it = throwers.find(thrower.throwers_id);
+            response_t item = (thrower_it != throwers.end())? thrower_it->second : response_t();
             item.data = std::to_string(thrower.mount_count) + item.data;
             answer.push_back(item);
             answer.back().group_name = "противолодочное вооружение";

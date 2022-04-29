@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 project(ship_server VERSION 1.0 LANGUAGES C CXX)
 
 set(release_flags
-    "-O3 --pedantic -flto -march=native -Wall -ftemplate-depth=10000 -std=c++20 -DNDEBUG -g"
+    "-O3 --pedantic -flto -march=native -Wall -ftemplate-depth=10000 -std=c++20 -DNDEBUG"
 )
 
 set(compile_flags
