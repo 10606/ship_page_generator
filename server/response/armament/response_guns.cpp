@@ -78,9 +78,8 @@ registrator_pred <guns::guns_t> & guns_cmp::filter ()
 }
 
 
-std::string guns::response (std::string_view query)
+void guns::response (std::string & answer, std::string_view query)
 {
-    std::string answer;
     answer.reserve(10000);
     
     static std::vector <guns_t> guns_cache = database->armament_info.get_list();
@@ -142,8 +141,6 @@ std::string guns::response (std::string_view query)
         
         answer.append(table::end);
     }
-
-    return answer;
 }
 
 

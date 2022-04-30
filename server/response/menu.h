@@ -38,7 +38,7 @@ struct menu
         database(_database)
     {}
     
-    std::string response ();
+    void response (std::string & answer);
     
 private:
     std::string response_impl ();

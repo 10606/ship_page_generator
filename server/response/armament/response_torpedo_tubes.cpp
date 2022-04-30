@@ -78,9 +78,8 @@ registrator_pred <torpedo_tubes::torpedo_tubes_t> & torpedo_tubes_cmp::filter ()
 }
 
 
-std::string torpedo_tubes::response (std::string_view query)
+void torpedo_tubes::response (std::string & answer, std::string_view query)
 {
-    std::string answer;
     answer.reserve(10000);
     
     static std::vector <torpedo_tubes_t> torpedo_tubes_cache = database->armament_info.get_torpedo_tubes();
@@ -118,8 +117,6 @@ std::string torpedo_tubes::response (std::string_view query)
         
         answer.append(table::end);
     }
-
-    return answer;
 }
 
 

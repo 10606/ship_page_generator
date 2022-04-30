@@ -67,12 +67,23 @@ struct ships_responser
         resp(_database, std::forward <T> (args) ...)
     {}
     
-    std::vector <std::string> response
+    using response_t = typename responser::response_t;
+    using key_t = std::pair <decltype(std::declval <response_t>().group),
+                             decltype(std::declval <response_t>().compare)>;
+
+    void response
     (
+        std::string & answer,
         std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year,
         std::vector <uint8_t> const & modernization
     ) const;
     
+    std::vector <std::pair <size_t, std::string> >
+    gun_classes
+    (
+        std::vector <std::vector <typename responser::response_t> > & values,
+        std::optional <key_t> min
+    ) const;
 
 private:
     rows_table_template table;
@@ -109,25 +120,22 @@ struct table_template
 
 
 template <typename armament_type>
-std::string add_armament 
+void add_armament 
 (
+    std::string & answer,
     ships_responser <armament_type> const & armament, 
     std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year,
     std::vector <uint8_t> const & modernizations,
     std::string_view new_row
 )
 {
-    std::string answer(new_row);
+    answer.append(new_row);
     try
     {
-        std::vector <std::string> table_guns = armament.response(ship_year, modernizations);
-        for (auto const & s : table_guns)
-            answer += s;
+        armament.response(answer, ship_year, modernizations);
     }
     catch (...)
     {}
-    
-    return answer;
 }
 
 
@@ -150,7 +158,7 @@ struct ship_armament
         return uri == "/ship/armament";
     }
 
-    std::string response (std::string_view query);
+    void response (std::string & answer, std::string_view query);
 
 private:
     table_template table;

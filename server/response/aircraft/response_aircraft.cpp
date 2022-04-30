@@ -108,9 +108,8 @@ registrator_pred <aircraft::aircraft_t> & aircraft_cmp::filter ()
 }
 
 
-std::string aircraft::response (std::string_view query)
+void aircraft::response (std::string & answer, std::string_view query)
 {
-    std::string answer;
     answer.reserve(10000);
     
     static std::vector <aircraft_t> aircraft_cache = database->aircraft_info.get_list("");
@@ -196,8 +195,6 @@ std::string aircraft::response (std::string_view query)
         
         answer.append(table::end);
     }
-
-    return answer;
 }
 
 

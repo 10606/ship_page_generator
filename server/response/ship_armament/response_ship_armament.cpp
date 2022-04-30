@@ -4,18 +4,67 @@
 
 
 template <typename responser>
-std::vector <std::string> ships_responser <responser> ::response 
+std::vector <std::pair <size_t, std::string> >
+ships_responser <responser> ::gun_classes
 (
+    std::vector <std::vector <typename responser::response_t> > & values,
+    std::optional <key_t> min
+) const
+{
+    std::vector <std::pair <size_t, std::string> > gun_class = {{0, table.column.begin}};
+    std::vector <size_t> positions(values.size(), 0);
+
+    while (min)
+    {
+        bool have_one_delimeter = 0;
+        bool have_group_delimeter = 0;
+        key_t expect = *min;
+        min.reset();
+        
+        for (size_t i = 0; i != values.size(); ++i)
+        {
+            for (size_t j = positions[i]; j != values[i].size(); )
+            {
+                key_t cur{values[i][j].group, values[i][j].compare};
+                if (cur != expect)
+                {
+                    have_one_delimeter   |= (cur.first == expect.first);
+                    have_group_delimeter |= (cur.first != expect.first);
+                    positions[i] = j;
+                    if (!min || *min > cur)
+                        min = std::move(cur);
+                    break;
+                }
+                
+                gun_class.back().second = std::move(values[i][j].group_name);
+                
+                // update position if we at end
+                if (++j == values[i].size())
+                    positions[i] = values[i].size();
+            }
+        }
+        
+        // end of row
+        gun_class.back().first++;
+        if (!have_one_delimeter && have_group_delimeter)
+            gun_class.emplace_back();
+    }
+
+    return gun_class;
+}
+
+
+template <typename responser>
+void
+ships_responser <responser> ::response 
+(
+    std::string & answer,
     std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year,
     std::vector <uint8_t> const & modernization
 ) const
 {
-    using response_t = typename responser::response_t;
     std::vector <std::vector <response_t> > values;
     values.reserve(ship_year.size());
-
-    using key_t = std::pair <decltype(std::declval <response_t>().group),
-                             decltype(std::declval <response_t>().compare)>;
     std::optional <key_t> min;
 
     // extract
@@ -38,14 +87,29 @@ std::vector <std::string> ships_responser <responser> ::response
     }
 
     
-    std::vector <std::string> rows;
-    std::vector <std::pair <size_t, std::string> > gun_class = {{0, table.column.begin}};
-    std::vector <size_t> positions(ship_year.size());
+    std::vector <std::pair <size_t, std::string> > gun_class = gun_classes(values, min);
+    std::vector <size_t> positions(ship_year.size(), 0);
     // main part of table
+    size_t class_sum = 0, class_pos = 0;
+    size_t rows_cnt = 0;
     while (min)
     {
-        rows.emplace_back(table.column.begin);
-        rows.back().reserve(1000);
+        if (class_sum == rows_cnt)
+        {
+            // new gun_class
+            answer.append(table.rowspan.begin)
+                  .append(std::to_string(gun_class[class_pos].first))
+                  .append(table.rowspan.middle)
+                  .append(std::move(gun_class[class_pos].second))
+                  .append(table.rowspan.end)
+                  .append(table.column.begin);
+            class_sum += gun_class[class_pos].first;
+            class_pos++;
+        }
+        else
+            answer.append(table.column.begin);
+        rows_cnt++;
+        
         bool have_one_delimeter = 0;
         bool have_group_delimeter = 0;
         key_t expect = *min;
@@ -54,28 +118,24 @@ std::vector <std::string> ships_responser <responser> ::response
         for (size_t i = 0; i != ship_year.size(); ++i)
         {
             if (i != 0)
-                rows.back() += table.column.new_column;
+                answer.append(table.column.new_column);
             
             for (size_t j = positions[i]; j != values[i].size(); )
             {
-                response_t const & tmp = values[i][j];
-                key_t cur{tmp.group, tmp.compare};
+                key_t cur{std::move(values[i][j].group), std::move(values[i][j].compare)};
                 if (cur != expect)
                 {
-                    if (tmp.group == expect.first)
-                        have_one_delimeter = 1;
-                    else
-                        have_group_delimeter = 1;
+                    have_one_delimeter   |= (cur.first == expect.first);
+                    have_group_delimeter |= (cur.first != expect.first);
                     positions[i] = j;
                     if (!min || *min > cur)
-                        min = cur;
+                        min = std::move(cur);
                     break;
                 }
                 
-                gun_class.back().second = tmp.group_name;
                 if (j != positions[i]) // not first line
-                    rows.back() += table.column.new_line;
-                rows.back() += values[i][j].data;
+                    answer.append(table.column.new_line);
+                answer.append(std::move(values[i][j].data));
                 
                 // update position if we at end
                 if (++j == values[i].size())
@@ -84,43 +144,16 @@ std::vector <std::string> ships_responser <responser> ::response
         }
         
         // end of row
-        rows.back() += table.column.end;
+        answer.append(table.column.end);
         if (have_one_delimeter)
-        {
-            gun_class.back().first++;
-            rows.back() += table.one_delimeter;
-        }
+            answer.append(table.one_delimeter);
         else if (have_group_delimeter)
-        {
-            gun_class.back().first++;
-            gun_class.emplace_back();
-            rows.back() += table.group_delimeter;
-        }
-        else
-        {
-            gun_class.back().first++;
-        }
+            answer.append(table.group_delimeter);
     }
-    
-    if (rows.empty())
-        return rows;
-    
-    // gun classes
-    for (size_t i = 0, pos = 0; i != gun_class.size(); ++i)
-    {
-        std::string rowspan = std::string(table.rowspan.begin)
-                                .append(std::to_string(gun_class[i].first))
-                                .append(table.rowspan.middle)
-                                .append(gun_class[i].second)
-                                .append(table.rowspan.end);
-        rows[pos] = rowspan + rows[pos];
-        pos += gun_class[i].first;
-    }
-    return rows;
 }
 
 
-std::string ship_armament::response (std::string_view query)
+void ship_armament::response (std::string & answer, std::string_view query)
 {
     try
     {
@@ -128,24 +161,20 @@ std::string ship_armament::response (std::string_view query)
             parse_query__ship_year(query);
     
         auto [header, modernizations] = names.response(ship_year);
-        std::string answer = table.begin;
+        answer.append(table.begin);
+        answer.append(std::move(header));
         
-        answer += header;
+        add_armament(answer, general,       ship_year, modernizations, table.new_row("class = \"general\""  ));
+        add_armament(answer, guns,          ship_year, modernizations, table.new_row("class = \"guns\""     ));
+        add_armament(answer, torpedo_tubes, ship_year, modernizations, table.new_row("class = \"torpedo\""  ));
+        add_armament(answer, throwers,      ship_year, modernizations, table.new_row("class = \"throwers\"" ));
+        add_armament(answer, searchers,     ship_year, modernizations, table.new_row("class = \"searchers\""));
+        add_armament(answer, catapult,      ship_year, modernizations, table.new_row("class = \"catapult\"" ));
+        add_armament(answer, aircraft,      ship_year, modernizations, table.new_row("class = \"aircraft\"" ));
         
-        answer += add_armament(general,         ship_year, modernizations, table.new_row("class = \"general\""  ));
-        answer += add_armament(guns,            ship_year, modernizations, table.new_row("class = \"guns\""     ));
-        answer += add_armament(torpedo_tubes,   ship_year, modernizations, table.new_row("class = \"torpedo\""  ));
-        answer += add_armament(throwers,        ship_year, modernizations, table.new_row("class = \"throwers\"" ));
-        answer += add_armament(searchers,       ship_year, modernizations, table.new_row("class = \"searchers\""));
-        answer += add_armament(catapult,        ship_year, modernizations, table.new_row("class = \"catapult\"" ));
-        answer += add_armament(aircraft,        ship_year, modernizations, table.new_row("class = \"aircraft\"" ));
-        
-        answer += table.end;
-        return answer;
+        answer.append(table.end);
     }
     catch (...)
-    {
-        return "";
-    }
+    {}
 }
 

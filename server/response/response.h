@@ -19,7 +19,7 @@ struct responser
 
     struct resp_base
     {
-        virtual std::string response (std::string_view) = 0;
+        virtual void response (std::string &, std::string_view) = 0;
         virtual ~resp_base () = default;
     };
     
@@ -31,9 +31,9 @@ struct responser
             value(std::forward <U> (args) ...)
         {}
         
-        virtual std::string response (std::string_view query)
+        virtual void response (std::string & answer, std::string_view query)
         {
-            return value.response(query);
+            value.response(answer, query);
         }
         
         virtual ~resp_impl () = default;
@@ -65,12 +65,10 @@ struct responser
                         .menu { display: inline; } \n\
                         .main { display: inline; } \n\
                    </style>\n";
-        answer += 
-            ship_list.response() +
-            "<div class = \"main\">\n" + 
-            it->second->response(query) +
-            "</div>\n";
-        answer += "</div>";
+        ship_list.response(answer);
+        answer.append("<div class = \"main\">\n");
+        it->second->response(answer, query);
+        answer += "</div>\n</div>";
         
         return answer;
     }

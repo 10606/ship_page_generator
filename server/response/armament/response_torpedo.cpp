@@ -72,9 +72,8 @@ registrator_pred <torpedo::torpedo_t> & torpedo_cmp::filter ()
 }
 
 
-std::string torpedo::response (std::string_view query)
+void torpedo::response (std::string & answer, std::string_view query)
 {
-    std::string answer;
     answer.reserve(10000);
     
     static std::vector <torpedo_t> torpedo_cache = database->armament_info.get_torpedo();
@@ -134,8 +133,6 @@ std::string torpedo::response (std::string_view query)
         
         answer.append(table::end);
     }
-
-    return answer;
 }
 
 

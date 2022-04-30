@@ -251,10 +251,10 @@ std::string menu::response_impl ()
 }
 
 
-std::string menu::response ()
+void menu::response (std::string & answer)
 {
-    static std::string answer = response_impl();
-    return answer;
+    static std::string cache = response_impl();
+    answer.append(cache);
 }
 
 

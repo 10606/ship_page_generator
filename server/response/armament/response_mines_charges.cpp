@@ -72,9 +72,8 @@ registrator_pred <mines_charges::mines_charges_t> & mines_charges_cmp::filter ()
 }
 
 
-std::string mines_charges::response (std::string_view query)
+void mines_charges::response (std::string & answer, std::string_view query)
 {
-    std::string answer;
     answer.reserve(10000);
     
     static std::vector <mines_charges_t> mines_charges_cache = database->armament_info.get_mines_charges();
@@ -118,8 +117,6 @@ std::string mines_charges::response (std::string_view query)
         
         answer.append(table::end);
     }
-
-    return answer;
 }
 
 
