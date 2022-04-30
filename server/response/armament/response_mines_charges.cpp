@@ -6,6 +6,7 @@
 #include "date_to_str.h"
 #include "registrators.h"
 #include "base_compare_predict.h"
+#include "base_comparators.h"
 
 
 struct mines_charges_cmp
@@ -18,9 +19,7 @@ struct mines_charges_cmp
 registrator_cmp <mines_charges::mines_charges_t> mines_charges_cmp::sort
 ({
     {
-        "in_service", 
-        [] (mines_charges::mines_charges_t const & a, mines_charges::mines_charges_t const & b)
-            { return compare_null_last(a.in_service, b.in_service); }
+        "in_service", comparators::in_service <mines_charges::mines_charges_t>
     },
     {
         "mass_ex", 
@@ -38,23 +37,17 @@ registrator_cmp <mines_charges::mines_charges_t> mines_charges_cmp::sort
             { return compare_null_last(a.mine_en, b.mine_en); }
     },
     {
-        "class", 
-        [] (mines_charges::mines_charges_t const & a, mines_charges::mines_charges_t const & b)
-            { return a.class_id <=> b.class_id; }
+        "class", comparators::classes <mines_charges::mines_charges_t>
     },
 });
 
 registrator_cmp <mines_charges::mines_charges_t> mines_charges_cmp::group
 ({
     {
-        "in_service", 
-        [] (mines_charges::mines_charges_t const & a, mines_charges::mines_charges_t const & b)
-            { return compare_date_10th(a.in_service, b.in_service); }
+        "in_service", comparators::in_service <mines_charges::mines_charges_t>
     },
     {
-        "class", 
-        [] (mines_charges::mines_charges_t const & a, mines_charges::mines_charges_t const & b)
-            { return a.class_id <=> b.class_id; }
+        "class", comparators::classes <mines_charges::mines_charges_t>
     },
 });
 

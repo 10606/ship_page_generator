@@ -6,6 +6,7 @@
 #include "date_to_str.h"
 #include "registrators.h"
 #include "base_compare_predict.h"
+#include "base_comparators.h"
 
 
 struct guns_cmp
@@ -18,14 +19,10 @@ struct guns_cmp
 registrator_cmp <guns::guns_t> guns_cmp::sort
 ({
     {
-        "caliber", 
-        [] (guns::guns_t const & a, guns::guns_t const & b)
-            { return compare_null_last(a.caliber, b.caliber); }
+        "caliber", comparators::caliber <guns::guns_t>
     },
     {
-        "in_service", 
-        [] (guns::guns_t const & a, guns::guns_t const & b)
-            { return compare_null_last(a.in_service, b.in_service); }
+        "in_service", comparators::in_service <guns::guns_t>
     },
     {
         "name_ru", 
@@ -38,28 +35,20 @@ registrator_cmp <guns::guns_t> guns_cmp::sort
             { return compare_null_last(a.gun_en, b.gun_en); }
     },
     {
-        "class", 
-        [] (guns::guns_t const & a, guns::guns_t const & b)
-            { return a.class_id <=> b.class_id; }
+        "class", comparators::in_service <guns::guns_t>
     },
 });
 
 registrator_cmp <guns::guns_t> guns_cmp::group
 ({
     {
-        "caliber", 
-        [] (guns::guns_t const & a, guns::guns_t const & b)
-            { return compare_null_last(a.caliber, b.caliber); }
+        "caliber", comparators::caliber <guns::guns_t>
     },
     {
-        "in_service", 
-        [] (guns::guns_t const & a, guns::guns_t const & b)
-            { return compare_date_10th(a.in_service, b.in_service); }
+        "in_service", comparators::in_service <guns::guns_t>
     },
     {
-        "class", 
-        [] (guns::guns_t const & a, guns::guns_t const & b)
-            { return a.class_id <=> b.class_id; }
+        "class", comparators::in_service <guns::guns_t>
     },
 });
 

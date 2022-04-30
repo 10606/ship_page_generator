@@ -6,6 +6,7 @@
 #include "date_to_str.h"
 #include "registrators.h"
 #include "base_compare_predict.h"
+#include "base_comparators.h"
 
 
 struct torpedo_tubes_cmp
@@ -18,14 +19,10 @@ struct torpedo_tubes_cmp
 registrator_cmp <torpedo_tubes::torpedo_tubes_t> torpedo_tubes_cmp::sort
 ({
     {
-        "caliber", 
-        [] (torpedo_tubes::torpedo_tubes_t const & a, torpedo_tubes::torpedo_tubes_t const & b)
-            { return compare_null_last(a.caliber, b.caliber); }
+        "caliber", comparators::caliber <torpedo_tubes::torpedo_tubes_t>
     },
     {
-        "in_service", 
-        [] (torpedo_tubes::torpedo_tubes_t const & a, torpedo_tubes::torpedo_tubes_t const & b)
-            { return compare_null_last(a.in_service, b.in_service); }
+        "in_service", comparators::in_service <torpedo_tubes::torpedo_tubes_t>
     },
     {
         "name_ru", 
@@ -38,28 +35,20 @@ registrator_cmp <torpedo_tubes::torpedo_tubes_t> torpedo_tubes_cmp::sort
             { return compare_null_last(a.tube_en, b.tube_en); }
     },
     {
-        "class", 
-        [] (torpedo_tubes::torpedo_tubes_t const & a, torpedo_tubes::torpedo_tubes_t const & b)
-            { return a.class_id <=> b.class_id; }
+        "class", comparators::classes <torpedo_tubes::torpedo_tubes_t>
     },
 });
 
 registrator_cmp <torpedo_tubes::torpedo_tubes_t> torpedo_tubes_cmp::group
 ({
     {
-        "caliber", 
-        [] (torpedo_tubes::torpedo_tubes_t const & a, torpedo_tubes::torpedo_tubes_t const & b)
-            { return compare_null_last(a.caliber, b.caliber); }
+        "caliber", comparators::caliber <torpedo_tubes::torpedo_tubes_t>
     },
     {
-        "in_service", 
-        [] (torpedo_tubes::torpedo_tubes_t const & a, torpedo_tubes::torpedo_tubes_t const & b)
-            { return compare_date_10th(a.in_service, b.in_service); }
+        "in_service", comparators::in_service <torpedo_tubes::torpedo_tubes_t>
     },
     {
-        "class", 
-        [] (torpedo_tubes::torpedo_tubes_t const & a, torpedo_tubes::torpedo_tubes_t const & b)
-            { return a.class_id <=> b.class_id; }
+        "class", comparators::classes <torpedo_tubes::torpedo_tubes_t>
     },
 });
 

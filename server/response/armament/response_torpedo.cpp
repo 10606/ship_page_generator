@@ -6,6 +6,7 @@
 #include "date_to_str.h"
 #include "registrators.h"
 #include "base_compare_predict.h"
+#include "base_comparators.h"
 
 
 struct torpedo_cmp
@@ -18,9 +19,7 @@ struct torpedo_cmp
 registrator_cmp <torpedo::torpedo_t> torpedo_cmp::sort
 ({
     {
-        "caliber", 
-        [] (torpedo::torpedo_t const & a, torpedo::torpedo_t const & b)
-            { return compare_null_last(a.caliber, b.caliber); }
+        "caliber", comparators::caliber <torpedo::torpedo_t>
     },
     {
         "mass_ex", 
@@ -28,9 +27,7 @@ registrator_cmp <torpedo::torpedo_t> torpedo_cmp::sort
             { return compare_null_last(a.mass_ex, b.mass_ex); }
     },
     {
-        "in_service", 
-        [] (torpedo::torpedo_t const & a, torpedo::torpedo_t const & b)
-            { return compare_null_last(a.in_service, b.in_service); }
+        "in_service", comparators::in_service <torpedo::torpedo_t>
     },
     {
         "name_ru", 
@@ -47,14 +44,10 @@ registrator_cmp <torpedo::torpedo_t> torpedo_cmp::sort
 registrator_cmp <torpedo::torpedo_t> torpedo_cmp::group
 ({
     {
-        "caliber", 
-        [] (torpedo::torpedo_t const & a, torpedo::torpedo_t const & b)
-            { return compare_null_last(a.caliber, b.caliber); }
+        "caliber", comparators::caliber <torpedo::torpedo_t>
     },
     {
-        "in_service", 
-        [] (torpedo::torpedo_t const & a, torpedo::torpedo_t const & b)
-            { return compare_date_10th(a.in_service, b.in_service); }
+        "in_service", comparators::in_service <torpedo::torpedo_t>
     },
 });
 

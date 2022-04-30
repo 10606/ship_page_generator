@@ -6,6 +6,7 @@
 #include "date_to_str.h"
 #include "registrators.h"
 #include "base_compare_predict.h"
+#include "base_comparators.h"
 
 
 struct searcher_cmp
@@ -18,9 +19,7 @@ struct searcher_cmp
 registrator_cmp <searcher::searcher_t> searcher_cmp::sort
 ({
     {
-        "in_service", 
-        [] (searcher::searcher_t const & a, searcher::searcher_t const & b)
-            { return compare_null_last(a.in_service, b.in_service); }
+        "in_service", comparators::in_service <searcher::searcher_t>
     },
     {
         "mass", 
@@ -43,23 +42,17 @@ registrator_cmp <searcher::searcher_t> searcher_cmp::sort
             { return compare_null_last(a.searcher_en, b.searcher_en); }
     },
     {
-        "class", 
-        [] (searcher::searcher_t const & a, searcher::searcher_t const & b)
-            { return a.class_id <=> b.class_id; }
+        "class", comparators::classes <searcher::searcher_t>
     },
 });
 
 registrator_cmp <searcher::searcher_t> searcher_cmp::group
 ({
     {
-        "in_service", 
-        [] (searcher::searcher_t const & a, searcher::searcher_t const & b)
-            { return compare_date_10th(a.in_service, b.in_service); }
+        "in_service", comparators::in_service <searcher::searcher_t>
     },
     {
-        "class", 
-        [] (searcher::searcher_t const & a, searcher::searcher_t const & b)
-            { return a.class_id <=> b.class_id; }
+        "class", comparators::classes <searcher::searcher_t>
     },
 });
 

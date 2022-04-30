@@ -6,6 +6,7 @@
 #include "date_to_str.h"
 #include "registrators.h"
 #include "base_compare_predict.h"
+#include "base_comparators.h"
 
 
 struct catapult_cmp
@@ -18,9 +19,7 @@ struct catapult_cmp
 registrator_cmp <catapult::catapult_t> catapult_cmp::sort
 ({
     {
-        "in_service", 
-        [] (catapult::catapult_t const & a, catapult::catapult_t const & b)
-            { return compare_null_last(a.in_service, b.in_service); }
+        "in_service", comparators::in_service <catapult::catapult_t>
     },
     {
         "acceleration", 
@@ -48,23 +47,17 @@ registrator_cmp <catapult::catapult_t> catapult_cmp::sort
             { return compare_null_last(a.catapult_en, b.catapult_en); }
     },
     {
-        "class", 
-        [] (catapult::catapult_t const & a, catapult::catapult_t const & b)
-            { return a.class_id <=> b.class_id; }
+        "class", comparators::classes <catapult::catapult_t>
     },
 });
 
 registrator_cmp <catapult::catapult_t> catapult_cmp::group
 ({
     {
-        "in_service", 
-        [] (catapult::catapult_t const & a, catapult::catapult_t const & b)
-            { return compare_date_10th(a.in_service, b.in_service); }
+        "in_service", comparators::in_service <catapult::catapult_t>
     },
     {
-        "class", 
-        [] (catapult::catapult_t const & a, catapult::catapult_t const & b)
-            { return a.class_id <=> b.class_id; }
+        "class", comparators::classes <catapult::catapult_t>
     },
 });
 
