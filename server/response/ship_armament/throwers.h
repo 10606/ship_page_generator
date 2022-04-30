@@ -17,7 +17,7 @@ struct ship_throwers
     {
         int group;
         bool compare;
-        std::string group_name;
+        std::string_view group_name;
         std::string data;
     };
 

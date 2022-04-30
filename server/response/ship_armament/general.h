@@ -15,7 +15,7 @@ struct ship_general
     {
         bool group;
         uint8_t compare;
-        std::string group_name;
+        std::string_view group_name;
         std::string data;
     };
 

@@ -17,7 +17,7 @@ struct ship_aircrafts
     {
         bool group;
         int compare;
-        std::string group_name;
+        std::string_view group_name;
         std::string data;
     };
 
