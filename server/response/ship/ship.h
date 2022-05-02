@@ -25,6 +25,14 @@ private:
     };
     
     friend struct add_event;
+    
+    friend void add_general_info
+    (
+        std::string & answer, 
+        std::string & modernization_link, 
+        ship_requests::ship_info_t::list const & info
+    );
+    
     static const constexpr html_template link = {"<a href=\"/ship/armament?ship=", "\">модернизации</a>"};
     static const constexpr std::string_view new_line = "<br>\n";
     static const constexpr std::string_view shift = "&emsp;";

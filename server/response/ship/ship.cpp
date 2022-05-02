@@ -106,6 +106,52 @@ private:
 };
 
 
+void add_general_info
+(
+    std::string & answer, 
+    std::string & modernization_link, 
+    ship_requests::ship_info_t::list const & info
+)
+{
+    if (info.ship_ru)
+        answer.append(*info.ship_ru)
+              .append(" ");
+    if (info.class_ru || info.type_ru)
+    {
+        answer.append("(");
+        if (info.class_ru)
+            answer.append(*info.class_ru)
+                  .append(" ");
+        if (info.type_ru)
+            answer.append("типа ")
+                  .append(*info.type_ru)
+                  .append(" ");
+        answer.append(")");
+    }
+    answer.append(ship::new_line);
+    
+    if (info.commissioned)
+    {
+        std::string commissioned_str = to_string(*info.commissioned);
+        answer.append(commissioned_str);
+        modernization_link.append("&date=")
+                          .append(std::move(commissioned_str));
+    }
+    answer.append(" -> ");
+    if (info.sunk_date)
+    {
+        answer.append(to_string(*info.sunk_date));
+        if (info.sunk_reason)
+        {
+            answer.append(" (")
+                  .append(*info.sunk_reason)
+                  .append(") ");
+        }
+    }
+    answer.append(ship::new_line);
+}
+
+
 ship::ship (ship_requests * _database) :
    database(_database)
 {
@@ -134,45 +180,15 @@ ship::ship (ship_requests * _database) :
     {
         int ship_id = ship_data.first;
         
-        std::string answer = "";
+        std::string answer;
         std::string modernization_link = std::string(link.begin);
         modernization_link.append(std::to_string(ship_id));
         
         // general info
-        std::unordered_map <int, list_t> :: iterator info = ship_info.find(ship_id);
-        if (info != ship_info.end())
         {
-            if (info->second.ship_ru)
-                answer.append(*info->second.ship_ru)
-                      .append(" ");
-            if (info->second.class_ru)
-                answer.append(*info->second.class_ru)
-                      .append(" ");
-            if (info->second.type_ru)
-                answer.append("типа ")
-                      .append(*info->second.type_ru)
-                      .append(" ");
-            answer.append(new_line);
-            
-            if (info->second.commissioned)
-            {
-                std::string commissioned_str = to_string(*info->second.commissioned);
-                answer.append(commissioned_str);
-                modernization_link.append("&date=")
-                                  .append(std::move(commissioned_str));
-            }
-            answer.append(" -> ");
-            if (info->second.sunk_date)
-            {
-                answer.append(to_string(*info->second.sunk_date));
-                if (info->second.sunk_reason)
-                {
-                    answer.append(" (")
-                          .append(*info->second.sunk_reason)
-                          .append(") ");
-                }
-            }
-            answer.append(new_line);
+            std::unordered_map <int, list_t> :: iterator info_it = ship_info.find(ship_id);
+            if (info_it != ship_info.end())
+                add_general_info(answer, modernization_link, info_it->second);
         }
 
         std::vector <size_t> const & index_mapping_value = index_mapping[ship_id];
