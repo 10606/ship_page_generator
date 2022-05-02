@@ -38,5 +38,18 @@ struct ship_requests::ship_event_t::event_lt
 };
 
 
+struct ship_requests::ship_event_t::event_lt_descr
+{
+    event_lt_descr (pqxx::row const & value);
+    
+    int ship_id;
+    int class_id;
+    std::optional <std::chrono::year_month_day> date_from;
+    std::optional <std::chrono::year_month_day> date_to;
+    std::optional <std::string> class_ru;
+    std::optional <std::string> description;
+};
+
+
 #endif
 

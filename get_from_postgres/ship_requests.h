@@ -252,6 +252,9 @@ struct ship_requests
         struct event_lt;
         std::vector <event_lt> get_event_lt (std::string_view where = "");
         
+        struct event_lt_descr;
+        std::vector <event_lt_descr> get_event_lt_descr (std::string_view where = "");
+        
         size_t count (std::string_view where);
         
         

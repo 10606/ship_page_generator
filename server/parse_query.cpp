@@ -37,7 +37,7 @@ std::pair <std::optional <uint32_t>, std::string_view::const_iterator> parse_num
         if (std::isdigit(c))
         {
             if (!answer)
-                *answer = 0;
+                answer = 0;
             *answer = *answer * 10 + c - '0';
         }
         else

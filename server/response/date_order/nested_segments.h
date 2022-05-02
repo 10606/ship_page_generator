@@ -8,6 +8,17 @@
 
 struct segment
 {
+    segment
+    (
+        std::optional <std::chrono::year_month_day> _begin,
+        std::optional <std::chrono::year_month_day> _end,
+        size_t _index
+    ) :
+        begin(std::move(_begin)),
+        end(std::move(_end)),
+        index(_index)
+    {}
+    
     std::optional <std::chrono::year_month_day> begin;
     std::optional <std::chrono::year_month_day> end;
     size_t index;
