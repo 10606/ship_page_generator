@@ -120,12 +120,12 @@ void add_general_info
     {
         answer.append("(");
         if (info.class_ru)
-            answer.append(*info.class_ru)
-                  .append(" ");
+            answer.append(*info.class_ru);
+        if (info.class_ru && info.type_ru)
+            answer.append(" ");
         if (info.type_ru)
             answer.append("типа ")
-                  .append(*info.type_ru)
-                  .append(" ");
+                  .append(*info.type_ru);
         answer.append(")");
     }
     answer.append(ship::new_line);
@@ -176,9 +176,9 @@ ship::ship (ship_requests * _database) :
     for (size_t i = 0; i != list.size(); ++i)
         ship_info.insert({list[i].ship_id, std::move(list[i])});
 
-    for (auto & ship_data : ship_to_segment)
+    for (auto & info : ship_info)
     {
-        int ship_id = ship_data.first;
+        int ship_id = info.first;
         
         std::string answer;
         std::string modernization_link = std::string(link.begin);
@@ -186,22 +186,21 @@ ship::ship (ship_requests * _database) :
         
         // general info
         {
-            std::unordered_map <int, list_t> :: iterator info_it = ship_info.find(ship_id);
-            if (info_it != ship_info.end())
-                add_general_info(answer, modernization_link, info_it->second);
+            add_general_info(answer, modernization_link, info.second);
         }
 
+        auto & ship_data = ship_to_segment[ship_id];
         std::vector <size_t> const & index_mapping_value = index_mapping[ship_id];
         
         // modernizations link
         {
-            add_modernizations(modernization_link, events, index_mapping_value, ship_data.second);
+            add_modernizations(modernization_link, events, index_mapping_value, ship_data);
             modernization_link.append(link.end);
         }
         
         // add events
         {
-            std::vector <std::vector <size_t> > nested = nested_segments(std::move(ship_data.second));
+            std::vector <std::vector <size_t> > nested = nested_segments(std::move(ship_data));
             add_event event_adder(answer, events, std::move(nested), index_mapping_value);
             event_adder();
         }

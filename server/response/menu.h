@@ -25,7 +25,8 @@ struct menu_item_template
     std::string_view close_type = "</div>";
     std::string_view close_class = "</div>";
 
-    item new_ship = {"", "<br>"};
+    item new_ship = {"", "</a><br>"};
+    item new_link = {"<a href=\"/ship?id=", "\">"};
     
 private:
     static const item all_template;

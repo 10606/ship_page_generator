@@ -25,7 +25,7 @@ include_directories(
     server/
     server/response
     server/response/ship_armament
-    server/response/date_order
+    server/response/ship/date_order
     server/response/armament
     server/response/aircraft
     server/response/ship
@@ -58,7 +58,7 @@ add_executable(ship_server
     server/response/ship_names.cpp
     server/response/menu.cpp
     server/response/ship/ship.cpp
-    server/response/date_order/nested_segments.cpp
+    server/response/ship/date_order/nested_segments.cpp
     get_from_postgres/parse_response.cpp
     get_from_postgres/ship_armament.cpp
     get_from_postgres/ship_armament_lt.cpp
@@ -71,7 +71,7 @@ add_executable(ship_server
 add_executable(tests
     test/main.cpp
     test/dekart_tree.cpp
-    server/response/date_order/nested_segments.cpp
+    server/response/ship/date_order/nested_segments.cpp
     test/nested_segments.cpp
 )
 

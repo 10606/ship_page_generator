@@ -231,6 +231,9 @@ std::string menu::response_impl ()
                         cur_type.min_date = ship.commissioned;
                 
                 cur_type.type_descr.append(menu_item.new_ship.begin)
+                                   .append(menu_item.new_link.begin)
+                                   .append(std::to_string(ship.ship_id))
+                                   .append(menu_item.new_link.end)
                                    .append(ship.ship_ru.value_or(" --- "))
                                    .append(menu_item.new_ship.end);
             }
