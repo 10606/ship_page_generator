@@ -47,7 +47,7 @@ registrator_cmp <torpedo::torpedo_t> torpedo_cmp::group
         "caliber", comparators::caliber <torpedo::torpedo_t>
     },
     {
-        "in_service", comparators::in_service <torpedo::torpedo_t>
+        "in_service", comparators::in_service_10th <torpedo::torpedo_t>
     },
 });
 

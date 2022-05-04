@@ -45,7 +45,7 @@ registrator_cmp <guns::guns_t> guns_cmp::group
         "caliber", comparators::caliber <guns::guns_t>
     },
     {
-        "in_service", comparators::in_service <guns::guns_t>
+        "in_service", comparators::in_service_10th <guns::guns_t>
     },
     {
         "class", comparators::in_service <guns::guns_t>

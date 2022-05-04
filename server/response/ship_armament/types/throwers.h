@@ -34,6 +34,8 @@ private:
     
     ship_requests * database;
     std::string new_line;
+    
+    std::string group_name;
 };
 
 

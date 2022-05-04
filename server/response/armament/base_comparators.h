@@ -14,6 +14,12 @@ std::partial_ordering in_service (T const & a, T const & b)
 }
 
 template <typename T>
+std::partial_ordering in_service_10th (T const & a, T const & b)
+{
+    return compare_date_10th(a.in_service, b.in_service);
+}
+
+template <typename T>
 std::partial_ordering classes (T const & a, T const & b)
 {
     return a.class_id <=> b.class_id;

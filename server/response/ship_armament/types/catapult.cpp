@@ -7,11 +7,13 @@
 #include "ship_armament.h"
 #include "date_to_str.h"
 #include "ship_armament_utils.h"
+#include "armament_links.h"
 
 
 ship_catapult::ship_catapult (ship_requests * _database, std::string_view _new_line) :
     database(_database),
-    new_line(_new_line)
+    new_line(_new_line),
+    group_name(armament_links::base("/armament/catapult?group=class&sort=in_service", "катапульта"))
 {
     std::vector <ship_catapults_t> catapult_list =
         database->ship_armament_lt.get_catapult("");
@@ -65,7 +67,7 @@ std::vector <ship_catapult::response_t> ship_catapult::response (int id, std::ch
             response_t item = (catapults_it != catapults.end())? catapults_it->second : response_t();
             item.data = std::to_string(catapult.count) + " " + item.data;
             answer.push_back(item);
-            answer.back().group_name = "катапульта";
+            answer.back().group_name = group_name;
         }
     }
     

@@ -5,11 +5,13 @@
 #include "ship_armament_lt.h"
 #include "date_to_str.h"
 #include "ship_armament_utils.h"
+#include "armament_links.h"
 
 
 ship_torpedo_tubes::ship_torpedo_tubes (ship_requests * _database, std::string_view _new_line) :
     database(_database),
-    new_line(_new_line)
+    new_line(_new_line),
+    group_name(armament_links::base("/armament/torpedo?group=caliber&sort=in_service", "торпедный аппарат"))
 {
     std::vector <ship_tubes_t> tube_list =
         database->ship_armament_lt.get_torpedo_tubes("");
@@ -74,7 +76,7 @@ std::vector <ship_torpedo_tubes::response_t> ship_torpedo_tubes::response (int i
             response_t item = (torpedo_it != torpedo_tubes.end())? torpedo_it->second : response_t();
             item.data = std::to_string(tube.mount_count) + item.data;
             answer.push_back(item);
-            answer.back().group_name = "торпедный аппарат";
+            answer.back().group_name = group_name;
         }
     }
     

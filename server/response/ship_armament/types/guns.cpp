@@ -8,6 +8,7 @@
 #include "ship_armament_lt.h"
 #include "date_to_str.h"
 #include "ship_armament_utils.h"
+#include "armament_links.h"
 
 
 ship_guns::ship_guns (ship_requests * _database, std::string_view _new_line) :
@@ -95,7 +96,7 @@ ship_guns::response_t ship_guns::partial_response (T const & mount)
 {
     response_t item;
     item.group = mount.class_id;
-    item.group_name = mount.class_ru.value_or("");
+    item.group_name = armament_links::filtered("/armament/guns?sort=caliber,in_service", mount.class_ru.value_or(""), mount.class_id);
     if (mount.caliber)
         item.compare = -std::floor((std::log(*mount.caliber + 1.) + 0.5) / 0.3);
     else

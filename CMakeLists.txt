@@ -25,8 +25,10 @@ include_directories(
     server/
     server/response
     server/response/ship_armament
+    server/response/ship_armament/types
     server/response/ship/date_order
     server/response/armament
+    server/response/armament/types
     server/response/aircraft
     server/response/ship
     get_from_postgres
@@ -40,20 +42,20 @@ add_executable(ship_server
     server/validate_path.cpp
     server/mongoose.c
     server/response/ship_armament/response_ship_armament.cpp
-    server/response/ship_armament/general.cpp
-    server/response/ship_armament/guns.cpp
-    server/response/ship_armament/torpedo.cpp
-    server/response/ship_armament/throwers.cpp
-    server/response/ship_armament/searchers.cpp
-    server/response/ship_armament/catapult.cpp
-    server/response/ship_armament/aircraft.cpp
+    server/response/ship_armament/types/general.cpp
+    server/response/ship_armament/types/guns.cpp
+    server/response/ship_armament/types/torpedo.cpp
+    server/response/ship_armament/types/throwers.cpp
+    server/response/ship_armament/types/searchers.cpp
+    server/response/ship_armament/types/catapult.cpp
+    server/response/ship_armament/types/aircraft.cpp
     server/response/armament/parse_query.cpp
-    server/response/armament/response_torpedo.cpp
-    server/response/armament/response_guns.cpp
-    server/response/armament/response_torpedo_tubes.cpp
-    server/response/armament/response_mines_charges.cpp
-    server/response/armament/response_catapult.cpp
-    server/response/armament/response_searchers.cpp
+    server/response/armament/types/response_torpedo.cpp
+    server/response/armament/types/response_guns.cpp
+    server/response/armament/types/response_torpedo_tubes.cpp
+    server/response/armament/types/response_mines_charges.cpp
+    server/response/armament/types/response_catapult.cpp
+    server/response/armament/types/response_searchers.cpp
     server/response/aircraft/response_aircraft.cpp
     server/response/ship_names.cpp
     server/response/menu.cpp

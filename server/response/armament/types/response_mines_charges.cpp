@@ -44,7 +44,7 @@ registrator_cmp <mines_charges::mines_charges_t> mines_charges_cmp::sort
 registrator_cmp <mines_charges::mines_charges_t> mines_charges_cmp::group
 ({
     {
-        "in_service", comparators::in_service <mines_charges::mines_charges_t>
+        "in_service", comparators::in_service_10th <mines_charges::mines_charges_t>
     },
     {
         "class", comparators::classes <mines_charges::mines_charges_t>

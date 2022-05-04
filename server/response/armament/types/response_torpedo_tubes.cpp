@@ -45,7 +45,7 @@ registrator_cmp <torpedo_tubes::torpedo_tubes_t> torpedo_tubes_cmp::group
         "caliber", comparators::caliber <torpedo_tubes::torpedo_tubes_t>
     },
     {
-        "in_service", comparators::in_service <torpedo_tubes::torpedo_tubes_t>
+        "in_service", comparators::in_service_10th <torpedo_tubes::torpedo_tubes_t>
     },
     {
         "class", comparators::classes <torpedo_tubes::torpedo_tubes_t>

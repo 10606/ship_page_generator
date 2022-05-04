@@ -7,11 +7,14 @@
 #include "ship_armament.h"
 #include "date_to_str.h"
 #include "ship_armament_utils.h"
+#include "armament_links.h"
 
 
 ship_throwers::ship_throwers (ship_requests * _database, std::string_view _new_line) :
     database(_database),
-    new_line(_new_line)
+    new_line(_new_line),
+    group_name("противолодочное вооружение")
+    //group_name(armament_links::base("/armament/throwers?group=class&sort=in_service", "противолодочное вооружение"))
 {
     std::vector <ship_throwers_t> thrower_list =
         database->ship_armament_lt.get_throwers("");
@@ -76,7 +79,7 @@ std::vector <ship_throwers::response_t> ship_throwers::response (int id, std::ch
             response_t item = (thrower_it != throwers.end())? thrower_it->second : response_t();
             item.data = std::to_string(thrower.mount_count) + item.data;
             answer.push_back(item);
-            answer.back().group_name = "противолодочное вооружение";
+            answer.back().group_name = group_name;
         }
     }
     

@@ -54,7 +54,7 @@ registrator_cmp <catapult::catapult_t> catapult_cmp::sort
 registrator_cmp <catapult::catapult_t> catapult_cmp::group
 ({
     {
-        "in_service", comparators::in_service <catapult::catapult_t>
+        "in_service", comparators::in_service_10th <catapult::catapult_t>
     },
     {
         "class", comparators::classes <catapult::catapult_t>

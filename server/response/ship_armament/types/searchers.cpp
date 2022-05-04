@@ -7,6 +7,7 @@
 #include "ship_armament.h"
 #include "date_to_str.h"
 #include "ship_armament_utils.h"
+#include "armament_links.h"
 
 
 ship_searchers::ship_searchers (ship_requests * _database, std::string_view _new_line) :
@@ -75,7 +76,7 @@ ship_searchers::response_t ship_searchers::partial_response (searcher_t const & 
 {
     response_t item;
     item.group = searcher.class_id;
-    item.group_name = searcher.class_ru.value_or("");
+    item.group_name = armament_links::filtered("/armament/searcher?sort=in_service", searcher.class_ru.value_or(""), searcher.class_id);
     item.compare = 0;
     
     item.data += searcher.searcher_ru.value_or("  ");

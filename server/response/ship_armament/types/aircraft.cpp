@@ -8,11 +8,13 @@
 #include "date_to_str.h"
 #include "ship_armament_utils.h"
 #include "aircraft_info.h"
+#include "armament_links.h"
 
 
 ship_aircrafts::ship_aircrafts (ship_requests * _database, std::string_view _new_line) :
     database(_database),
-    new_line(_new_line)
+    new_line(_new_line),
+    group_name(armament_links::base("/aircraft?group=class&sort=in_service", "авиагруппа"))
 {
     std::vector <ship_aircrafts_t> aircraft_list =
         database->ship_armament_lt.get_aircraft("");
@@ -66,7 +68,7 @@ std::vector <ship_aircrafts::response_t> ship_aircrafts::response (int id, std::
             response_t item = (air_it != aircrafts.end())? air_it->second : response_t();
             item.data = std::to_string(aircraft.count) + " " + item.data;
             answer.push_back(item);
-            answer.back().group_name = "авиагруппа";
+            answer.back().group_name = group_name;
         }
     }
     
@@ -80,11 +82,17 @@ ship_aircrafts::response_t ship_aircrafts::partial_response (aircraft_t const & 
     item.group = 0;
     
     if (aircraft.aircraft_en)
-        item.data += aircraft.aircraft_en.value_or("  ");
+        item.data += *aircraft.aircraft_en;
     if (aircraft.aircraft_en && aircraft.aircraft_ru) 
         item.data += new_line;
     if (aircraft.aircraft_ru)
-        item.data += "&emsp;" + aircraft.aircraft_ru.value_or("  ");
+        item.data += "&emsp;" + 
+                    armament_links::filtered
+                    (
+                        "/aircraft?group=type&sort=in_service", 
+                        aircraft.aircraft_ru.value_or("  "), 
+                        aircraft.class_id
+                    );
 
     return item;
 }

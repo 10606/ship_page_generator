@@ -33,7 +33,7 @@ private:
         ship_requests::ship_info_t::list const & info
     );
     
-    static const constexpr html_template link = {"<a href=\"/ship/armament?ship=", "\">модернизации</a>"};
+    static const constexpr html_template link = {"<a href=\"/ship/armament?ship=", "\">вооружение</a>"};
     static const constexpr std::string_view new_line = "<br>\n";
     static const constexpr std::string_view shift = "&emsp;";
 };

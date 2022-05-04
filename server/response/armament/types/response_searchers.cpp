@@ -49,7 +49,7 @@ registrator_cmp <searcher::searcher_t> searcher_cmp::sort
 registrator_cmp <searcher::searcher_t> searcher_cmp::group
 ({
     {
-        "in_service", comparators::in_service <searcher::searcher_t>
+        "in_service", comparators::in_service_10th <searcher::searcher_t>
     },
     {
         "class", comparators::classes <searcher::searcher_t>
