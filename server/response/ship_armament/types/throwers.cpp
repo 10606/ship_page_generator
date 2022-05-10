@@ -13,8 +13,7 @@
 ship_throwers::ship_throwers (ship_requests * _database, std::string_view _new_line) :
     database(_database),
     new_line(_new_line),
-    group_name("противолодочное вооружение")
-    //group_name(armament_links::base("/armament/throwers?group=class&sort=in_service", "противолодочное вооружение"))
+    group_name(armament_links::base("/armament/mines_charges?filter=class,4&sort=mass_ex", "противолодочное вооружение"))
 {
     std::vector <ship_throwers_t> thrower_list =
         database->ship_armament_lt.get_throwers("");

@@ -89,7 +89,7 @@ ship_aircrafts::response_t ship_aircrafts::partial_response (aircraft_t const & 
         item.data += "&emsp;" + 
                     armament_links::filtered
                     (
-                        "/aircraft?group=type&sort=in_service", 
+                        "/aircraft?group=in_service&sort=type", 
                         aircraft.aircraft_ru.value_or("  "), 
                         aircraft.class_id
                     );

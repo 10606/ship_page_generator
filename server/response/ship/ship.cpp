@@ -152,8 +152,9 @@ void add_general_info
 }
 
 
-ship::ship (ship_requests * _database) :
-   database(_database)
+ship::ship (ship_requests * _database, ship_armament & _armament) :
+    database(_database),
+    armament(_armament)
 {
     std::vector <ship_requests::ship_event_t::event_lt_descr> events = 
         database->ship_event.get_event_lt_descr();
@@ -180,13 +181,13 @@ ship::ship (ship_requests * _database) :
     {
         int ship_id = info.first;
         
-        std::string answer;
-        std::string modernization_link = std::string(link.begin);
-        modernization_link.append(std::to_string(ship_id));
+        response_t answer;
+        answer.armament_link = std::string(query_template);
+        answer.armament_link.append(std::to_string(ship_id));
         
         // general info
         {
-            add_general_info(answer, modernization_link, info.second);
+            add_general_info(answer.begin, answer.armament_link, info.second);
         }
 
         auto & ship_data = ship_to_segment[ship_id];
@@ -194,20 +195,21 @@ ship::ship (ship_requests * _database) :
         
         // modernizations link
         {
-            add_modernizations(modernization_link, events, index_mapping_value, ship_data);
-            modernization_link.append(link.end);
+            add_modernizations(answer.armament_link, events, index_mapping_value, ship_data);
         }
         
         // add events
         {
             std::vector <std::vector <size_t> > nested = nested_segments(std::move(ship_data));
-            add_event event_adder(answer, events, std::move(nested), index_mapping_value);
+            add_event event_adder(answer.begin, events, std::move(nested), index_mapping_value);
             event_adder();
         }
         
-        answer.append(std::move(modernization_link));
-        answer.append(new_line)
-              .append(new_line);
+        answer.begin.append(link.begin)
+                    .append(answer.armament_link)
+                    .append(link.end);
+        answer.end.append(new_line)
+                  .append(new_line);
         modernizations.insert({ship_id, std::move(answer)});
     }
 }
@@ -219,10 +221,12 @@ void ship::response (std::string & answer, std::string_view query)
     
     for (int id : ids)
     {
-        std::unordered_map <int, std::string> :: iterator it = modernizations.find(id);
+        std::unordered_map <int, response_t> :: iterator it = modernizations.find(id);
         if (it == modernizations.end())
             continue;
-        answer.append(it->second);
+        answer.append(it->second.begin);
+        armament.response(answer, it->second.armament_link);
+        answer.append(it->second.end);
     }
 }
 

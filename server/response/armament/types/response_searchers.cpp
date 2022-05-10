@@ -85,8 +85,6 @@ void searcher::response (std::string & answer, std::string_view query)
         
         for (searcher_t const & item : list)
             answer.append(table::new_column)
-                  .append(item.class_ru.value_or(" "))
-                  .append(table::new_line)
                   .append(item.searcher_ru.value_or(" "));
         answer.append(table::new_row);
         

@@ -16,13 +16,16 @@ struct responser
         ship_list(database),
         resp()
     {}
-
+    
     struct resp_base
     {
         virtual void response (std::string &, std::string_view) = 0;
         virtual ~resp_base () = default;
     };
     
+    template <typename T>
+    T & get (std::string_view uri);
+
     template <typename T>
     struct resp_impl : resp_base
     {
@@ -35,12 +38,16 @@ struct responser
         {
             value.response(answer, query);
         }
-        
+
         virtual ~resp_impl () = default;
     
+        template <typename U>
+        friend U & responser::get (std::string_view uri);
+        
     private:
         T value;
     };
+
     
     template <typename T, typename ... U>
     void reg (std::string name, U && ... args)
@@ -78,6 +85,17 @@ private:
     menu ship_list;
     std::unordered_map <std::string, std::unique_ptr <resp_base> > resp;
 };
+
+template <typename T>
+T & responser::get (std::string_view uri)
+{
+    std::unordered_map <std::string, std::unique_ptr <resp_base> > :: iterator it =
+        resp.find(std::string(uri));
+    if (it == resp.end())
+        throw std::runtime_error("can't find responser");
+    resp_impl <T> & value_impl = dynamic_cast <resp_impl <T> &> (*it->second);
+    return value_impl.value;
+}
 
 
 #endif

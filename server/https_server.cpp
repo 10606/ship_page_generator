@@ -68,7 +68,7 @@ struct https_server
         resp.reg <catapult>         ("/armament/catapult",      &database);
         resp.reg <searcher>         ("/armament/searcher",      &database);
         resp.reg <aircraft>         ("/aircraft",               &database);
-        resp.reg <ship>             ("/ship",                   &database);
+        resp.reg <ship>             ("/ship",                   &database, resp.get <ship_armament> ("/ship/armament"));
     }
 
     static const char * s_ssl_cert;

@@ -2,12 +2,13 @@
 #define SHIP_H
 
 #include "ship_event.h"
+#include "response_ship_armament.h"
 #include <map>
 
 
 struct ship
 {
-    ship (ship_requests * _database);
+    ship (ship_requests * _database, ship_armament & _armament);
     
     typedef ship_requests::aircraft_info_t::list aircraft_t;
  
@@ -16,7 +17,16 @@ struct ship
     
 private:
     ship_requests * database;
-    std::unordered_map <int, std::string> modernizations;
+    ship_armament & armament;
+    
+    struct response_t
+    {
+        std::string begin;
+        std::string armament_link;
+        std::string end;
+    };
+    
+    std::unordered_map <int, response_t> modernizations;
     
     struct html_template
     {
@@ -33,7 +43,8 @@ private:
         ship_requests::ship_info_t::list const & info
     );
     
-    static const constexpr html_template link = {"<a href=\"/ship/armament?ship=", "\">вооружение</a>"};
+    static const constexpr std::string_view query_template = "ship=";
+    static const constexpr html_template link = {"<a href=\"/ship/armament?", "\">вооружение</a>"};
     static const constexpr std::string_view new_line = "<br>\n";
     static const constexpr std::string_view shift = "&emsp;";
 };
