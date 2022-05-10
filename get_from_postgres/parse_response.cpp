@@ -14,8 +14,18 @@ std::chrono::year_month_day get_date (std::string const & value)
 
 std::string to_string (std::chrono::year_month_day const & value)
 {
-    return std::to_string(static_cast <unsigned> (value.day())) + "." +
-           std::to_string(static_cast <unsigned> (value.month())) + "." +
-           std::to_string(static_cast <int> (value.year()));
+    uint8_t day   = static_cast <unsigned> (value.day()) % 100;
+    uint8_t month = static_cast <unsigned> (value.month()) % 100;
+    std::string answer
+    {
+        static_cast <char> ('0' + day / 10),
+        static_cast <char> ('0' + day % 10),
+        '.',
+        static_cast <char> ('0' + month / 10),
+        static_cast <char> ('0' + month % 10),
+        '.'
+    };
+    answer.append( std::to_string(static_cast <int> (value.year())));
+    return answer;
 }
 
