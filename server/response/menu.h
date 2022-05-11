@@ -19,15 +19,15 @@ struct menu_item_template
     item new_class = {"<button type = \"button\" class = \"collapsible\">\n", 
                       "</button><br><div class = \"content\">\n"};
     
+    item new_type_link = {"<button type = \"button\" class = \"collapsible\">\n&nbsp;&nbsp;&nbsp;<a href=\"/ship?id=", 
+                          "\">"};
     item new_type = {"", 
                      "</a></button><br><div class = \"content\">\n"};
-    item new_type_link = {"<button type = \"button\" class = \"collapsible\">\n&emsp;<a href=\"/ship?id=", 
-                          "\">\n"};
     
     std::string_view close_type = "</div>";
     std::string_view close_class = "</div>";
 
-    item new_ship = {"", "</a><br>"};
+    item new_ship = {"&nbsp;&nbsp;", "</a><br>"};
     item new_ship_link = {"<a href=\"/ship?id=", "\">"};
     
 private:

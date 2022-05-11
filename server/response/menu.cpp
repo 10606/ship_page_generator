@@ -22,6 +22,10 @@ menu_item_template::item const menu_item_template::all_template =
               font-size: 15px; \n\
             } \n\
             \n\
+            .collapsible a { \n\
+              color: #ffffff; \n\
+            } \n\
+            \n\
             .active, .collapsible:hover { \n\
               background-color: #555555; \n\
             } \n\
