@@ -60,11 +60,15 @@ struct cur_type_t
     {
         id.reset();
         type_descr.clear();
+        link.clear();
+        ships_in_type.clear();
         min_date.reset();
     }
 
     std::optional <int> id;
     std::string type_descr;
+    std::string link;
+    std::string ships_in_type;
     std::optional <std::chrono::year_month_day> min_date;
 };
 
@@ -125,7 +129,9 @@ struct inserter_t
         
         answer.append(it_class->second.class_descr);
         for (auto const & cur_type : it_class->second.types)
-            answer.append(cur_type.type_descr);
+            answer.append(cur_type.link)
+                  .append(cur_type.type_descr)
+                  .append(cur_type.ships_in_type);
         
         std::map <int, std::vector <int> > :: const_iterator it_graph = classes_graph.find(class_id);
         
@@ -178,9 +184,16 @@ std::string menu::response_impl ()
         
         cur_class.close_class = menu_item.close_class;
         
-        auto add_type = [close_type = menu_item.close_type, &cur_class, &cur_type] () -> void
+        auto add_type = 
+        [
+            close_type = menu_item.close_type, 
+            new_type_link = menu_item.new_type_link,
+            &cur_class, 
+            &cur_type
+        ] () -> void
         {
-            cur_type.type_descr.append(close_type);
+            cur_type.link.append(new_type_link.end);
+            cur_type.ships_in_type.append(close_type);
             cur_class.types.push_back(std::move(cur_type));
             cur_type.reset();
         };
@@ -218,7 +231,7 @@ std::string menu::response_impl ()
                 if (i + 1 != ships.size() && 
                     ships[i].type_id != ships[i + 1].type_id &&
                     ship.ship_ru &&
-                    (!ship.type_ru || *ship.ship_ru != *ship.type_ru))
+                    (!ship.type_ru || *ship.ship_ru != *ship.type_ru)) // one ship in type with another name
                     cur_type.type_descr.append(" (").append(*ship.ship_ru).append(")");
                 
                 cur_type.type_descr.append(menu_item.new_type.end);
@@ -230,12 +243,18 @@ std::string menu::response_impl ()
                     if (!cur_type.min_date || *cur_type.min_date < *ship.commissioned)
                         cur_type.min_date = ship.commissioned;
                 
-                cur_type.type_descr.append(menu_item.new_ship.begin)
-                                   .append(menu_item.new_link.begin)
-                                   .append(std::to_string(ship.ship_id))
-                                   .append(menu_item.new_link.end)
-                                   .append(ship.ship_ru.value_or(" --- "))
-                                   .append(menu_item.new_ship.end);
+                cur_type.ships_in_type.append(menu_item.new_ship.begin)
+                                      .append(menu_item.new_ship_link.begin)
+                                      .append(std::to_string(ship.ship_id))
+                                      .append(menu_item.new_ship_link.end)
+                                      .append(ship.ship_ru.value_or(" --- "))
+                                      .append(menu_item.new_ship.end);
+                
+                if (cur_type.link.empty())
+                    cur_type.link.append(menu_item.new_type_link.begin);
+                else
+                    cur_type.link.append("&id=");
+                cur_type.link.append(std::to_string(ship.ship_id));
             }
         }
         
