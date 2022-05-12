@@ -69,9 +69,11 @@ struct responser
                    </style>\n";
         answer += "<div class = \"wrapper\"> \n\
                    <style> \n\
-                        .menu { display: inline; } \n\
-                        .menu { width:   220px;  } \n\
-                        .main { display: inline; } \n\
+                        .menu { display:    inline; } \n\
+                        .menu { min-width:  150pt;  } \n\
+                        .menu { width:      150pt;  } \n\
+                        .menu { max-width:  150pt;  } \n\
+                        .main { display:    inline; } \n\
                    </style>\n";
         ship_list.response(answer);
         answer.append("<div class = \"main\">\n");

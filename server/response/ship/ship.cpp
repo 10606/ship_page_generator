@@ -66,6 +66,9 @@ struct add_event
         if (events[index].date_to)
             answer.append(to_string(*events[index].date_to));
         answer.append(" ");
+        if (events[index].class_ru)
+            answer.append(*events[index].class_ru)
+                  .append(": ");
         if (events[index].description)
             answer.append(*events[index].description);
         answer.append(ship::new_line);
