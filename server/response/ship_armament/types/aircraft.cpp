@@ -64,9 +64,9 @@ std::vector <ship_aircrafts::response_t> ship_aircrafts::response (int id, std::
     {
         if (between(aircraft.date_from, date, aircraft.date_to))
         {
-            std::unordered_map <int, response_t> :: const_iterator air_it = aircrafts.find(aircraft.aircraft_id);
+            std::unordered_map <int, p_response_t> :: const_iterator air_it = aircrafts.find(aircraft.aircraft_id);
             response_t item = (air_it != aircrafts.end())? air_it->second : response_t();
-            item.data = std::to_string(aircraft.count) + " " + item.data;
+            item.data_begin = std::to_string(aircraft.count) + " ";
             answer.push_back(item);
             answer.back().group_name = group_name;
         }
@@ -75,9 +75,9 @@ std::vector <ship_aircrafts::response_t> ship_aircrafts::response (int id, std::
     return answer;
 }
 
-ship_aircrafts::response_t ship_aircrafts::partial_response (aircraft_t const & aircraft)
+ship_aircrafts::p_response_t ship_aircrafts::partial_response (aircraft_t const & aircraft)
 {
-    response_t item;
+    p_response_t item;
     item.compare = aircraft.class_id;
     item.group = 0;
     

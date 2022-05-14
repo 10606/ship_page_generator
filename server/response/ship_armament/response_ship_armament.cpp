@@ -135,7 +135,8 @@ ships_responser <responser> ::response
                 
                 if (j != positions[i]) // not first line
                     answer.append(table.column.new_line);
-                answer.append(std::move(values[i][j].data));
+                answer.append(std::move(values[i][j].data_begin))
+                      .append(std::move(values[i][j].data_end));
                 
                 // update position if we at end
                 if (++j == values[i].size())

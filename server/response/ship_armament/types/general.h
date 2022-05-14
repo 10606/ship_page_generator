@@ -11,7 +11,7 @@ struct ship_general
 {
     ship_general (ship_requests * _database, std::string_view _new_line);
 
-    struct response_t
+    struct p_response_t
     {
         bool group;
         uint8_t compare;
@@ -19,12 +19,31 @@ struct ship_general
         std::string data;
     };
 
+    struct response_t
+    {
+        response_t () = default;
+    
+        response_t (p_response_t const & value) :
+            group(value.group),
+            compare(value.compare),
+            group_name(value.group_name),
+            data_begin(),
+            data_end(value.data)
+        {}
+    
+        bool group;
+        uint8_t compare;
+        std::string_view group_name;
+        std::string_view data_begin;
+        std::string_view data_end;
+    };
+
     std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
 
 private:
     struct response_with_time_label
     {
-        std::vector <response_t> answer;
+        std::vector <p_response_t> answer;
         std::optional <std::chrono::year_month_day> date_from;
         std::optional <std::chrono::year_month_day> date_to;
     };

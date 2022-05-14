@@ -30,9 +30,10 @@ std::vector <ship_general::response_t> ship_general::response (int id, std::chro
     {
         if (between(response_with_time.date_from, date, response_with_time.date_to))
         {
-            std::vector <response_t> answer = response_with_time.answer;
-            for (response_t & item : answer)
-                item.group_name = "характеристики";
+            std::vector <response_t> answer;
+            answer.reserve(response_with_time.answer.size());
+            for (p_response_t const & item : response_with_time.answer)
+                answer.push_back(item);
             return answer;
         }
     }
@@ -43,13 +44,14 @@ std::vector <ship_general::response_t> ship_general::response (int id, std::chro
 
 ship_general::response_with_time_label ship_general::partial_response (general_t const & general)
 {
-    std::vector <response_t> answer;
+    std::vector <p_response_t> answer;
     answer.reserve(5);
 
     {
-        response_t item;
+        p_response_t item;
         item.group = 0;
         item.compare = 0;
+        item.group_name = "характеристики";
         
         if (general.displacement_standart)
             item.data += to_string_10(*general.displacement_standart) + "т";
@@ -61,7 +63,7 @@ ship_general::response_with_time_label ship_general::partial_response (general_t
     }
     
     {
-        response_t item;
+        p_response_t item;
         item.group = 0;
         item.group_name = "характеристики";
         item.compare = 1;
@@ -78,7 +80,7 @@ ship_general::response_with_time_label ship_general::partial_response (general_t
     }
     
     {
-        response_t item;
+        p_response_t item;
         item.group = 0;
         item.group_name = "характеристики";
         item.compare = 2;
@@ -89,7 +91,7 @@ ship_general::response_with_time_label ship_general::partial_response (general_t
     }
     
     {
-        response_t item;
+        p_response_t item;
         item.group = 0;
         item.group_name = "характеристики";
         item.compare = 3;
@@ -100,7 +102,7 @@ ship_general::response_with_time_label ship_general::partial_response (general_t
     }
     
     {
-        response_t item;
+        p_response_t item;
         item.group = 0;
         item.group_name = "характеристики";
         item.compare = 4;

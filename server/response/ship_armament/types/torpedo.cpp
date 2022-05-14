@@ -72,9 +72,9 @@ std::vector <ship_torpedo_tubes::response_t> ship_torpedo_tubes::response (int i
     {
         if (between(tube.date_from, date, tube.date_to))
         {
-            std::unordered_map <int, response_t> :: const_iterator torpedo_it = torpedo_tubes.find(tube.tube_id);
+            std::unordered_map <int, p_response_t> :: const_iterator torpedo_it = torpedo_tubes.find(tube.tube_id);
             response_t item = (torpedo_it != torpedo_tubes.end())? torpedo_it->second : response_t();
-            item.data = std::to_string(tube.mount_count) + item.data;
+            item.data_begin = std::to_string(tube.mount_count);
             answer.push_back(item);
             answer.back().group_name = group_name;
         }
@@ -83,9 +83,9 @@ std::vector <ship_torpedo_tubes::response_t> ship_torpedo_tubes::response (int i
     return answer;
 }
 
-ship_torpedo_tubes::response_t ship_torpedo_tubes::partial_response (tube_t const & tube)
+ship_torpedo_tubes::p_response_t ship_torpedo_tubes::partial_response (tube_t const & tube)
 {
-    response_t item;
+    p_response_t item;
     item.group = 0;
     item.compare = tube.class_id;;
     

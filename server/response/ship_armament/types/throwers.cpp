@@ -74,9 +74,9 @@ std::vector <ship_throwers::response_t> ship_throwers::response (int id, std::ch
     {
         if (between(thrower.date_from, date, thrower.date_to))
         {
-            std::unordered_map <int, response_t> :: const_iterator thrower_it = throwers.find(thrower.throwers_id);
+            std::unordered_map <int, p_response_t> :: const_iterator thrower_it = throwers.find(thrower.throwers_id);
             response_t item = (thrower_it != throwers.end())? thrower_it->second : response_t();
-            item.data = std::to_string(thrower.mount_count) + item.data;
+            item.data_begin = std::to_string(thrower.mount_count);
             answer.push_back(item);
             answer.back().group_name = group_name;
         }
@@ -85,9 +85,9 @@ std::vector <ship_throwers::response_t> ship_throwers::response (int id, std::ch
     return answer;
 }
 
-ship_throwers::response_t ship_throwers::partial_response (throwers_t const & thrower)
+ship_throwers::p_response_t ship_throwers::partial_response (throwers_t const & thrower)
 {
-    response_t item;
+    p_response_t item;
     item.group = 0;
     item.compare = 0;
     

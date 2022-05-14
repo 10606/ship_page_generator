@@ -80,9 +80,9 @@ std::vector <ship_guns::response_t> ship_guns::response (int id, std::chrono::ye
     {
         if (between(value.date_from, date, value.date_to))
         {
-            std::unordered_map <int, response_t> :: const_iterator mounts_it = mounts.find(value.mount_id);
+            std::unordered_map <int, p_response_t> :: const_iterator mounts_it = mounts.find(value.mount_id);
             response_t item = (mounts_it != mounts.end())? mounts_it->second : response_t();
-            item.data = std::to_string(value.mount_count) + item.data;
+            item.data_begin = std::to_string(value.mount_count);
             answer.push_back(item);
         }
     }
@@ -92,9 +92,9 @@ std::vector <ship_guns::response_t> ship_guns::response (int id, std::chrono::ye
 
 
 template <typename T>
-ship_guns::response_t ship_guns::partial_response (T const & mount)
+ship_guns::p_response_t ship_guns::partial_response (T const & mount)
 {
-    response_t item;
+    p_response_t item;
     item.group = mount.class_id;
     item.group_name = armament_links::filtered("/armament/guns?sort=caliber,in_service", mount.class_ru.value_or(""), mount.class_id);
     if (mount.caliber)

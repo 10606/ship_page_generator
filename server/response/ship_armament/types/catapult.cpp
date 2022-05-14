@@ -63,9 +63,9 @@ std::vector <ship_catapult::response_t> ship_catapult::response (int id, std::ch
     {
         if (between(catapult.date_from, date, catapult.date_to))
         {
-            std::unordered_map <int, response_t> :: const_iterator catapults_it = catapults.find(catapult.catapult_id);
+            std::unordered_map <int, p_response_t> :: const_iterator catapults_it = catapults.find(catapult.catapult_id);
             response_t item = (catapults_it != catapults.end())? catapults_it->second : response_t();
-            item.data = std::to_string(catapult.count) + " " + item.data;
+            item.data_begin = std::to_string(catapult.count) + " ";
             answer.push_back(item);
             answer.back().group_name = group_name;
         }
@@ -74,13 +74,17 @@ std::vector <ship_catapult::response_t> ship_catapult::response (int id, std::ch
     return answer;
 }
 
-ship_catapult::response_t ship_catapult::partial_response (catapult_t const & catapult)
+ship_catapult::p_response_t ship_catapult::partial_response (catapult_t const & catapult)
 {
-    response_t item;
+    p_response_t item;
     item.group = 0;
     item.compare = catapult.class_id;;
     
     item.data += catapult.catapult_ru.value_or("  ");
+    if (catapult.class_ru)
+        item.data.append("<br>&emsp;(")
+                 .append(*catapult.class_ru)
+                 .append(")");
     return item;
 }
     

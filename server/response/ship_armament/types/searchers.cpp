@@ -62,9 +62,9 @@ std::vector <ship_searchers::response_t> ship_searchers::response (int id, std::
     {
         if (between(searcher.date_from, date, searcher.date_to))
         {
-            std::unordered_map <int, response_t> :: const_iterator searcher_it = searchers.find(searcher.searcher_id);
+            std::unordered_map <int, p_response_t> :: const_iterator searcher_it = searchers.find(searcher.searcher_id);
             response_t item = (searcher_it != searchers.end())? searcher_it->second : response_t();
-            item.data = std::to_string(searcher.count) + " " + item.data;
+            item.data_begin = std::to_string(searcher.count) + " ";
             answer.push_back(item);
         }
     }
@@ -72,9 +72,9 @@ std::vector <ship_searchers::response_t> ship_searchers::response (int id, std::
     return answer;
 }
 
-ship_searchers::response_t ship_searchers::partial_response (searcher_t const & searcher)
+ship_searchers::p_response_t ship_searchers::partial_response (searcher_t const & searcher)
 {
-    response_t item;
+    p_response_t item;
     item.group = searcher.class_id;
     item.group_name = armament_links::filtered("/armament/searcher?sort=in_service", searcher.class_ru.value_or(""), searcher.class_id);
     item.compare = 0;

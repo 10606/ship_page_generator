@@ -13,12 +13,31 @@ struct ship_catapult
 {
     ship_catapult (ship_requests * _database, std::string_view _new_line);
 
-    struct response_t
+    struct p_response_t
     {
         bool group;
         int compare;
         std::string_view group_name;
         std::string data;
+    };
+
+    struct response_t
+    {
+        response_t () = default;
+    
+        response_t (p_response_t const & value) :
+            group(value.group),
+            compare(value.compare),
+            group_name(value.group_name),
+            data_begin(),
+            data_end(value.data)
+        {}
+    
+        bool group;
+        int compare;
+        std::string_view group_name;
+        std::string data_begin;
+        std::string_view data_end;
     };
 
     std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
@@ -28,9 +47,9 @@ private:
     typedef ship_requests::armament_info_t::catapult catapult_t;
     
     std::unordered_map <int, std::vector <ship_catapults_t> > ship_catapults_list;
-    std::unordered_map <int, response_t> catapults;
+    std::unordered_map <int, p_response_t> catapults;
     
-    response_t partial_response (catapult_t const & catapult);
+    p_response_t partial_response (catapult_t const & catapult);
     
     ship_requests * database;
     std::string new_line;

@@ -176,12 +176,12 @@ private:
         "<style type = \"text/css\"> \
             TR.header    { background: #fff8dc; } \
             TR.general   { background: #f8ffdc; } \
-            TR.guns      { background: #f8ffff; } \
-            TR.torpedo   { background: #fff8dc; } \
+            TR.guns      { background: #cdffcc; } \
+            TR.torpedo   { background: #ffd2c7; } \
             TR.throwers  { background: #f8ffdc; } \
             TR.searchers { background: #f8ffff; } \
             TR.catapult  { background: #fff8dc; } \
-            TR.aircraft  { background: #f8ffdc; } \
+            TR.aircraft  { background: #dbffff; } \
         </style>";
 };
 
