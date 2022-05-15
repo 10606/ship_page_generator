@@ -66,7 +66,8 @@ std::vector <ship_aircrafts::response_t> ship_aircrafts::response (int id, std::
         {
             std::unordered_map <int, p_response_t> :: const_iterator air_it = aircrafts.find(aircraft.aircraft_id);
             response_t item = (air_it != aircrafts.end())? air_it->second : response_t();
-            item.data_begin = std::to_string(aircraft.count) + " ";
+            add_value(item.data_begin, aircraft.count);
+            item.data_begin += " ";
             answer.push_back(item);
             answer.back().group_name = group_name;
         }

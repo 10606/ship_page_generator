@@ -82,7 +82,7 @@ std::vector <ship_guns::response_t> ship_guns::response (int id, std::chrono::ye
         {
             std::unordered_map <int, p_response_t> :: const_iterator mounts_it = mounts.find(value.mount_id);
             response_t item = (mounts_it != mounts.end())? mounts_it->second : response_t();
-            item.data_begin = std::to_string(value.mount_count);
+            add_value(item.data_begin, value.mount_count);
             answer.push_back(item);
         }
     }
@@ -102,7 +102,9 @@ ship_guns::p_response_t ship_guns::partial_response (T const & mount)
     else
         item.compare = 0;
     
-    item.data += "x" + std::to_string(mount.gun_count) + " ";
+    item.data += "x";
+    add_value(item.data, mount.gun_count);
+    item.data += " ";
     if (mount.caliber)
         item.data.append(to_string_10(*mount.caliber) + "мм");
     if (mount.length)

@@ -86,7 +86,10 @@ ship_general::response_with_time_label ship_general::partial_response (general_t
         item.compare = 2;
         
         if (general.crew)
-            item.data += std::to_string(*general.crew) + "чел";
+        {
+            add_value(item.data, *general.crew);
+            item.data += "чел";
+        }
         answer.push_back(item);
     }
     

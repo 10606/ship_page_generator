@@ -65,7 +65,8 @@ std::vector <ship_catapult::response_t> ship_catapult::response (int id, std::ch
         {
             std::unordered_map <int, p_response_t> :: const_iterator catapults_it = catapults.find(catapult.catapult_id);
             response_t item = (catapults_it != catapults.end())? catapults_it->second : response_t();
-            item.data_begin = std::to_string(catapult.count) + " ";
+            add_value(item.data_begin, catapult.count);
+            item.data_begin += " ";
             answer.push_back(item);
             answer.back().group_name = group_name;
         }

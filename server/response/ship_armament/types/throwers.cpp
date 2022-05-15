@@ -76,7 +76,7 @@ std::vector <ship_throwers::response_t> ship_throwers::response (int id, std::ch
         {
             std::unordered_map <int, p_response_t> :: const_iterator thrower_it = throwers.find(thrower.throwers_id);
             response_t item = (thrower_it != throwers.end())? thrower_it->second : response_t();
-            item.data_begin = std::to_string(thrower.mount_count);
+            add_value(item.data_begin, thrower.mount_count);
             answer.push_back(item);
             answer.back().group_name = group_name;
         }
@@ -91,7 +91,10 @@ ship_throwers::p_response_t ship_throwers::partial_response (throwers_t const & 
     item.group = 0;
     item.compare = 0;
     
-    item.data += "x" + (thrower.tubes_count? std::to_string(*thrower.tubes_count) : "") + " ";
+    item.data += "x";
+    if (thrower.tubes_count)
+        add_value(item.data, *thrower.tubes_count);
+    item.data += " ";
     item.data += (thrower.caliber? (to_string_10(*thrower.caliber) + "мм  ") : "  ");
     item.data += (thrower.class_ru? *thrower.class_ru + "  ": "");
     item.data += thrower.thrower_ru.value_or("  ");

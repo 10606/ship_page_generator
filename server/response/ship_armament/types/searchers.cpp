@@ -64,7 +64,8 @@ std::vector <ship_searchers::response_t> ship_searchers::response (int id, std::
         {
             std::unordered_map <int, p_response_t> :: const_iterator searcher_it = searchers.find(searcher.searcher_id);
             response_t item = (searcher_it != searchers.end())? searcher_it->second : response_t();
-            item.data_begin = std::to_string(searcher.count) + " ";
+            add_value(item.data_begin, searcher.count);
+            item.data_begin += " ";
             answer.push_back(item);
         }
     }
