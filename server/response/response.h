@@ -70,9 +70,9 @@ struct responser
         answer += "<div class = \"wrapper\"> \n\
                    <style> \n\
                         .menu { display:    inline; } \n\
-                        .menu { min-width:  150pt;  } \n\
-                        .menu { width:      150pt;  } \n\
-                        .menu { max-width:  150pt;  } \n\
+                        .menu { min-width:  170pt;  } \n\
+                        .menu { width:      170pt;  } \n\
+                        .menu { max-width:  170pt;  } \n\
                         .main { display:    inline; } \n\
                    </style>\n";
         ship_list.response(answer);

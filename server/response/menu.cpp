@@ -238,6 +238,10 @@ std::string menu::response_impl ()
                     (!ship.type_ru || *ship.ship_ru != *ship.type_ru)) // one ship in type with another name
                     cur_type.type_descr.append(" (").append(*ship.ship_ru).append(")");
                 
+                if (ship.commissioned)
+                    cur_type.type_descr.append(" ")
+                                       .append(std::to_string(static_cast <int> (ship.commissioned->year())));
+                
                 cur_type.type_descr.append(menu_item.new_type.end);
             }
             
