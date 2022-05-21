@@ -46,8 +46,23 @@ private:
     typedef ship_requests::ship_armament_lt_t::throwers ship_throwers_t;
     typedef ship_requests::armament_info_t::throwers throwers_t;
     
-    std::unordered_map <int, std::vector <ship_throwers_t> > ship_throwers_list;
-    std::unordered_map <int, p_response_t> throwers;
+    struct ship_throwers_lt
+    {
+        ship_throwers_lt (size_t _thrower_id, ship_throwers_t const & value) :
+            thrower_id(_thrower_id),
+            mount_count(value.mount_count),
+            date_from  (value.date_from),
+            date_to    (value.date_to)
+        {}
+        
+        size_t thrower_id;
+        uint32_t mount_count;
+        std::optional <std::chrono::year_month_day> date_from;
+        std::optional <std::chrono::year_month_day> date_to;
+    };
+    
+    std::unordered_map <int, std::vector <ship_throwers_lt> > ship_throwers_list;
+    std::vector <p_response_t> throwers;
     
     p_response_t partial_response (throwers_t const & thrower);
     

@@ -15,30 +15,33 @@ ship_throwers::ship_throwers (ship_requests * _database, std::string_view _new_l
     new_line(_new_line),
     group_name(armament_links::base("/armament/mines_charges?filter=class,4&sort=mass_ex", "противолодочное вооружение"))
 {
+    std::vector <throwers_t> throwers_full =
+        database->armament_info.get_throwers();
+    std::unordered_map <int, size_t> throwers_index;
+    for (throwers_t & thrower : throwers_full)
+    {
+        int thrower_id = thrower.id;
+        throwers_index.insert({thrower_id, throwers.size()});
+        throwers.push_back(partial_response(thrower));
+    }
+    
     std::vector <ship_throwers_t> thrower_list =
         database->ship_armament_lt.get_throwers("");
-
     for (ship_throwers_t & thrower : thrower_list)
-        ship_throwers_list[thrower.ship_id].push_back(std::move(thrower));
+    {
+        std::unordered_map <int, size_t> ::iterator it = throwers_index.find(thrower.throwers_id);
+        if (it != throwers_index.end())
+            ship_throwers_list[thrower.ship_id].emplace_back(it->second, thrower);
+    }
 
     // sorting
     {
-        std::vector <throwers_t> mounts_list =
-            database->armament_info.get_throwers();
-        std::unordered_map <int, throwers_t> throwers_full;
-        for (throwers_t & thrower : mounts_list)
-        {
-            int thrower_id = thrower.id;
-            throwers.insert({thrower_id, partial_response(thrower)});
-            throwers_full.insert({thrower_id, std::move(thrower)});
-        }
-        
         auto torpedo_order = 
-            [&throwers_full] (ship_throwers_t const & a, ship_throwers_t const & b) -> bool
+            [&throwers_full] (ship_throwers_lt const & a, ship_throwers_lt const & b) -> bool
             {
                 // class_id, -caliber, tube_count, thrower_id
-                throwers_t const & a_info = throwers_full.at(a.throwers_id);
-                throwers_t const & b_info = throwers_full.at(b.throwers_id);
+                throwers_t const & a_info = throwers_full[a.thrower_id];
+                throwers_t const & b_info = throwers_full[b.thrower_id];
                 
                 std::strong_ordering class_cmp = a_info.class_id <=> b_info.class_id;
                 if (class_cmp != std::strong_ordering::equal)
@@ -55,7 +58,7 @@ ship_throwers::ship_throwers (ship_requests * _database, std::string_view _new_l
                 if (cnt_cmp != std::strong_ordering::equal)
                     return std::is_lt(cnt_cmp);
                     
-                return a.throwers_id < b.throwers_id;
+                return a_info.id < b_info.id;
             };
         
         for (auto & item : ship_throwers_list)
@@ -67,15 +70,14 @@ std::vector <ship_throwers::response_t> ship_throwers::response (int id, std::ch
 {
     std::vector <response_t> answer;
 
-    std::unordered_map <int, std::vector <ship_throwers_t> > :: const_iterator it = ship_throwers_list.find(id);
+    std::unordered_map <int, std::vector <ship_throwers_lt> > :: const_iterator it = ship_throwers_list.find(id);
     if (it == ship_throwers_list.end())
         return answer;
-    for (ship_throwers_t const & thrower : it->second)
+    for (ship_throwers_lt const & thrower : it->second)
     {
         if (between(thrower.date_from, date, thrower.date_to))
         {
-            std::unordered_map <int, p_response_t> :: const_iterator thrower_it = throwers.find(thrower.throwers_id);
-            response_t item = (thrower_it != throwers.end())? thrower_it->second : response_t();
+            response_t item = throwers[thrower.thrower_id];
             add_value(item.data_begin, thrower.mount_count);
             answer.push_back(item);
             answer.back().group_name = group_name;

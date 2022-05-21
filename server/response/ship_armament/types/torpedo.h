@@ -46,8 +46,23 @@ private:
     typedef ship_requests::ship_armament_lt_t::torpedo_tubes ship_tubes_t;
     typedef ship_requests::armament_info_t::torpedo_tubes tube_t;
     
-    std::unordered_map <int, std::vector <ship_tubes_t> > ship_tubes_list;
-    std::unordered_map <int, p_response_t> torpedo_tubes;
+    struct ship_tubes_lt
+    {
+        ship_tubes_lt (size_t _tube_id, ship_tubes_t const & value) :
+            tube_id(_tube_id),
+            mount_count(value.mount_count),
+            date_from  (value.date_from),
+            date_to    (value.date_to)
+        {}
+        
+        size_t tube_id;
+        uint32_t mount_count;
+        std::optional <std::chrono::year_month_day> date_from;
+        std::optional <std::chrono::year_month_day> date_to;
+    };
+    
+    std::unordered_map <int, std::vector <ship_tubes_lt> > ship_tubes_list;
+    std::vector <p_response_t> torpedo_tubes;
     
     p_response_t partial_response (tube_t const & tube);
     

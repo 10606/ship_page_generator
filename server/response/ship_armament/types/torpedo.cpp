@@ -13,30 +13,33 @@ ship_torpedo_tubes::ship_torpedo_tubes (ship_requests * _database, std::string_v
     new_line(_new_line),
     group_name(armament_links::base("/armament/torpedo?group=caliber&sort=in_service", "торпедный аппарат"))
 {
+    std::vector <tube_t> torpedo_tubes_full =
+        database->armament_info.get_torpedo_tubes();
+    std::unordered_map <int, size_t> torpedo_tubes_index;
+    for (tube_t & tube : torpedo_tubes_full)
+    {
+        int tube_id = tube.id;
+        torpedo_tubes_index.insert({tube_id, torpedo_tubes.size()});
+        torpedo_tubes.push_back(partial_response(tube));
+    }
+    
     std::vector <ship_tubes_t> tube_list =
         database->ship_armament_lt.get_torpedo_tubes("");
-
     for (ship_tubes_t & tube : tube_list)
-        ship_tubes_list[tube.ship_id].push_back(std::move(tube));
+    {
+        std::unordered_map <int, size_t> ::iterator it = torpedo_tubes_index.find(tube.tube_id);
+        if (it != torpedo_tubes_index.end())
+            ship_tubes_list[tube.ship_id].emplace_back(it->second, tube);
+    }
 
     // sorting
     {
-        std::vector <tube_t> mounts_list =
-            database->armament_info.get_torpedo_tubes();
-        std::unordered_map <int, tube_t> torpedo_tubes_full;
-        for (tube_t & tube : mounts_list)
-        {
-            int tube_id = tube.id;
-            torpedo_tubes.insert({tube_id, partial_response(tube)});
-            torpedo_tubes_full.insert({tube_id, std::move(tube)});
-        }
-        
         auto torpedo_order = 
-            [&torpedo_tubes_full] (ship_tubes_t const & a, ship_tubes_t const & b) -> bool
+            [&torpedo_tubes_full] (ship_tubes_lt const & a, ship_tubes_lt const & b) -> bool
             {
                 // class_id, -caliber, tube_count, tube_id
-                tube_t const & a_info = torpedo_tubes_full.at(a.tube_id);
-                tube_t const & b_info = torpedo_tubes_full.at(b.tube_id);
+                tube_t const & a_info = torpedo_tubes_full[a.tube_id];
+                tube_t const & b_info = torpedo_tubes_full[b.tube_id];
                 
                 std::strong_ordering class_cmp = a_info.class_id <=> b_info.class_id;
                 if (class_cmp != std::strong_ordering::equal)
@@ -53,7 +56,7 @@ ship_torpedo_tubes::ship_torpedo_tubes (ship_requests * _database, std::string_v
                 if (cnt_cmp != std::strong_ordering::equal)
                     return std::is_lt(cnt_cmp);
                     
-                return a.tube_id < b.tube_id;
+                return a_info.id < b_info.id;
             };
         
         for (auto & item : ship_tubes_list)
@@ -65,15 +68,14 @@ std::vector <ship_torpedo_tubes::response_t> ship_torpedo_tubes::response (int i
 {
     std::vector <response_t> answer;
 
-    std::unordered_map <int, std::vector <ship_tubes_t> > :: const_iterator it = ship_tubes_list.find(id);
+    std::unordered_map <int, std::vector <ship_tubes_lt> > :: const_iterator it = ship_tubes_list.find(id);
     if (it == ship_tubes_list.end())
         return answer;
-    for (ship_tubes_t const & tube : it->second)
+    for (ship_tubes_lt const & tube : it->second)
     {
         if (between(tube.date_from, date, tube.date_to))
         {
-            std::unordered_map <int, p_response_t> :: const_iterator torpedo_it = torpedo_tubes.find(tube.tube_id);
-            response_t item = (torpedo_it != torpedo_tubes.end())? torpedo_it->second : response_t();
+            response_t item = torpedo_tubes[tube.tube_id];
             add_value(item.data_begin, tube.mount_count);
             answer.push_back(item);
             answer.back().group_name = group_name;

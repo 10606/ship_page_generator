@@ -46,8 +46,23 @@ private:
     typedef ship_requests::ship_armament_lt_t::searchers ship_searchers_t;
     typedef ship_requests::armament_info_t::searchers searcher_t;
     
-    std::unordered_map <int, std::vector <ship_searchers_t> > ship_searchers_list;
-    std::unordered_map <int, p_response_t> searchers;
+    struct ship_searchers_lt
+    {
+        ship_searchers_lt (size_t _searcher_id, ship_searchers_t const & value) :
+            searcher_id(_searcher_id),
+            count    (value.count),
+            date_from(value.date_from),
+            date_to  (value.date_to)
+        {}
+    
+        size_t searcher_id;
+        uint32_t count;
+        std::optional <std::chrono::year_month_day> date_from;
+        std::optional <std::chrono::year_month_day> date_to;
+    };
+    
+    std::unordered_map <int, std::vector <ship_searchers_lt> > ship_searchers_list;
+    std::vector <p_response_t> searchers;
     
     p_response_t partial_response (searcher_t const & searcher);
     

@@ -50,9 +50,9 @@ private:
     {
         ship_guns_lt (size_t _mount_id, ship_guns_t const & value) :
             mount_id(_mount_id),
-            mount_count (value.mount_count),
-            date_from   (value.date_from),
-            date_to     (value.date_to)
+            mount_count(value.mount_count),
+            date_from  (value.date_from),
+            date_to    (value.date_to)
         {}
         
         size_t mount_id;

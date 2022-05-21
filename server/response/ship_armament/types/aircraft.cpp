@@ -16,36 +16,39 @@ ship_aircrafts::ship_aircrafts (ship_requests * _database, std::string_view _new
     new_line(_new_line),
     group_name(armament_links::base("/aircraft?group=class&sort=in_service", "авиагруппа"))
 {
+    std::vector <aircraft_t> aircrafts_full =
+        database->aircraft_info.get_list("");
+    std::unordered_map <int, size_t> aircrafts_index;
+    for (aircraft_t & aircraft : aircrafts_full)
+    {
+        int aircraft_id = aircraft.id;
+        aircrafts_index.insert({aircraft_id, aircrafts.size()});
+        aircrafts.push_back(partial_response(aircraft));
+    }
+    
     std::vector <ship_aircrafts_t> aircraft_list =
         database->ship_armament_lt.get_aircraft("");
-
     for (ship_aircrafts_t & aircraft : aircraft_list)
-        ship_aircrafts_list[aircraft.ship_id].push_back(std::move(aircraft));
+    {
+        std::unordered_map <int, size_t> ::iterator it = aircrafts_index.find(aircraft.aircraft_id);
+        if (it != aircrafts_index.end())
+            ship_aircrafts_list[aircraft.ship_id].emplace_back(it->second, aircraft);
+    }
 
     // sorting
     {
-        std::vector <aircraft_t> mounts_list =
-            database->aircraft_info.get_list("");
-        std::unordered_map <int, aircraft_t> aircrafts_full;
-        for (aircraft_t & aircraft : mounts_list)
-        {
-            int aircraft_id = aircraft.id;
-            aircrafts.insert({aircraft_id, partial_response(aircraft)});
-            aircrafts_full.insert({aircraft_id, std::move(aircraft)});
-        }
-        
         auto torpedo_order = 
-            [&aircrafts_full] (ship_aircrafts_t const & a, ship_aircrafts_t const & b) -> bool
+            [&aircrafts_full] (ship_aircrafts_lt const & a, ship_aircrafts_lt const & b) -> bool
             {
                 // class_id, aircraft_id
-                aircraft_t const & a_info = aircrafts_full.at(a.aircraft_id);
-                aircraft_t const & b_info = aircrafts_full.at(b.aircraft_id);
+                aircraft_t const & a_info = aircrafts_full[a.aircraft_id];
+                aircraft_t const & b_info = aircrafts_full[b.aircraft_id];
                 
                 std::strong_ordering class_cmp = a_info.class_id <=> b_info.class_id;
                 if (class_cmp != std::strong_ordering::equal)
                     return std::is_lt(class_cmp);
                     
-                return a.aircraft_id < b.aircraft_id;
+                return a_info.id < b_info.id;
             };
         
         for (auto & item : ship_aircrafts_list)
@@ -57,17 +60,15 @@ std::vector <ship_aircrafts::response_t> ship_aircrafts::response (int id, std::
 {
     std::vector <response_t> answer;
 
-    std::unordered_map <int, std::vector <ship_aircrafts_t> > :: const_iterator it = ship_aircrafts_list.find(id);
+    std::unordered_map <int, std::vector <ship_aircrafts_lt> > :: const_iterator it = ship_aircrafts_list.find(id);
     if (it == ship_aircrafts_list.end())
         return answer;
-    for (ship_aircrafts_t const & aircraft : it->second)
+    for (ship_aircrafts_lt const & aircraft : it->second)
     {
         if (between(aircraft.date_from, date, aircraft.date_to))
         {
-            std::unordered_map <int, p_response_t> :: const_iterator air_it = aircrafts.find(aircraft.aircraft_id);
-            response_t item = (air_it != aircrafts.end())? air_it->second : response_t();
+            response_t item = aircrafts[aircraft.aircraft_id];
             add_value(item.data_begin, aircraft.count);
-            item.data_begin += " ";
             answer.push_back(item);
             answer.back().group_name = group_name;
         }
@@ -82,6 +83,7 @@ ship_aircrafts::p_response_t ship_aircrafts::partial_response (aircraft_t const 
     item.compare = aircraft.class_id;
     item.group = 0;
     
+    item.data += " ";
     if (aircraft.aircraft_en)
         item.data += *aircraft.aircraft_en;
     if (aircraft.aircraft_en && aircraft.aircraft_ru) 

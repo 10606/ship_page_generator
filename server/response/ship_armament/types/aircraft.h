@@ -46,8 +46,23 @@ private:
     typedef ship_requests::ship_armament_lt_t::aircraft ship_aircrafts_t;
     typedef ship_requests::aircraft_info_t::list aircraft_t;
     
-    std::unordered_map <int, std::vector <ship_aircrafts_t> > ship_aircrafts_list;
-    std::unordered_map <int, p_response_t> aircrafts;
+    struct ship_aircrafts_lt
+    {
+        ship_aircrafts_lt (size_t _aircraft_id, ship_aircrafts_t const & value) :
+            aircraft_id(_aircraft_id),
+            count    (value.count),
+            date_from(value.date_from),
+            date_to  (value.date_to)
+        {}
+        
+        size_t aircraft_id;
+        uint32_t count;
+        std::optional <std::chrono::year_month_day> date_from;
+        std::optional <std::chrono::year_month_day> date_to;
+    };
+    
+    std::unordered_map <int, std::vector <ship_aircrafts_lt> > ship_aircrafts_list;
+    std::vector <p_response_t> aircrafts;
     
     p_response_t partial_response (aircraft_t const & aircraft);
     

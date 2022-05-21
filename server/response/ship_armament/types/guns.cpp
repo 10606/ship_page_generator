@@ -16,16 +16,14 @@ ship_guns::ship_guns (ship_requests * _database, std::string_view _new_line) :
     database(_database),
     new_line(_new_line)
 {
-    std::vector <mount_t> mounts_list =
+    std::vector <mount_t> mounts_full =
         database->armament_info.get_mount();
-    std::vector <mount_t> mounts_full;
     std::unordered_map <int, size_t> mounts_index;
-    for (mount_t & mount : mounts_list)
+    for (mount_t & mount : mounts_full)
     {
         int mount_id = mount.id;
         mounts_index.insert({mount_id, mounts.size()});
         mounts.push_back(partial_response(mount));
-        mounts_full.push_back(std::move(mount));
     }
 
     std::vector <ship_guns_t> guns_list =
@@ -65,7 +63,7 @@ ship_guns::ship_guns (ship_requests * _database, std::string_view _new_line) :
                 if (cnt_cmp != std::strong_ordering::equal)
                     return std::is_gt(cnt_cmp);
                     
-                return a.mount_id < b.mount_id;
+                return a_info.id < b_info.id;
             };
         
         for (auto & item : ship_guns_list)

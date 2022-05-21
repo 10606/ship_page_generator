@@ -15,36 +15,39 @@ ship_catapult::ship_catapult (ship_requests * _database, std::string_view _new_l
     new_line(_new_line),
     group_name(armament_links::base("/armament/catapult?group=class&sort=in_service", "катапульта"))
 {
+    std::vector <catapult_t> catapults_full =
+        database->armament_info.get_catapult();
+    std::unordered_map <int, size_t> catapults_index;
+    for (catapult_t & catapult : catapults_full)
+    {
+        int catapult_id = catapult.id;
+        catapults_index.insert({catapult_id, catapults.size()});
+        catapults.push_back(partial_response(catapult));
+    }
+    
     std::vector <ship_catapults_t> catapult_list =
         database->ship_armament_lt.get_catapult("");
-
     for (ship_catapults_t & catapult : catapult_list)
-        ship_catapults_list[catapult.ship_id].push_back(std::move(catapult));
+    {
+        std::unordered_map <int, size_t> ::iterator it = catapults_index.find(catapult.catapult_id);
+        if (it != catapults_index.end())
+            ship_catapults_list[catapult.ship_id].emplace_back(it->second, catapult);
+    }
 
     // sorting
     {
-        std::vector <catapult_t> mounts_list =
-            database->armament_info.get_catapult();
-        std::unordered_map <int, catapult_t> catapults_full;
-        for (catapult_t & catapult : mounts_list)
-        {
-            int catapult_id = catapult.id;
-            catapults.insert({catapult_id, partial_response(catapult)});
-            catapults_full.insert({catapult_id, std::move(catapult)});
-        }
-        
         auto torpedo_order = 
-            [&catapults_full] (ship_catapults_t const & a, ship_catapults_t const & b) -> bool
+            [&catapults_full] (ship_catapults_lt const & a, ship_catapults_lt const & b) -> bool
             {
                 // class_id, catapult_id
-                catapult_t const & a_info = catapults_full.at(a.catapult_id);
-                catapult_t const & b_info = catapults_full.at(b.catapult_id);
+                catapult_t const & a_info = catapults_full[a.catapult_id];
+                catapult_t const & b_info = catapults_full[b.catapult_id];
                 
                 std::strong_ordering class_cmp = a_info.class_id <=> b_info.class_id;
                 if (class_cmp != std::strong_ordering::equal)
                     return std::is_lt(class_cmp);
                     
-                return a.catapult_id < b.catapult_id;
+                return a_info.id < b_info.id;
             };
         
         for (auto & item : ship_catapults_list)
@@ -56,17 +59,15 @@ std::vector <ship_catapult::response_t> ship_catapult::response (int id, std::ch
 {
     std::vector <response_t> answer;
 
-    std::unordered_map <int, std::vector <ship_catapults_t> > :: const_iterator it = ship_catapults_list.find(id);
+    std::unordered_map <int, std::vector <ship_catapults_lt> > :: const_iterator it = ship_catapults_list.find(id);
     if (it == ship_catapults_list.end())
         return answer;
-    for (ship_catapults_t const & catapult : it->second)
+    for (ship_catapults_lt const & catapult : it->second)
     {
         if (between(catapult.date_from, date, catapult.date_to))
         {
-            std::unordered_map <int, p_response_t> :: const_iterator catapults_it = catapults.find(catapult.catapult_id);
-            response_t item = (catapults_it != catapults.end())? catapults_it->second : response_t();
+            response_t item = catapults[catapult.catapult_id];
             add_value(item.data_begin, catapult.count);
-            item.data_begin += " ";
             answer.push_back(item);
             answer.back().group_name = group_name;
         }
@@ -81,6 +82,7 @@ ship_catapult::p_response_t ship_catapult::partial_response (catapult_t const & 
     item.group = 0;
     item.compare = catapult.class_id;;
     
+    item.data += " ";
     item.data += catapult.catapult_ru.value_or("  ");
     if (catapult.class_ru)
         item.data.append("<br>&emsp;(")
