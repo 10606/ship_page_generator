@@ -51,13 +51,13 @@ struct aircraft
         std::optional <std::string> aircraft_ru;
         std::optional <std::string> aircraft_en;
     
-        std::optional <double> mass;             /* kg */
-        std::optional <double> engine_power;     /* hp */
-        std::optional <double> max_speed;        /* km/h */
-        std::optional <double> range;            /* km */
-        std::optional <double> range_with_tank;  /* km */
-        std::optional <double> ceiling;          /* km */
-        std::optional <double> time_to_altitude; /* 1000m in ... minutes */
+        double mass;             /* kg */
+        double engine_power;     /* hp */
+        double max_speed;        /* km/h */
+        double range;            /* km */
+        double range_with_tank;  /* km */
+        double ceiling;          /* km */
+        double time_to_altitude; /* 1000m in ... minutes */
         std::optional <std::chrono::year_month_day> in_service;
     };
     

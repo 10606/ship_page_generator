@@ -25,32 +25,32 @@ registrator_cmp <aircraft::aircraft_partial> aircraft_cmp::sort
     {
         "mass", 
         [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
-            { return compare_null_last(a.mass, b.mass); }
+            { return a.mass <=> b.mass; }
     },
     {
         "engine_power", 
         [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
-            { return compare_null_last(a.engine_power, b.engine_power); }
+            { return a.engine_power <=> b.engine_power; }
     },
     {
         "max_speed", 
         [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
-            { return compare_null_last(a.max_speed, b.max_speed); }
+            { return a.max_speed <=> b.max_speed; }
     },
     {
         "range", 
         [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
-            { return compare_null_last(a.range, b.range); }
+            { return a.range <=> b.range; }
     },
     {
         "ceiling", 
         [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
-            { return compare_null_last(a.ceiling, b.ceiling); }
+            { return a.ceiling <=> b.ceiling; }
     },
     {
         "time_alt", 
         [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
-            { return compare_null_last(a.time_to_altitude, b.time_to_altitude); }
+            { return a.time_to_altitude <=> b.time_to_altitude; }
     },
     {
         "name_ru", 
@@ -220,13 +220,13 @@ aircraft::aircraft_partial::aircraft_partial (aircraft_t const & value, size_t _
     class_id    (value.class_id),
     aircraft_ru (value.aircraft_ru),
     aircraft_en (value.aircraft_en),
-    mass        (value.mass),
-    engine_power(value.engine_power),
-    max_speed   (value.max_speed),
-    range       (value.range),
-    range_with_tank (value.range_with_tank),
-    ceiling         (value.ceiling),
-    time_to_altitude(value.time_to_altitude),
+    mass        (value.mass         .value_or(std::numeric_limits <double> ::infinity())),
+    engine_power(value.engine_power .value_or(std::numeric_limits <double> ::infinity())),
+    max_speed   (value.max_speed    .value_or(std::numeric_limits <double> ::infinity())),
+    range       (value.range        .value_or(std::numeric_limits <double> ::infinity())),
+    range_with_tank (value.range_with_tank  .value_or(std::numeric_limits <double> ::infinity())),
+    ceiling         (value.ceiling          .value_or(std::numeric_limits <double> ::infinity())),
+    time_to_altitude(value.time_to_altitude .value_or(std::numeric_limits <double> ::infinity())),
     in_service      (value.in_service)
 {}
 

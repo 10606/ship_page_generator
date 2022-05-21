@@ -46,8 +46,23 @@ private:
     typedef ship_requests::ship_armament_lt_t::guns ship_guns_t;
     typedef ship_requests::armament_info_t::mount mount_t;
     
-    std::unordered_map <int, std::vector <ship_guns_t> > ship_guns_list;
-    std::unordered_map <int, p_response_t> mounts;
+    struct ship_guns_lt
+    {
+        ship_guns_lt (size_t _mount_id, ship_guns_t const & value) :
+            mount_id(_mount_id),
+            mount_count (value.mount_count),
+            date_from   (value.date_from),
+            date_to     (value.date_to)
+        {}
+        
+        size_t mount_id;
+        uint32_t mount_count;
+        std::optional <std::chrono::year_month_day> date_from;
+        std::optional <std::chrono::year_month_day> date_to;
+    };
+    
+    std::unordered_map <int, std::vector <ship_guns_lt> > ship_guns_list;
+    std::vector <p_response_t> mounts;
 
     template <typename T>
     p_response_t partial_response (T const & mount);

@@ -1959,9 +1959,12 @@ size_t mg_iobuf_add(struct mg_iobuf *io, size_t ofs, const void *buf,
     mg_iobuf_resize(io, new_size);      // Attempt to realloc
     if (new_size != io->size) len = 0;  // Realloc failure, append nothing
   }
-  if (ofs < io->len) memmove(io->buf + ofs + len, io->buf + ofs, io->len - ofs);
-  if (buf != NULL) memmove(io->buf + ofs, buf, len);
-  if (ofs > io->len) io->len += ofs - io->len;
+  if (ofs < io->len)
+    memmove(io->buf + ofs + len, io->buf + ofs, io->len - ofs);
+  if (buf != NULL)
+    memcpy(io->buf + ofs, buf, len);
+  if (ofs > io->len)
+    io->len += ofs - io->len;
   io->len += len;
   return len;
 }

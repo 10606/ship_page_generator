@@ -16,30 +16,35 @@ ship_guns::ship_guns (ship_requests * _database, std::string_view _new_line) :
     database(_database),
     new_line(_new_line)
 {
+    std::vector <mount_t> mounts_list =
+        database->armament_info.get_mount();
+    std::vector <mount_t> mounts_full;
+    std::unordered_map <int, size_t> mounts_index;
+    for (mount_t & mount : mounts_list)
+    {
+        int mount_id = mount.id;
+        mounts_index.insert({mount_id, mounts.size()});
+        mounts.push_back(partial_response(mount));
+        mounts_full.push_back(std::move(mount));
+    }
+
     std::vector <ship_guns_t> guns_list =
         database->ship_armament_lt.get_guns("");
-
     for (ship_guns_t & gun : guns_list)
-        ship_guns_list[gun.ship_id].push_back(std::move(gun));
+    {
+        std::unordered_map <int, size_t> ::iterator it = mounts_index.find(gun.mount_id);
+        if (it != mounts_index.end())
+            ship_guns_list[gun.ship_id].emplace_back(it->second, gun);
+    }
 
     // sorting
     {
-        std::vector <mount_t> mounts_list =
-            database->armament_info.get_mount();
-        std::unordered_map <int, mount_t> mounts_full;
-        for (mount_t & mount : mounts_list)
-        {
-            int mount_id = mount.id;
-            mounts.insert({mount_id, partial_response(mount)});
-            mounts_full.insert({mount_id, std::move(mount)});
-        }
-
         auto guns_order = 
-            [&mounts_full] (ship_guns_t const & a, ship_guns_t const & b) -> bool
+            [&mounts_full] (ship_guns_lt const & a, ship_guns_lt const & b) -> bool
             {
                 // class_id, -caliber, gun_id, -gun_count, mount_id
-                mount_t const & a_info = mounts_full.at(a.mount_id);
-                mount_t const & b_info = mounts_full.at(b.mount_id);
+                mount_t const & a_info = mounts_full[a.mount_id];
+                mount_t const & b_info = mounts_full[b.mount_id];
                 
                 std::strong_ordering class_cmp = a_info.class_id <=> b_info.class_id;
                 if (class_cmp != std::strong_ordering::equal)
@@ -73,15 +78,14 @@ std::vector <ship_guns::response_t> ship_guns::response (int id, std::chrono::ye
 {
     std::vector <response_t> answer;
 
-    std::unordered_map <int, std::vector <ship_guns_t> > :: const_iterator it = ship_guns_list.find(id);
+    std::unordered_map <int, std::vector <ship_guns_lt> > :: const_iterator it = ship_guns_list.find(id);
     if (it == ship_guns_list.end())
         return answer;
-    for (ship_guns_t const & value : it->second)
+    for (ship_guns_lt const & value : it->second)
     {
         if (between(value.date_from, date, value.date_to))
         {
-            std::unordered_map <int, p_response_t> :: const_iterator mounts_it = mounts.find(value.mount_id);
-            response_t item = (mounts_it != mounts.end())? mounts_it->second : response_t();
+            response_t item = mounts[value.mount_id];
             add_value(item.data_begin, value.mount_count);
             answer.push_back(item);
         }

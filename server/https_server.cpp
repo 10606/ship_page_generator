@@ -163,12 +163,7 @@ struct https_server
                         "Content-Length: %lu\r\n"
                         "Connection: close\r\n"
                         "\r\n", code, get_resp_code_str(code).data(), response.size());
-            mg_send
-            (
-                nc, 
-                response.c_str(), 
-                response.size()
-            );
+            mg_send(nc, response.c_str(), response.size());
             mg_iobuf_del(&nc->recv, 0, nc->recv.len);
             nc->recv.len = 0;
             nc->is_draining = 1;
