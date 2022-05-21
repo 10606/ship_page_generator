@@ -248,7 +248,7 @@ std::string menu::response_impl ()
             {
                 // new ship
                 if (ship.commissioned)
-                    if (!cur_type.min_date || *cur_type.min_date < *ship.commissioned)
+                    if (!cur_type.min_date || *ship.commissioned < *cur_type.min_date)
                         cur_type.min_date = ship.commissioned;
                 
                 cur_type.ships_in_type.append(menu_item.new_ship.begin)
