@@ -9,52 +9,56 @@
 
 menu_item_template::item const menu_item_template::all_template =
 {
-    "<div class = \"menu\"> \n\
-        <style> \n\
-            .collapsible { \n\
-              background-color: #777777; \n\
-              color: white; \n\
-              cursor: pointer; \n\
-              padding: 6px; \n\
-              border: none; \n\
-              text-align: left; \n\
-              outline: none; \n\
-              font-size: 15px; \n\
-            } \n\
-            \n\
-            .collapsible a { \n\
-              color: #ffffff; \n\
-            } \n\
-            \n\
-            .active, .collapsible:hover { \n\
-              background-color: #555555; \n\
-            } \n\
-            \n\
-            .content { \n\
-              padding: 0px 20px; \n\
-              display: none; \n\
-              overflow: hidden; \n\
-              background-color: #ffffff; \n\
-            } \n\
-        </style>\n",
-        
-        "<script>\n\
-            var coll = document.getElementsByClassName(\"collapsible\");\n\
-            var i;\n\
-            \n\
-            for (i = 0; i < coll.length; i++) {\n\
-                coll[i].addEventListener(\"click\", function() {\n\
-                    this.classList.toggle(\"active\");\n\
-                    var content = this.nextElementSibling.nextElementSibling;\n\
-                    if (content.style.display === \"block\") {\n\
-                        content.style.display = \"none\";\n\
-                    } else {\n\
-                        content.style.display = \"block\";\n\
-                    }\n\
-                });\n\
-            }\n\
-        </script>\n\
-    </div>\n"
+"<div class = \"menu\"> \n\
+    <style> \n\
+        .collapsible { \n\
+            background-color: #777777; \n\
+            color: white; \n\
+            cursor: crosshair; \n\
+            padding: 6px; \n\
+            border: none; \n\
+            text-align: left; \n\
+            outline: none; \n\
+            font-size: 15px; \n\
+            width: 100%; \n\
+        } \n\
+        \n\
+        .collapsible a { \n\
+            color: #ffffff; \n\
+        } \n\
+        \n\
+        .active { background-color: #555555; } \n\
+        .collapsible:hover { background-color: #ff5555; } \n\
+        \n\
+        .content { \n\
+            padding: 0px 0px 0px 20px; \n\
+            display: none; \n\
+            overflow: hidden; \n\
+        } \n\
+        .content > a { \n\
+            color: #000000; \n\
+            background-color: #ffffff; \n\
+        } \n\
+        .content > a:hover { color: #ff2222; } \n\
+    </style>\n",
+    
+    "<script>\n\
+        var coll = document.getElementsByClassName(\"collapsible\");\n\
+        var i;\n\
+        \n\
+        for (i = 0; i < coll.length; i++) {\n\
+            coll[i].addEventListener(\"click\", function() {\n\
+                this.classList.toggle(\"active\");\n\
+                var content = this.nextElementSibling.nextElementSibling;\n\
+                if (content.style.display === \"block\") {\n\
+                    content.style.display = \"none\";\n\
+                } else {\n\
+                    content.style.display = \"block\";\n\
+                }\n\
+            });\n\
+        }\n\
+    </script>\n\
+</div>\n"
 };
 
 
