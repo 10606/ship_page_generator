@@ -71,6 +71,7 @@ struct ship_requests::ship_armament_lt_t::aircraft
     int ship_id;
     int aircraft_id;
     uint32_t count;
+    uint32_t count_reserve;
     std::optional <std::chrono::year_month_day> date_from;
     std::optional <std::chrono::year_month_day> date_to;
 };

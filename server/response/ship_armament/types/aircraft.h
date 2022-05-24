@@ -7,6 +7,7 @@
 #include "ship_requests.h"
 #include "armament_info.h"
 #include "ship_armament_lt.h"
+#include "date_to_str.h"
 
 
 struct ship_aircrafts
@@ -36,7 +37,7 @@ struct ship_aircrafts
         bool group;
         int compare;
         std::string_view group_name;
-        std::string data_begin;
+        std::string_view data_begin;
         std::string_view data_end;
     };
 
@@ -50,13 +51,21 @@ private:
     {
         ship_aircrafts_lt (size_t _aircraft_id, ship_aircrafts_t const & value) :
             aircraft_id(_aircraft_id),
-            count    (value.count),
+            count(),
             date_from(value.date_from),
             date_to  (value.date_to)
-        {}
+        {
+            add_value(count, value.count);
+            if (value.count_reserve)
+            {
+                count.append("(+");
+                add_value(count, value.count_reserve);
+                count.append(")");
+            }
+        }
         
         size_t aircraft_id;
-        uint32_t count;
+        std::string count;
         std::optional <std::chrono::year_month_day> date_from;
         std::optional <std::chrono::year_month_day> date_to;
     };

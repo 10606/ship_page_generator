@@ -176,11 +176,12 @@ ship_requests::ship_armament_lt_t::aircraft::aircraft (pqxx::row const & value) 
         ship_id     (value[0].as <int> ()),
         aircraft_id (value[1].as <int> ()),
         count       (value[2].as <uint32_t> ()),
+        count_reserve(value[3].as <uint32_t> ()),
         date_from(),
         date_to()
 {
-    std::optional <std::string> str_date_from = value[3].as <std::optional <std::string> > ();
-    std::optional <std::string> str_date_to   = value[4].as <std::optional <std::string> > ();
+    std::optional <std::string> str_date_from = value[4].as <std::optional <std::string> > ();
+    std::optional <std::string> str_date_to   = value[5].as <std::optional <std::string> > ();
     date_from = transform_optional(str_date_from, get_date);
     date_to   = transform_optional(str_date_to,   get_date);
 }
@@ -191,7 +192,7 @@ std::vector <ship_requests::ship_armament_lt_t::aircraft> ship_requests::ship_ar
     (
         std::string
         (
-            "select ship_id, aircraft_id, amount, \
+            "select ship_id, aircraft_id, amount, amount_reserve, \
                     date_from, date_to \
              from ship_aircraft "
         )

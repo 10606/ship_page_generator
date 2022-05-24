@@ -68,7 +68,7 @@ std::vector <ship_aircrafts::response_t> ship_aircrafts::response (int id, std::
         if (between(aircraft.date_from, date, aircraft.date_to))
         {
             response_t item = aircrafts[aircraft.aircraft_id];
-            add_value(item.data_begin, aircraft.count);
+            item.data_begin = aircraft.count;
             answer.push_back(item);
             answer.back().group_name = group_name;
         }
