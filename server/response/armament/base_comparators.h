@@ -28,7 +28,19 @@ std::partial_ordering classes (T const & a, T const & b)
 template <typename T>
 std::partial_ordering caliber (T const & a, T const & b)
 {
-    return compare_null_last(a.caliber, b.caliber);
+    return a.caliber <=> b.caliber;
+}
+
+template <typename T>
+std::partial_ordering name_ru (T const & a, T const & b)
+{
+    return compare_null_last(a.name_ru, b.name_ru);
+}
+
+template <typename T>
+std::partial_ordering name_en (T const & a, T const & b)
+{
+    return compare_null_last(a.name_en, b.name_en);
 }
 
 };

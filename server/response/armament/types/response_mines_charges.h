@@ -2,21 +2,54 @@
 #define RESPONSE_MINES_CHARGES_H
 
 #include "armament_info.h"
+#include "response_partial.h"
 
 
 struct mines_charges
 {
-    mines_charges (ship_requests * _database) :
-       database(_database)
-    {}
+    mines_charges (ship_requests * database) :
+        mines_charges_cache(),
+        text_cache()
+    {
+        std::vector <mines_charges_t> tmp = database->armament_info.get_mines_charges();
+        mines_charges_cache = partial::partial_response <mines_charges_t, mines_charges_partial> (tmp);
+        text_cache = partial::text_response <mines_charges_t, mines_charges_text> (tmp);
+    }
     
     typedef ship_requests::armament_info_t::mines_charges mines_charges_t;
  
     // https://127.0.0.1:8443/armament/mines_charges?sort=in_service,mass_ex&group=class
     void response (std::string & answer, std::string_view query);
     
+    struct mines_charges_text
+    {
+        mines_charges_text (mines_charges_t const & value);
+            
+        std::string name;
+        std::string mass;
+        std::string mass_ex;
+        std::string size;
+        std::string in_service;
+    };
+    
+    struct mines_charges_partial
+    {
+        mines_charges_partial (mines_charges_t const & value, size_t _index);
+    
+        size_t index;
+        
+        int id;
+        int class_id;
+        std::optional <std::string> name_ru;
+        std::optional <std::string> name_en;
+    
+        double mass_ex;
+        std::optional <std::chrono::year_month_day> in_service;
+    };
+    
 private:
-    ship_requests * database;
+    std::vector <mines_charges_partial> mines_charges_cache;
+    std::vector <mines_charges_text> text_cache;
 };
 
 

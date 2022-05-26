@@ -2,18 +2,18 @@
 #define RESPONSE_aircraft_H
 
 #include "aircraft_info.h"
+#include "response_partial.h"
 
 
 struct aircraft
 {
-    aircraft (ship_requests * _database) :
+    aircraft (ship_requests * database) :
         aircraft_cache(),
-        text_cache(),
-        database(_database)
+        text_cache()
     {
         std::vector <aircraft_t> tmp = database->aircraft_info.get_list("");
-        aircraft_cache = partial_response(tmp);
-        text_cache = text_response(tmp);
+        aircraft_cache = partial::partial_response <aircraft_t, aircraft_partial> (tmp);
+        text_cache = partial::text_response <aircraft_t, aircraft_text> (tmp);
     }
     
     typedef ship_requests::aircraft_info_t::list aircraft_t;
@@ -62,13 +62,8 @@ struct aircraft
     };
     
 private:
-    static std::vector <aircraft_partial> partial_response (std::vector <aircraft_t> const & aircrafts);
-    static std::vector <aircraft_text> text_response (std::vector <aircraft_t> const & aircrafts);
-    
     std::vector <aircraft_partial> aircraft_cache;
     std::vector <aircraft_text> text_cache;
-    
-    ship_requests * database;
 };
 
 

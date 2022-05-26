@@ -7,6 +7,7 @@
 #include <functional>
 #include <optional>
 #include <set>
+#include <cmath>
 
 template <typename T>
 std::partial_ordering 
@@ -126,9 +127,9 @@ struct caliber_filter
 
     bool operator () (T const & value)
     {
-        if (!value.caliber)
+        if (std::isinf(value.caliber))
             return 0;
-        return years.find(*value.caliber) != years.end();
+        return years.find(value.caliber) != years.end();
     }
 
 private:

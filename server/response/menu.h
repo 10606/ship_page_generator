@@ -36,18 +36,18 @@ private:
 
 struct menu
 {
-    menu (ship_requests * _database, menu_item_template const & _menu_item = menu_item_template()) :
+    menu (ship_requests * database, menu_item_template const & _menu_item = menu_item_template()) :
         menu_item(_menu_item),
-        database(_database)
+        cache(response_impl(database))
     {}
     
     void response (std::string & answer);
     
 private:
-    std::string response_impl ();
+    std::string response_impl (ship_requests * database);
     
     menu_item_template menu_item;
-    ship_requests * database;
+    std::string cache;
 };
 
 #endif

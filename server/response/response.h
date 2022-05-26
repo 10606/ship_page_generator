@@ -11,9 +11,8 @@
 
 struct responser
 {
-    responser (ship_requests * _database) :
-        database(_database),
-        ship_list(database),
+    responser (ship_requests & database) :
+        ship_list(&database),
         resp()
     {}
     
@@ -87,7 +86,6 @@ struct responser
     }
 
 private:
-    ship_requests * database;
     menu ship_list;
     std::unordered_map <std::string, std::unique_ptr <resp_base> > resp;
 };

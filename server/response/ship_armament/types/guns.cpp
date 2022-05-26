@@ -11,9 +11,8 @@
 #include "armament_links.h"
 
 
-ship_guns::ship_guns (ship_requests * _database, std::string_view _new_line) :
+ship_guns::ship_guns (ship_requests * database, std::string_view _new_line) :
     ship_guns_list(),
-    database(_database),
     new_line(_new_line)
 {
     std::vector <mount_t> mounts_full =

@@ -162,7 +162,7 @@ struct inserter_t
 };
 
 
-std::string menu::response_impl ()
+std::string menu::response_impl (ship_requests * database)
 {
     try
     {
@@ -287,7 +287,6 @@ std::string menu::response_impl ()
 
 void menu::response (std::string & answer)
 {
-    static std::string cache = response_impl();
     answer.append(cache);
 }
 

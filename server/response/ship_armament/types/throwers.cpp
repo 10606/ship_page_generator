@@ -10,8 +10,7 @@
 #include "armament_links.h"
 
 
-ship_throwers::ship_throwers (ship_requests * _database, std::string_view _new_line) :
-    database(_database),
+ship_throwers::ship_throwers (ship_requests * database, std::string_view _new_line) :
     new_line(_new_line),
     group_name(armament_links::base("/armament/mines_charges?filter=class,4&sort=mass_ex", "противолодочное вооружение"))
 {

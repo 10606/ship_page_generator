@@ -12,7 +12,7 @@
 
 struct ship_aircrafts
 {
-    ship_aircrafts (ship_requests * _database, std::string_view _new_line);
+    ship_aircrafts (ship_requests * database, std::string_view _new_line);
 
     struct p_response_t
     {
@@ -75,9 +75,7 @@ private:
     
     p_response_t partial_response (aircraft_t const & aircraft);
     
-    ship_requests * database;
     std::string new_line;
-    
     std::string group_name;
 };
 

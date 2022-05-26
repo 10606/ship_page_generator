@@ -63,7 +63,6 @@ struct ships_responser
         T && ... args
     ) :
         table(_table),
-        database(_database),
         resp(_database, std::forward <T> (args) ...)
     {}
     
@@ -87,7 +86,6 @@ struct ships_responser
 
 private:
     rows_table_template table;
-    ship_requests * database;
     responser resp;
 };
 

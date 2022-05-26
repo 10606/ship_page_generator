@@ -16,7 +16,6 @@ struct ship
     void response (std::string & answer, std::string_view query);
     
 private:
-    ship_requests * database;
     ship_armament & armament;
     
     struct response_t

@@ -9,8 +9,7 @@
 #include "ship_armament_utils.h"
 
 
-ship_general::ship_general (ship_requests * _database, std::string_view _new_line) :
-    database(_database),
+ship_general::ship_general (ship_requests * database, std::string_view _new_line) :
     new_line(_new_line)
 {
     std::vector <ship_requests::ship_info_t::general> general_list =

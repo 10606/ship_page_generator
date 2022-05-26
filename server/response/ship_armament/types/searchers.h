@@ -11,7 +11,7 @@
 
 struct ship_searchers
 {
-    ship_searchers (ship_requests * _database, std::string_view _new_line);
+    ship_searchers (ship_requests * database, std::string_view _new_line);
 
     struct p_response_t
     {
@@ -66,7 +66,6 @@ private:
     
     p_response_t partial_response (searcher_t const & searcher);
     
-    ship_requests * database;
     std::string new_line;
 };
 

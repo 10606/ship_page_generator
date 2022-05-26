@@ -10,8 +10,7 @@
 #include "armament_links.h"
 
 
-ship_catapult::ship_catapult (ship_requests * _database, std::string_view _new_line) :
-    database(_database),
+ship_catapult::ship_catapult (ship_requests * database, std::string_view _new_line) :
     new_line(_new_line),
     group_name(armament_links::base("/armament/catapult?group=class&sort=in_service", "катапульта"))
 {

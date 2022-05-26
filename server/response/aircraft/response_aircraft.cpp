@@ -231,22 +231,3 @@ aircraft::aircraft_partial::aircraft_partial (aircraft_t const & value, size_t _
 {}
 
 
-std::vector <aircraft::aircraft_partial> aircraft::partial_response (std::vector <aircraft_t> const & aircrafts)
-{
-    std::vector <aircraft_partial> answer;
-    answer.reserve(aircrafts.size());
-    for (size_t i = 0; i != aircrafts.size(); ++i)
-        answer.emplace_back(aircrafts[i], i);
-    return answer;
-}
-
-
-std::vector <aircraft::aircraft_text> aircraft::text_response (std::vector <aircraft_t> const & aircrafts)
-{
-    std::vector <aircraft_text> answer;
-    answer.reserve(aircrafts.size());
-    for (size_t i = 0; i != aircrafts.size(); ++i)
-        answer.emplace_back(aircrafts[i]);
-    return answer;
-}
-

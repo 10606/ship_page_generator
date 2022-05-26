@@ -46,8 +46,8 @@ struct https_server
         std::string const & https_port,
         std::string const & _response_value
     ) :
-        database(),
-        resp(&database),
+        database(std::in_place),
+        resp(*database),
         response_value(_response_value),
         http_mark{this, 0},
         https_mark{this, 1}
@@ -60,15 +60,17 @@ struct https_server
         mg_log_set("0");
 
         
-        resp.reg <ship_armament>    ("/ship/armament",          &database);
-        resp.reg <torpedo>          ("/armament/torpedo",       &database);
-        resp.reg <guns>             ("/armament/guns",          &database);
-        resp.reg <torpedo_tubes>    ("/armament/torpedo_tubes", &database);
-        resp.reg <mines_charges>    ("/armament/mines_charges", &database);
-        resp.reg <catapult>         ("/armament/catapult",      &database);
-        resp.reg <searcher>         ("/armament/searcher",      &database);
-        resp.reg <aircraft>         ("/aircraft",               &database);
-        resp.reg <ship>             ("/ship",                   &database, resp.get <ship_armament> ("/ship/armament"));
+        resp.reg <ship_armament>    ("/ship/armament",          &(*database));
+        resp.reg <torpedo>          ("/armament/torpedo",       &(*database));
+        resp.reg <guns>             ("/armament/guns",          &(*database));
+        resp.reg <torpedo_tubes>    ("/armament/torpedo_tubes", &(*database));
+        resp.reg <mines_charges>    ("/armament/mines_charges", &(*database));
+        resp.reg <catapult>         ("/armament/catapult",      &(*database));
+        resp.reg <searcher>         ("/armament/searcher",      &(*database));
+        resp.reg <aircraft>         ("/aircraft",               &(*database));
+        resp.reg <ship>             ("/ship",                   &(*database), resp.get <ship_armament> ("/ship/armament"));
+
+        database.reset();
     }
 
     static const char * s_ssl_cert;
@@ -182,7 +184,7 @@ struct https_server
     }
     
 private:
-    ship_requests database;
+    std::optional <ship_requests> database;
     responser resp;
     
     std::string response_value;

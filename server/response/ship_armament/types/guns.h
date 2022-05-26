@@ -11,7 +11,7 @@
 
 struct ship_guns
 {
-    ship_guns (ship_requests * _database, std::string_view _new_line);
+    ship_guns (ship_requests * database, std::string_view _new_line);
 
     struct p_response_t
     {
@@ -67,7 +67,6 @@ private:
     template <typename T>
     p_response_t partial_response (T const & mount);
     
-    ship_requests * database;
     std::string new_line;
 };
 

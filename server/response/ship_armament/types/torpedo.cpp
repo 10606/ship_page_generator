@@ -8,8 +8,7 @@
 #include "armament_links.h"
 
 
-ship_torpedo_tubes::ship_torpedo_tubes (ship_requests * _database, std::string_view _new_line) :
-    database(_database),
+ship_torpedo_tubes::ship_torpedo_tubes (ship_requests * database, std::string_view _new_line) :
     new_line(_new_line),
     group_name(armament_links::base("/armament/torpedo?group=caliber&sort=in_service", "торпедный аппарат"))
 {

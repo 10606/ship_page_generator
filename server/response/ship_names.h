@@ -18,7 +18,7 @@ struct header_column
 
 struct ship_names
 {
-    ship_names (header_column _table, ship_requests * _database);
+    ship_names (header_column _table, ship_requests * database);
 
     struct response_t
     {
@@ -46,7 +46,6 @@ private:
     std::string ship_info (ship_t const & ship);
 
     header_column table;
-    ship_requests * database;
 };
 
 #endif

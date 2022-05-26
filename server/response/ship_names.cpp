@@ -5,9 +5,8 @@
 #include "date_to_str.h"
 
 
-ship_names::ship_names (header_column _table, ship_requests * _database) :
-    table(_table),
-    database(_database)
+ship_names::ship_names (header_column _table, ship_requests * database) :
+    table(_table)
 {
     std::vector <ship_t> ships =
         database->ship_info.get_list();

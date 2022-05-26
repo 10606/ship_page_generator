@@ -9,7 +9,7 @@
 
 struct ship_general
 {
-    ship_general (ship_requests * _database, std::string_view _new_line);
+    ship_general (ship_requests * database, std::string_view _new_line);
 
     struct p_response_t
     {
@@ -53,7 +53,6 @@ private:
     
     response_with_time_label partial_response (general_t const & general);
     
-    ship_requests * database;
     std::string new_line;
 };
 

@@ -155,8 +155,7 @@ void add_general_info
 }
 
 
-ship::ship (ship_requests * _database, ship_armament & _armament) :
-    database(_database),
+ship::ship (ship_requests * database, ship_armament & _armament) :
     armament(_armament)
 {
     std::vector <ship_requests::ship_event_t::event_lt_descr> events = 

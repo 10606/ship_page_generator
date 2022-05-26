@@ -10,8 +10,7 @@
 #include "armament_links.h"
 
 
-ship_searchers::ship_searchers (ship_requests * _database, std::string_view _new_line) :
-    database(_database),
+ship_searchers::ship_searchers (ship_requests * database, std::string_view _new_line) :
     new_line(_new_line)
 {
     std::vector <searcher_t> searchers_full =

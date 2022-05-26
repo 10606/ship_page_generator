@@ -11,7 +11,7 @@
 
 struct ship_torpedo_tubes
 {
-    ship_torpedo_tubes (ship_requests * _database, std::string_view _new_line);
+    ship_torpedo_tubes (ship_requests * database, std::string_view _new_line);
 
     struct p_response_t
     {
@@ -66,9 +66,7 @@ private:
     
     p_response_t partial_response (tube_t const & tube);
     
-    ship_requests * database;
     std::string new_line;
-
     std::string group_name;
 };
 
