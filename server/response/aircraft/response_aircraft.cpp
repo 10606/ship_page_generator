@@ -108,10 +108,8 @@ registrator_pred <aircraft::aircraft_partial> & aircraft_cmp::filter ()
 }
 
 
-void aircraft::response (std::string & answer, std::string_view query)
+void aircraft::response (simple_string & answer, std::string_view query)
 {
-    answer.reserve(10000);
-    
     std::vector <std::vector <aircraft_partial> > list_group = 
          parse_group_and_sort <aircraft_partial, aircraft_cmp> (aircraft_cache, query);
 

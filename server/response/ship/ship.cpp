@@ -217,7 +217,7 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
 }
 
 
-void ship::response (std::string & answer, std::string_view query)
+void ship::response (simple_string & answer, std::string_view query)
 {
     std::vector <int> ids = parse_query__id(query);
     

@@ -4,14 +4,14 @@
 
 
 template <typename responser>
-std::vector <std::pair <size_t, std::string> >
+std::vector <std::pair <uint32_t, std::string_view> >
 ships_responser <responser> ::gun_classes
 (
     std::vector <std::vector <typename responser::response_t> > & values,
     std::optional <key_t> min
 ) const
 {
-    std::vector <std::pair <size_t, std::string> > gun_class = {{0, table.column.begin}};
+    std::vector <std::pair <uint32_t, std::string_view> > gun_class = {{0, table.column.begin}};
     std::vector <size_t> positions(values.size(), 0);
 
     while (min)
@@ -36,7 +36,7 @@ ships_responser <responser> ::gun_classes
                     break;
                 }
                 
-                gun_class.back().second = std::move(values[i][j].group_name);
+                gun_class.back().second = values[i][j].group_name;
                 
                 // update position if we at end
                 if (++j == values[i].size())
@@ -58,7 +58,7 @@ template <typename responser>
 void
 ships_responser <responser> ::response 
 (
-    std::string & answer,
+    simple_string & answer,
     std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year,
     std::vector <uint8_t> const & modernization
 ) const
@@ -87,19 +87,19 @@ ships_responser <responser> ::response
     }
 
     
-    std::vector <std::pair <size_t, std::string> > gun_class = gun_classes(values, min);
+    std::vector <std::pair <uint32_t, std::string_view> > gun_class = gun_classes(values, min);
     std::vector <size_t> positions(ship_year.size(), 0);
     // main part of table
-    size_t class_sum = 0, class_pos = 0;
-    size_t rows_cnt = 0;
+    uint32_t class_sum = 0, class_pos = 0;
+    uint32_t rows_cnt = 0;
     while (min)
     {
         if (class_sum == rows_cnt)
         {
             // new gun_class
-            answer.append(table.rowspan.begin)
-                  .append(std::to_string(gun_class[class_pos].first))
-                  .append(table.rowspan.middle)
+            answer.append(table.rowspan.begin);
+            add_value(answer, gun_class[class_pos].first);
+            answer.append(table.rowspan.middle)
                   .append(std::move(gun_class[class_pos].second))
                   .append(table.rowspan.end)
                   .append(table.column.begin);
@@ -154,7 +154,7 @@ ships_responser <responser> ::response
 }
 
 
-void ship_armament::response (std::string & answer, std::string_view query)
+void ship_armament::response (simple_string & answer, std::string_view query)
 {
     try
     {

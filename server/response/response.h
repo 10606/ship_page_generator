@@ -7,6 +7,7 @@
 #include <optional>
 #include "menu.h"
 #include "ship_requests.h"
+#include "simple_string.h"
 
 
 struct responser
@@ -18,7 +19,7 @@ struct responser
     
     struct resp_base
     {
-        virtual void response (std::string &, std::string_view) = 0;
+        virtual void response (simple_string &, std::string_view) = 0;
         virtual ~resp_base () = default;
     };
     
@@ -33,7 +34,7 @@ struct responser
             value(std::forward <U> (args) ...)
         {}
         
-        virtual void response (std::string & answer, std::string_view query)
+        virtual void response (simple_string & answer, std::string_view query)
         {
             value.response(answer, query);
         }
@@ -54,19 +55,19 @@ struct responser
         resp.insert({std::move(name), std::make_unique <resp_impl <T> > (std::forward <U> (args) ...)});
     }
     
-    std::optional <std::string> response (std::string_view uri, std::string_view query)
+    bool response (simple_string & answer, std::string_view uri, std::string_view query)
     {
         std::unordered_map <std::string, std::unique_ptr <resp_base> > :: iterator it =
             resp.find(std::string(uri));
         if (it == resp.end())
-            return std::nullopt;
+            return 0;
 
-        std::string answer;
+        answer.reserve(100000);
 
-        answer += "<style> \n\
+        answer.append("<style> \n\
                       .wrapper { display: flex; } \n\
-                   </style>\n";
-        answer += "<div class = \"wrapper\"> \n\
+                   </style>\n");
+        answer.append("<div class = \"wrapper\"> \n\
                    <style> \n\
                         .menu { \n\
                             display:    inline; \n\
@@ -76,13 +77,13 @@ struct responser
                             padding: 0px 10px 0px 0px; \n\
                         } \n\
                         .main { display:    inline; } \n\
-                   </style>\n";
+                   </style>\n");
         ship_list.response(answer);
         answer.append("<div class = \"main\">\n");
         it->second->response(answer, query);
-        answer += "</div>\n</div>";
+        answer.append("</div>\n</div>");
         
-        return answer;
+        return 1;
     }
 
 private:

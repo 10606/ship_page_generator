@@ -3,6 +3,7 @@
 
 #include "ship_event.h"
 #include "response_ship_armament.h"
+#include "simple_string.h"
 #include <map>
 
 
@@ -13,7 +14,7 @@ struct ship
     typedef ship_requests::aircraft_info_t::list aircraft_t;
  
     // http://127.0.0.1:8080/ship?id=0&id=1&id=2&id=3
-    void response (std::string & answer, std::string_view query);
+    void response (simple_string & answer, std::string_view query);
     
 private:
     ship_armament & armament;

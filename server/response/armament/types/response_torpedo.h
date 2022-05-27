@@ -3,6 +3,7 @@
 
 #include "armament_info.h"
 #include "response_partial.h"
+#include "simple_string.h"
 
 
 struct torpedo
@@ -19,7 +20,7 @@ struct torpedo
     typedef ship_requests::armament_info_t::torpedo torpedo_t;
  
     // https://127.0.0.1:8443/armament/torpedo?sort=in_service,mass_ex&group=caliber&filter=in_service,3x,4x&filter=caliber,450,533,610
-    void response (std::string & answer, std::string_view query);
+    void response (simple_string & answer, std::string_view query);
     
     struct torpedo_text
     {

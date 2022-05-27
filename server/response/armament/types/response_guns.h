@@ -3,6 +3,7 @@
 
 #include "armament_info.h"
 #include "response_partial.h"
+#include "simple_string.h"
 
 
 struct guns
@@ -19,7 +20,7 @@ struct guns
     typedef ship_requests::armament_info_t::list guns_t;
  
     // https://127.0.0.1:8443/armament/guns?sort=caliber,in_service&group=class&filter=in_service,2x,3x,4x
-    void response (std::string & answer, std::string_view query);
+    void response (simple_string &, std::string_view query);
     
     struct guns_text
     {

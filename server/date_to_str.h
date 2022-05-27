@@ -4,6 +4,7 @@
 #include <string>
 #include <chrono>
 #include <charconv>
+#include "simple_string.h"
 
 std::string to_string (std::chrono::year_month_day const & value);
 std::string to_string_sql (std::chrono::year_month_day const & value);
@@ -14,6 +15,13 @@ inline void add_value (std::string & answer, uint32_t value)
     char value_char[16];
     std::to_chars_result res = std::to_chars(std::begin(value_char), std::end(value_char), value);
     answer.append(value_char, res.ptr);
+}
+
+inline void add_value (simple_string & answer, uint32_t value)
+{
+    char value_char[16];
+    std::to_chars_result res = std::to_chars(std::begin(value_char), std::end(value_char), value);
+    answer.append(std::string_view(value_char, res.ptr));
 }
 
 std::string where

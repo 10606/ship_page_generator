@@ -63,10 +63,8 @@ registrator_pred <guns::guns_partial> & guns_cmp::filter ()
 }
 
 
-void guns::response (std::string & answer, std::string_view query)
+void guns::response (simple_string & answer, std::string_view query)
 {
-    answer.reserve(10000);
-    
     std::vector <std::vector <guns_partial> > list_group = 
          parse_group_and_sort <guns_partial, guns_cmp> (guns_cache, query);
 

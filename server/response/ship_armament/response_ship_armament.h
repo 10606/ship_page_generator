@@ -21,6 +21,7 @@
 #include "catapult.h"
 #include "aircraft.h"
 #include "ship_names.h"
+#include "simple_string.h"
 
 
 struct rows_table_template
@@ -72,12 +73,12 @@ struct ships_responser
 
     void response
     (
-        std::string & answer,
+        simple_string & answer,
         std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year,
         std::vector <uint8_t> const & modernization
     ) const;
     
-    std::vector <std::pair <size_t, std::string> >
+    std::vector <std::pair <uint32_t, std::string_view> >
     gun_classes
     (
         std::vector <std::vector <typename responser::response_t> > & values,
@@ -120,7 +121,7 @@ struct table_template
 template <typename armament_type>
 void add_armament 
 (
-    std::string & answer,
+    simple_string & answer,
     ships_responser <armament_type> const & armament, 
     std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year,
     std::vector <uint8_t> const & modernizations,
@@ -157,7 +158,7 @@ struct ship_armament
     }
 
     // http://127.0.0.1:8080/ship/armament?ship=40&date=9.7.44&ship=42&date=14.7.44&ship=43&date=8.7.44&ship=50&date=30.1.39&date=9.7.44&ship=52&date=9.7.44&ship=54&date=23.7.45
-    void response (std::string & answer, std::string_view query);
+    void response (simple_string & answer, std::string_view query);
 
 private:
     table_template table;

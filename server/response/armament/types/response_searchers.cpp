@@ -66,10 +66,8 @@ registrator_pred <searcher::searchers_partial> & searcher_cmp::filter ()
 }
 
 
-void searcher::response (std::string & answer, std::string_view query)
+void searcher::response (simple_string & answer, std::string_view query)
 {
-    answer.reserve(10000);
-    
     std::vector <std::vector <searchers_partial> > list_group = 
          parse_group_and_sort <searchers_partial, searcher_cmp> (searchers_cache, query);
 

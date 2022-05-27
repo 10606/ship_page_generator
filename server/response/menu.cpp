@@ -285,7 +285,7 @@ std::string menu::response_impl (ship_requests * database)
 }
 
 
-void menu::response (std::string & answer)
+void menu::response (simple_string & answer)
 {
     answer.append(cache);
 }

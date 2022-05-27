@@ -4,6 +4,7 @@
 #include <string_view>
 #include <vector>
 #include "ship_requests.h"
+#include "simple_string.h"
 
 
 struct menu_item_template
@@ -41,7 +42,7 @@ struct menu
         cache(response_impl(database))
     {}
     
-    void response (std::string & answer);
+    void response (simple_string & answer);
     
 private:
     std::string response_impl (ship_requests * database);

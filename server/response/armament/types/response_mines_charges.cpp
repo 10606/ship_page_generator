@@ -61,10 +61,8 @@ registrator_pred <mines_charges::mines_charges_partial> & mines_charges_cmp::fil
 }
 
 
-void mines_charges::response (std::string & answer, std::string_view query)
+void mines_charges::response (simple_string & answer, std::string_view query)
 {
-    answer.reserve(10000);
-    
     std::vector <std::vector <mines_charges_partial> > list_group = 
          parse_group_and_sort <mines_charges_partial, mines_charges_cmp> (mines_charges_cache, query);
 

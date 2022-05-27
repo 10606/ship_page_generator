@@ -19,23 +19,38 @@
 #include "response_aircraft.h"
 #include "ship.h"
 #include "response.h"
+#include "simple_string.h"
 
 
-std::string_view get_resp_code_str (uint32_t code)
+struct get_resp_code_str_t
 {
-    static const std::map <uint32_t, std::string_view> answer = 
+    std::string_view operator () (uint32_t code)
     {
-        {200, "OK"},
-        {403, "Forbidden"},
-        {404, "Not found"},
-        {405, "Method not allowed"},
-    };
+        
+        std::map <uint32_t, std::string_view> ::const_iterator it = answer.find(code);
+        if (it == answer.end())
+            return "";
+        return it->second;
+    }
     
-    std::map <uint32_t, std::string_view> ::const_iterator it = answer.find(code);
-    if (it == answer.end())
-        return "";
-    return it->second;
-}
+    size_t max_size ()
+    {
+        size_t max = 0;
+        for (auto const & value : answer)
+            max = std::max(max, value.second.size());
+        return max;
+    }
+    
+    static const std::map <uint32_t, std::string_view> answer;
+} get_resp_code_str;
+
+const std::map <uint32_t, std::string_view> get_resp_code_str_t::answer =
+{
+    {200, "200 OK"},
+    {403, "403 Forbidden"},
+    {404, "404 Not found"},
+    {405, "405 Method not allowed"},
+};
 
 
 struct https_server
@@ -106,11 +121,24 @@ struct https_server
             mg_http_message * http_msg = reinterpret_cast <mg_http_message *> (ev_data);
             
             uint32_t code;
-            std::string response;
+            static const std::string_view http_begin = "HTTP/1.1 ";
+            static const std::string_view http_middle = "\r\nServer: japan_ships\r\n"
+                                                        "Content-Type: text/html; charset=utf-8\r\n"
+                                                        "Content-Length: ";
+            static const std::string code_padding(' ', get_resp_code_str.max_size());
+            static const std::string length_padding(' ', 123);
+            
+            simple_string response;
+            response.append(http_begin)
+                    .append(code_padding)
+                    .append(http_middle)
+                    .append(length_padding)//%lu
+                    .append("\r\nConnection: close\r\n\r\n");
+            size_t http_header_size = response.size();
             
             if (std::string_view(http_msg->method.ptr, http_msg->method.len) != "GET")
             {
-                response = "??";
+                response.append("??");
                 code = 405;
             }
             else if (upgrade_if_need(nc, http_msg, "8443"))
@@ -118,15 +146,15 @@ struct https_server
             else
             {
                 std::string_view uri(http_msg->uri.ptr, http_msg->uri.len);
-                std::optional <std::string> answer = 
+                bool answer = 
                     cur->resp.response
                     (
+                        response,
                         uri,
                         std::string_view(http_msg->query.ptr, http_msg->query.len)
                     );
                 if (answer)
                 {
-                    response = std::move(*answer);
                     code = 200;
                 }
                 else
@@ -159,13 +187,21 @@ struct https_server
             }
             */
             
-            mg_printf(nc, "HTTP/1.1 %u %s\r\n"
+            response.rewrite(http_begin.size(), get_resp_code_str(code).data());
+            std::string length = std::to_string(response.size() - http_header_size);
+            response.rewrite(http_begin.size() +
+                             code_padding.size() +
+                             http_middle.size(), length);
+            /*
+            mg_printf(nc, "HTTP/1.1 %s\r\n"
                         "Server: japan_ships\r\n"
                         "Content-Type: text/html; charset=utf-8\r\n"
                         "Content-Length: %lu\r\n"
                         "Connection: close\r\n"
-                        "\r\n", code, get_resp_code_str(code).data(), response.size());
-            mg_send(nc, response.c_str(), response.size());
+                        "\r\n", get_resp_code_str(code).data(), response.size());
+                        */
+            size_t answer_size = response.size();
+            mg_send__eat_buf(nc, response.reset(), answer_size);
             mg_iobuf_del(&nc->recv, 0, nc->recv.len);
             nc->recv.len = 0;
             nc->is_draining = 1;

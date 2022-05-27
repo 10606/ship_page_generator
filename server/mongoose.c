@@ -1950,6 +1950,36 @@ int mg_iobuf_init(struct mg_iobuf *io, size_t size) {
   return mg_iobuf_resize(io, size);
 }
 
+size_t mg_iobuf_eat(struct mg_iobuf *io, size_t ofs, unsigned char *buf,
+                    size_t len, size_t chunk_size) {
+    size_t new_size = io->len + len;
+    if (!io->size && !io->len)
+    {
+        free(io->buf);
+        io->buf = buf;
+        io->size = new_size;
+        io->len = new_size;
+        return len;
+    }
+    if (new_size > io->size)
+    {
+        new_size += chunk_size;             // Make sure that io->size
+        new_size -= new_size % chunk_size;  // is aligned by chunk_size boundary
+        mg_iobuf_resize(io, new_size);      // Attempt to realloc
+        if (new_size != io->size) 
+            len = 0;  // Realloc failure, append nothing
+    }
+    if (ofs < io->len)
+        memmove(io->buf + ofs + len, io->buf + ofs, io->len - ofs);
+    if (buf != NULL)
+        memcpy(io->buf + ofs, buf, len);
+    if (ofs > io->len)
+        io->len += ofs - io->len;
+    io->len += len;
+    free(buf);
+    return len;
+}
+
 size_t mg_iobuf_add(struct mg_iobuf *io, size_t ofs, const void *buf,
                     size_t len, size_t chunk_size) {
   size_t new_size = io->len + len;
@@ -3237,6 +3267,19 @@ bool mg_send(struct mg_connection *c, const void *buf, size_t len) {
     return n > 0;
   } else {
     return mg_iobuf_add(&c->send, c->send.len, buf, len, MG_IO_SIZE);
+  }
+}
+
+bool mg_send__eat_buf(struct mg_connection *c, unsigned char *buf, size_t len) {
+  if (c->is_udp) {
+    long n = mg_sock_send(c, buf, len);
+    MG_DEBUG(("%lu %p %d:%d %ld err %d (%s)", c->id, c->fd, (int) c->send.len,
+              (int) c->recv.len, n, MG_SOCK_ERRNO, strerror(errno)));
+    iolog(c, (char *) buf, n, false);
+    free(buf);
+    return n > 0;
+  } else {
+    return mg_iobuf_eat(&c->send, c->send.len, buf, len, MG_IO_SIZE);
   }
 }
 

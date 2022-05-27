@@ -3,6 +3,7 @@
 
 #include "armament_info.h"
 #include "response_partial.h"
+#include "simple_string.h"
 
 
 struct catapult
@@ -19,7 +20,7 @@ struct catapult
     typedef ship_requests::armament_info_t::catapult catapult_t;
  
     // https://127.0.0.1:8443/armament/catapult?sort=in_service,launch_mass&group=class
-    void response (std::string & answer, std::string_view query);
+    void response (simple_string & answer, std::string_view query);
     
     struct catapult_text
     {
