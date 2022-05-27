@@ -126,13 +126,13 @@ struct https_server
                                                         "Content-Type: text/html; charset=utf-8\r\n"
                                                         "Content-Length: ";
             static const std::string code_padding(' ', get_resp_code_str.max_size());
-            static const std::string length_padding(' ', 123);
+            static const std::string length_padding(' ', std::numeric_limits<size_t>::digits10 + 1);
             
             simple_string response;
             response.append(http_begin)
                     .append(code_padding)
                     .append(http_middle)
-                    .append(length_padding)//%lu
+                    .append(length_padding)
                     .append("\r\nConnection: close\r\n\r\n");
             size_t http_header_size = response.size();
             
@@ -192,14 +192,6 @@ struct https_server
             response.rewrite(http_begin.size() +
                              code_padding.size() +
                              http_middle.size(), length);
-            /*
-            mg_printf(nc, "HTTP/1.1 %s\r\n"
-                        "Server: japan_ships\r\n"
-                        "Content-Type: text/html; charset=utf-8\r\n"
-                        "Content-Length: %lu\r\n"
-                        "Connection: close\r\n"
-                        "\r\n", get_resp_code_str(code).data(), response.size());
-                        */
             size_t answer_size = response.size();
             mg_send__eat_buf(nc, response.reset(), answer_size);
             mg_iobuf_del(&nc->recv, 0, nc->recv.len);
