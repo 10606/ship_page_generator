@@ -233,14 +233,14 @@ std::string menu::response_impl (ship_requests * database)
                     add_type();
                 cur_type.id = ship.type_id;
                 
-                cur_type.type_descr.append(menu_item.new_type.begin)
-                                   .append(ship.type_ru.value_or(" -- "));
                 
-                if (i + 1 != ships.size() && 
-                    ships[i].type_id != ships[i + 1].type_id &&
+                cur_type.type_descr.append(menu_item.new_type.begin);
+                if ((i + 1 == ships.size() || ships[i].type_id != ships[i + 1].type_id) &&
                     ship.ship_ru &&
                     (!ship.type_ru || *ship.ship_ru != *ship.type_ru)) // one ship in type with another name
-                    cur_type.type_descr.append(" (").append(*ship.ship_ru).append(")");
+                    cur_type.type_descr.append(*ship.ship_ru);
+                else
+                    cur_type.type_descr.append(ship.type_ru.value_or(" -- "));
                 
                 if (ship.commissioned)
                     cur_type.type_descr.append(" ")
