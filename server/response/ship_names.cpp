@@ -17,7 +17,7 @@ ship_names::ship_names (header_column _table, ship_requests * database) :
     }
     
     std::vector <event_t> events =
-        database->ship_event.get_event_lt();
+        database->ship_event.get_event_lt("where class_id = 0 ");
     for (event_t & event : events)
     {
         int ship_id = event.ship_id;
