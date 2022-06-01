@@ -55,7 +55,7 @@ struct add_event
 
     void visit (size_t vertex, size_t shift = 1)
     {
-        visited[vertex] = 0;
+        visited[vertex] = 1;
         size_t index = index_mapping[vertex];
         
         for (size_t i = 0; i != shift; ++i)
