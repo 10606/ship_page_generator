@@ -58,7 +58,8 @@ struct ship_requests
         ship_armament_lt(&db),
         armament_info(&db),
         aircraft_info(&db),
-        ship_event(&db)
+        ship_event(&db),
+        pictures(&db)
     {}
 
     
@@ -267,6 +268,30 @@ struct ship_requests
         ship_database * db;
     };
     
+    
+    struct pictures_t
+    {
+        pictures_t (ship_database * _db) :
+            db(_db)
+        {}
+        
+
+        struct ship;
+        std::vector <ship> get_ship (std::string_view where = "");
+
+        struct aircraft;
+        std::vector <aircraft> get_aircraft (std::string_view where = "");
+        
+        
+        pictures_t (pictures_t &&) = delete;
+        pictures_t (pictures_t const &) = delete;
+        pictures_t & operator = (pictures_t &&) = delete;
+        pictures_t & operator = (pictures_t const &) = delete;
+        
+    private:
+        ship_database * db;
+    };
+    
 
     ship_database db;
     ship_info_t ship_info;
@@ -275,6 +300,7 @@ struct ship_requests
     armament_info_t armament_info;
     aircraft_info_t aircraft_info;
     ship_event_t ship_event;
+    pictures_t pictures;
 };
 
 

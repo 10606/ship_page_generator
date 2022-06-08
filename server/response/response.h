@@ -77,6 +77,20 @@ struct responser
                             padding: 0px 10px 0px 0px; \n\
                         } \n\
                         .main { display:    inline; } \n\
+                        .main img { \n\
+                            object-fit: contain; \n\
+                            min-width: 180px; \n\
+                            max-width: 180px; \n\
+                            min-height: 180px; \n\
+                            max-height: 180px; \n\
+                            background-color: #f5f5f5; \n\
+                        } \n\
+                        .main li { \n\
+                            display: inline-block; \n\
+                            margin: 10px; \n\
+                            max-width: 180px; \n\
+                            vertical-align: top; \n\
+                        } \n\
                    </style>\n");
         ship_list.response(answer);
         answer.append("<div class = \"main\">\n");

@@ -4,6 +4,7 @@
 #include "ship_requests.h"
 #include "ship_event.h"
 #include "ship_info.h"
+#include "pictures.h"
 #include "date_to_str.h"
 #include "parse_query.h"
 
@@ -155,19 +156,48 @@ void add_general_info
 }
 
 
+void add_pictures
+(
+    std::string & answer,
+    std::vector <ship_requests::pictures_t::ship> const & info
+)
+{
+    answer.append(ship::pictures.all.begin);
+    
+    for (auto const & i : info)
+    {
+        answer.append(ship::pictures.picture.begin__full)
+              .append(i.path_full)
+              .append(ship::pictures.picture.full__small)
+              .append(i.path_small)
+              .append(ship::pictures.picture.small__descr)
+              .append(i.description)
+              .append(ship::pictures.picture.descr__end);
+    }
+    
+    answer.append(ship::pictures.all.end);
+}
+
+
+
 ship::ship (ship_requests * database, ship_armament & _armament) :
     armament(_armament)
 {
     std::vector <ship_requests::ship_event_t::event_lt_descr> events = 
         database->ship_event.get_event_lt_descr();
     
-    std::vector <ship_requests::ship_info_t::list> list =
+    typedef ship_requests::ship_info_t::list list_t;
+    std::vector <list_t> list =
         database->ship_info.get_list();
+
+    typedef ship_requests::pictures_t::ship picture_t;
+    std::vector <picture_t> ship_pictures_list =
+        database->pictures.get_ship();
     
     std::unordered_map <int, std::vector <segment> > ship_to_segment;
     std::unordered_map <int, std::vector <size_t> > index_mapping; // 0..size -> event index
-    typedef ship_requests::ship_info_t::list list_t;
     std::unordered_map <int, list_t> ship_info;
+    std::unordered_map <int, std::vector <picture_t> > ship_pictures;
     
     for (size_t i = 0; i != events.size(); ++i)
     {
@@ -177,7 +207,13 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
     }
 
     for (size_t i = 0; i != list.size(); ++i)
-        ship_info.insert({list[i].ship_id, std::move(list[i])});
+    {
+        int ship_id = list[i].ship_id;
+        ship_info.insert({ship_id, std::move(list[i])});
+    }
+
+    for (auto && item : ship_pictures_list)
+        ship_pictures[item.ship_id].push_back(std::move(item));
 
     for (auto & info : ship_info)
     {
@@ -210,6 +246,8 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
         answer.begin.append(link.begin)
                     .append(answer.armament_link)
                     .append(link.end);
+        answer.end.append(new_line);
+        add_pictures(answer.end, ship_pictures[ship_id]);
         answer.end.append(new_line)
                   .append(new_line);
         modernizations.insert({ship_id, std::move(answer)});

@@ -34,6 +34,19 @@ private:
         std::string_view end;
     };
     
+    struct pictures_template
+    {
+        struct picture_template
+        {
+            std::string_view begin__full;
+            std::string_view full__small;
+            std::string_view small__descr;
+            std::string_view descr__end;
+        } picture;
+        
+        html_template all;
+    };
+    
     friend struct add_event;
     
     friend void add_general_info
@@ -43,10 +56,30 @@ private:
         ship_requests::ship_info_t::list const & info
     );
     
+    friend void add_pictures
+    (
+        std::string & answer,
+        std::vector <ship_requests::pictures_t::ship> const & info
+    );
+    
     static const constexpr std::string_view query_template = "ship=";
     static const constexpr html_template link = {"<a href=\"/ship/armament?", "\">вооружение</a>"};
     static const constexpr std::string_view new_line = "<br>\n";
     static const constexpr std::string_view shift = "&emsp;";
+    
+    static const constexpr pictures_template pictures =
+    {
+        {
+            "<li><a href=\"/pictures/",
+            "\"><img src=\"/pictures/",
+            "\"></a><br>",
+            "</li>"
+        },
+        {
+            "<ul>",
+            "</ul><br>"
+        }
+    };
 };
 
 
