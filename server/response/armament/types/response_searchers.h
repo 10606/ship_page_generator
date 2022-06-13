@@ -25,6 +25,7 @@ struct searcher
     struct searchers_text
     {
         searchers_text (searcher_t const & value);
+        std::string freq_convert (double frequency);
             
         std::string name;
         std::string mass;

@@ -119,6 +119,19 @@ searcher::searchers_partial::searchers_partial (searcher_t const & value, size_t
     in_service  (value.in_service)
 {}
 
+std::string searcher::searchers_text::freq_convert (double frequency)
+{
+    if (frequency < 10000) [[likely]]
+        return to_string_10(frequency) + "МГц";
+    frequency /= 1000;
+    if (frequency < 10000) [[unlikely]]
+        return to_string_10(frequency) + "ГГц";
+    double exp = std::floor(std::log10(frequency));
+    frequency /= std::exp(exp * std::log(10));
+    frequency = std::round(frequency * 10) / 10;
+    return to_string_10(frequency) + "<sup>" + to_string_10(exp + 9) + "</sup>Гц";
+}
+
 searcher::searchers_text::searchers_text (searcher_t const & item) :
     name        (table::new_column),
     mass        (table::new_column),
@@ -129,7 +142,7 @@ searcher::searchers_text::searchers_text (searcher_t const & item) :
 {
     name      .append(item.searcher_ru.value_or(" "));
     mass      .append(item.mass? to_string_10(*item.mass) + "кг" : " ");
-    frequency .append(item.frequency? to_string_10(*item.frequency) + "МГц" : " ");
+    frequency .append(item.frequency? freq_convert(*item.frequency) : " ");
     power     .append(item.power? to_string_10(*item.power) + "кВт" : " ");
     build_cnt .append(item.build_cnt? to_string_10(*item.build_cnt) + "шт" : " ");
     in_service.append(item.in_service? to_string(*item.in_service) : " ");

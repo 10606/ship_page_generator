@@ -181,6 +181,7 @@ private:
             TR.searchers { background: #f8ffff; } \
             TR.catapult  { background: #fff8dc; } \
             TR.aircraft  { background: #dbffff; } \
+            TH {min-width: 180px } \
         </style>";
 };
 
