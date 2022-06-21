@@ -14,7 +14,8 @@ void add_modernizations
     std::string & answer, 
     std::vector <ship_requests::ship_event_t::event_lt_descr> const & events,
     std::vector <size_t> const & index_mapping,
-    std::vector <segment> segments
+    std::vector <segment> segments,
+    std::optional <std::chrono::year_month_day> commisioned
 )
 {
     std::vector <segment> :: iterator part = 
@@ -32,7 +33,7 @@ void add_modernizations
                 });
     
     for (std::vector <segment> :: iterator it = segments.begin(); it != part; ++it)
-        if (it->begin)
+        if (it->end && commisioned && (*commisioned <= *it->end))
             answer.append("&date=")
                   .append(to_string(*it->end));
 }
@@ -63,9 +64,13 @@ struct add_event
             answer.append(ship::shift);
         if (events[index].date_from)
             answer.append(to_string(*events[index].date_from));
+        else
+            answer.append(date_placeholder);
         answer.append(" - ");
         if (events[index].date_to)
             answer.append(to_string(*events[index].date_to));
+        else
+            answer.append(date_placeholder);
         answer.append(" ");
         if (events[index].class_ru)
             answer.append(*events[index].class_ru)
@@ -107,6 +112,8 @@ private:
     std::vector <std::vector <size_t> > graph;
     std::vector <size_t> const & index_mapping;
     std::vector <uint8_t> visited;
+    
+    static const constexpr std::string_view date_placeholder = "&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;";
 };
 
 
@@ -233,7 +240,8 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
         
         // modernizations link
         {
-            add_modernizations(answer.armament_link, events, index_mapping_value, ship_data);
+            std::optional <std::chrono::year_month_day> commisioned = info.second.commissioned;
+            add_modernizations(answer.armament_link, events, index_mapping_value, ship_data, commisioned);
         }
         
         // add events
