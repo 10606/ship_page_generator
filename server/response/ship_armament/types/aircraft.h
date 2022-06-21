@@ -16,9 +16,9 @@ struct ship_aircrafts
 
     struct p_response_t
     {
-        bool group;
-        int compare;
-        std::string_view group_name;
+        int group;
+        bool compare;
+        std::string group_name;
         std::string data;
     };
 
@@ -34,8 +34,8 @@ struct ship_aircrafts
             data_end(value.data)
         {}
     
-        bool group;
-        int compare;
+        int group;
+        bool compare;
         std::string_view group_name;
         std::string_view data_begin;
         std::string_view data_end;
@@ -46,6 +46,7 @@ struct ship_aircrafts
 private:
     typedef ship_requests::ship_armament_lt_t::aircraft ship_aircrafts_t;
     typedef ship_requests::aircraft_info_t::list aircraft_t;
+    typedef ship_requests::aircraft_info_t::classes aircraft_class;
     
     struct ship_aircrafts_lt
     {
@@ -73,10 +74,9 @@ private:
     std::unordered_map <int, std::vector <ship_aircrafts_lt> > ship_aircrafts_list;
     std::vector <p_response_t> aircrafts;
     
-    p_response_t partial_response (aircraft_t const & aircraft);
+    p_response_t partial_response (aircraft_t const & aircraft, std::unordered_map <int, std::string> aircraft_class_map);
     
     std::string new_line;
-    std::string group_name;
 };
 
 

@@ -12,17 +12,25 @@
 
 
 ship_aircrafts::ship_aircrafts (ship_requests * database, std::string_view _new_line) :
-    new_line(_new_line),
-    group_name(armament_links::base("/aircraft?group=class&sort=in_service", "авиагруппа"))
+    new_line(_new_line)
 {
+    std::vector <aircraft_class> aircraft_class_list =
+        database->aircraft_info.get_classes("");
+    std::unordered_map <int, std::string> aircraft_class_map;
+    
+    for (aircraft_class const & cur_class : aircraft_class_list)
+        aircraft_class_map.insert({cur_class.class_id, cur_class.class_ru.value_or(" ")});
+    
+    
     std::vector <aircraft_t> aircrafts_full =
         database->aircraft_info.get_list("");
     std::unordered_map <int, size_t> aircrafts_index;
+    
     for (aircraft_t & aircraft : aircrafts_full)
     {
         int aircraft_id = aircraft.id;
         aircrafts_index.insert({aircraft_id, aircrafts.size()});
-        aircrafts.push_back(partial_response(aircraft));
+        aircrafts.push_back(partial_response(aircraft, aircraft_class_map));
     }
     
     std::vector <ship_aircrafts_t> aircraft_list =
@@ -69,18 +77,26 @@ std::vector <ship_aircrafts::response_t> ship_aircrafts::response (int id, std::
             response_t item = aircrafts[aircraft.aircraft_id];
             item.data_begin = aircraft.count;
             answer.push_back(item);
-            answer.back().group_name = group_name;
         }
     }
     
     return answer;
 }
 
-ship_aircrafts::p_response_t ship_aircrafts::partial_response (aircraft_t const & aircraft)
+ship_aircrafts::p_response_t ship_aircrafts::partial_response (aircraft_t const & aircraft, std::unordered_map <int, std::string> aircraft_class_map)
 {
     p_response_t item;
-    item.compare = aircraft.class_id;
-    item.group = 0;
+    item.compare = 0;
+    item.group = aircraft.class_id;
+    
+    std::unordered_map <int, std::string> :: iterator it = aircraft_class_map.find(aircraft.class_id);
+    if (it != aircraft_class_map.end())
+        item.group_name = armament_links::filtered
+                          (
+                              "/aircraft?group=in_service&sort=type", 
+                              (it != aircraft_class_map.end())? it->second : " ",
+                              aircraft.class_id
+                          );
     
     item.data += " ";
     if (aircraft.aircraft_en)
@@ -88,13 +104,7 @@ ship_aircrafts::p_response_t ship_aircrafts::partial_response (aircraft_t const 
     if (aircraft.aircraft_en && aircraft.aircraft_ru) 
         item.data += new_line;
     if (aircraft.aircraft_ru)
-        item.data += "&emsp;" + 
-                    armament_links::filtered
-                    (
-                        "/aircraft?group=in_service&sort=type", 
-                        aircraft.aircraft_ru.value_or("  "), 
-                        aircraft.class_id
-                    );
+        item.data += "&emsp;" + aircraft.aircraft_ru.value_or("  ");
 
     return item;
 }
