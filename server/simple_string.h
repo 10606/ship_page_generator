@@ -87,7 +87,8 @@ private:
         unsigned char * new_data = static_cast <unsigned char *> (malloc(value));
         if (!new_data)
             throw std::runtime_error("can't alloc");
-        std::memcpy(new_data, _data, _size);
+        if (_size > 0)
+            std::memcpy(new_data, _data, _size);
         free(_data);
         _data = new_data;
         capacity = value;

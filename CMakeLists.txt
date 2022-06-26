@@ -7,8 +7,7 @@ set(release_flags
 )
 
 set(compile_flags
-    "-fsanitize=address -fsanitize=leak -fsanitize=undefined \
-     -fdiagnostics-color=always -fdiagnostics-generate-patch \
+    "-fsanitize=address -fsanitize=leak -fsanitize=undefined -fdiagnostics-color=always \
      -g --pedantic -Wall -ftemplate-depth=10000 -std=c++20"
 )
 
@@ -59,6 +58,7 @@ add_executable(ship_server
     server/response/aircraft/response_aircraft.cpp
     server/response/ship_names.cpp
     server/response/menu.cpp
+    server/response/search.cpp
     server/response/ship/ship.cpp
     server/response/ship/date_order/nested_segments.cpp
     get_from_postgres/parse_response.cpp

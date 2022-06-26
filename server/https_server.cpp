@@ -20,6 +20,7 @@
 #include "ship.h"
 #include "response.h"
 #include "simple_string.h"
+#include "search.h"
 
 
 struct get_resp_code_str_t
@@ -84,6 +85,7 @@ struct https_server
         resp.reg <searcher>         ("/armament/searcher",      &(*database));
         resp.reg <aircraft>         ("/aircraft",               &(*database));
         resp.reg <ship>             ("/ship",                   &(*database), resp.get <ship_armament> ("/ship/armament"));
+        resp.reg <search>           ("/search",                 &(*database));
 
         database.reset();
     }

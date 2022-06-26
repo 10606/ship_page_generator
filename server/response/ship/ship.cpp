@@ -113,7 +113,7 @@ private:
     std::vector <size_t> const & index_mapping;
     std::vector <uint8_t> visited;
     
-    static const constexpr std::string_view date_placeholder = "&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;";
+    static const constexpr std::string_view date_placeholder = "&ensp;&ensp;&nbsp;&ensp;&ensp;&nbsp;&ensp;&ensp;&ensp;&ensp;";
 };
 
 
