@@ -45,10 +45,10 @@ void search::response (simple_string & answer, std::string_view request_percent_
         if (!answer_list)
             return;
 
-        std::set <size_t> indexes;
+        std::vector <uint32_t> indexes;
         for (position_t pos : *answer_list)
         {
-            if (request.size() == 3)
+            if (request.size() >= 3)
             {
                 if ((names[pos.index].name_ru.size() <= pos.offset + check_3th_offset ||
                      names[pos.index].name_ru[pos.offset + check_3th_offset] != request[check_3th_offset]) &&
@@ -56,7 +56,8 @@ void search::response (simple_string & answer, std::string_view request_percent_
                      names[pos.index].name_en[pos.offset + check_3th_offset] != request[check_3th_offset]))
                     continue;
             }
-            indexes.insert(pos.index);
+            if (indexes.empty() || indexes.back() != pos.index)
+                indexes.push_back(pos.index);
         }
         
         add_ship(answer, indexes);
@@ -67,7 +68,7 @@ void search::response (simple_string & answer, std::string_view request_percent_
         auto it = by_4_chars.find(index);
         if (it != by_4_chars.end())
         {
-            std::set <size_t> indexes;
+            std::vector <uint32_t> indexes;
             for (position_t const & pos : it->second)
             {
                 if (names[pos.index].name_ru.size() < pos.offset + request.size() &&
@@ -81,7 +82,8 @@ void search::response (simple_string & answer, std::string_view request_percent_
 
                 if (name_ru != request && name_en != request)
                     continue;
-                indexes.insert(pos.index);
+                if (indexes.empty() || indexes.back() != pos.index)
+                    indexes.push_back(pos.index);
             }
             
             add_ship(answer, indexes);
@@ -94,7 +96,7 @@ void search::add (std::string_view name, size_t name_index)
     for (size_t i = 0; i != name.size(); ++i)
     {
         std::string_view value = name.substr(i);
-        position_t pos = {name_index, i};
+        position_t pos = {static_cast <uint32_t> (name_index), static_cast <uint32_t> (i)};
         uint8_t cur = value[0];
         if (by_1_chars[cur].empty() || by_1_chars[cur].back() != pos.index)
             by_1_chars[cur].emplace_back(pos.index);

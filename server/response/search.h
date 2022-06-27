@@ -38,8 +38,8 @@ private:
 
     struct position_t
     {
-        size_t index;
-        size_t offset;
+        uint32_t index;
+        uint32_t offset;
     };
     
     struct ship_info_t
@@ -50,18 +50,19 @@ private:
             name_ru(value.ship_ru.value_or("")),
             answer()
         {
-            answer.append(armament_links::base("/ship?id=" + std::to_string(value.ship_id), value.ship_ru.value_or("--")))
+            answer.append("<tr><td>")
+                  .append(armament_links::base("/ship?id=" + std::to_string(value.ship_id), value.ship_ru.value_or("--")))
                   .append(" ");
             if (value.class_ru || value.type_ru)
             {
-                answer.append(" (")
+                answer.append("</td><td>(")
                       .append(value.class_ru.value_or(""));
                 if (value.type_ru)
                     answer.append(" типа ")
                           .append(*value.type_ru);
-                answer.append(")"); // ато
+                answer.append(")");
             }
-            answer.append("<br>");
+            answer.append("</td></tr>");
         }
 
         int class_id;
@@ -71,7 +72,7 @@ private:
     };
     
     std::vector <ship_info_t> names;
-    std::array <std::vector <size_t>, 256> by_1_chars;
+    std::array <std::vector <uint32_t>, 256> by_1_chars;
     std::unordered_map <uint8_t, std::array <std::vector <position_t>, (1lu << 6)> > by_2_chars_mb2; // multi_byte 2
     std::array <std::vector <position_t>, (1lu << (7 + 7))> by_2_chars_ascii; // ascii | acsii,  ascii | mb <n> here use second char
     std::unordered_map <uint32_t, std::vector <position_t> > by_4_chars; // last chars for multi byte
@@ -89,18 +90,22 @@ private:
     }
 
     template <template <typename, typename ...> typename T, typename ... U> 
-    void add_ship (simple_string & answer, T <size_t, U ...> const & container)
+    void add_ship (simple_string & answer, T <uint32_t, U ...> const & container)
     {
         std::optional <int> class_id;
         for (size_t pos : container)
         {
             if (names[pos].class_id != class_id)
             {
+                if (class_id)
+                    answer.append("</table>");
+                answer.append("<br><table>");
                 class_id = names[pos].class_id;
-                answer.append("<br>");
             }
             answer.append(names[pos].answer);
         }
+        if (class_id)
+            answer.append("</table>");
     }
  
     std::pair <std::vector <position_t> *, size_t> calc_index_3 (std::string_view request)
@@ -131,7 +136,7 @@ private:
             answer.second = 2;
             answer.first += request[1];
         }
-        else if (request.size() == 3 && is_mb_begin(request[1]) && is_mb(request[2]))
+        else if (request.size() >= 3 && is_mb_begin(request[1]) && is_mb(request[2]))
         {
             answer.second = 1;
             answer.first += request[2] & 0b00111111;
