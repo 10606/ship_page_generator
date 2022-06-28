@@ -33,6 +33,9 @@ std::string search::percent_dec (std::string_view request_percent_enc)
 
 void search::response (simple_string & answer, std::string_view request_percent_enc)
 {
+    static const constexpr std::string_view search_keyword = "search=";
+    if (request_percent_enc.starts_with(search_keyword))
+        request_percent_enc = request_percent_enc.substr(search_keyword.size());
     std::string request = percent_dec(request_percent_enc);
 
     if (request.empty())
