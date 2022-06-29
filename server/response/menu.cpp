@@ -42,7 +42,7 @@ menu_item_template::item const menu_item_template::all_template =
         .content > a:hover { color: #ff2222; } \n\
         input { width: 100% }\n\
     </style>\n\
-    <form action = \"search\" method = \"get\">\n\
+    <form action = \"/search\" method = \"get\">\n\
         <input name = \"search\" type = \"text\" placeholder = \"Поиск...\"><br>\n\
     </form>",
     

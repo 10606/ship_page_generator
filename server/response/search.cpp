@@ -58,7 +58,8 @@ void search::response (simple_string & answer, std::string_view request_percent_
                     (names[pos.index].name_en.size() <= pos.offset + check_3th_offset ||
                      names[pos.index].name_en[pos.offset + check_3th_offset] != request[check_3th_offset]))
                     continue;
-            }
+            } else if (check_3th_offset >= 1)
+                continue;
             if (indexes.empty() || indexes.back() != pos.index)
                 indexes.push_back(pos.index);
         }

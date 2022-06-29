@@ -134,12 +134,12 @@ private:
         if (is_ascii(request[1]))
         {
             answer.second = 2;
-            answer.first += request[1];
+            answer.first += static_cast <uint8_t> (request[1]);
         }
         else if (request.size() >= 3 && is_mb_begin(request[1]) && is_mb(request[2]))
         {
             answer.second = 1;
-            answer.first += request[2] & 0b00111111;
+            answer.first += static_cast <uint8_t> (request[2]) & 0b00111111;
         }
         return answer;
     }
