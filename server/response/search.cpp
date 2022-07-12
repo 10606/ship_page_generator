@@ -125,7 +125,7 @@ void search::add (std::string_view name, size_t name_index)
 uint32_t search::calc_index_4 (std::string_view request)
 {
     uint32_t index = 0;
-    for (size_t i = 0, pos = 0; i != 4 && pos < request.size(); ++i)
+    for (size_t i = 0, pos = 0; i != 4 && pos < 4 && pos < request.size(); ++i)
     {
         index = index << 8;
         char cur = request[pos];

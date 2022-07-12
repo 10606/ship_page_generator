@@ -49,7 +49,7 @@ struct simple_string
     simple_string & append (std::string_view value)
     {
         if (value.size() + _size > capacity)
-            realloc(value.size() + _size * 4 + 64);
+            realloc(3 * value.size() + _size * 4 + 64);
         memcpy(_data + _size, value.data(), value.size());
         _size += value.size();
         return *this;
