@@ -34,6 +34,7 @@ struct search
     void response (simple_string & answer, std::string_view request);
     
 private:
+    friend struct add_ship_t;
     typedef ship_requests::ship_info_t::list ship_info_long;
 
     struct position_t
@@ -89,25 +90,6 @@ private:
         return c - 'A' + 10;
     }
 
-    template <template <typename, typename ...> typename T, typename ... U> 
-    void add_ship (simple_string & answer, T <uint32_t, U ...> const & container)
-    {
-        std::optional <int> class_id;
-        for (size_t pos : container)
-        {
-            if (names[pos].class_id != class_id)
-            {
-                if (class_id)
-                    answer.append("</table>");
-                answer.append("<br><table>");
-                class_id = names[pos].class_id;
-            }
-            answer.append(names[pos].answer);
-        }
-        if (class_id)
-            answer.append("</table>");
-    }
- 
     std::pair <std::vector <position_t> *, size_t> calc_index_3 (std::string_view request)
     {
         std::pair <std::vector <position_t> *, size_t> answer = {nullptr, 0};
