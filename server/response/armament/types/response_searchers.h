@@ -15,8 +15,12 @@ struct searcher
         std::vector <searcher_t> tmp = database->armament_info.get_searchers();
         searchers_cache = partial::partial_response <searcher_t, searchers_partial> (tmp);
         text_cache = partial::text_response <searcher_t, searchers_text> (tmp);
+
+        std::vector <picture_t> pictures_list = database->pictures.get_searcher();
+        pictures_cache = partial::pictures_response <searcher_t> (pictures_list, tmp);
     }
     
+    typedef ship_requests::pictures_t::picture picture_t;
     typedef ship_requests::armament_info_t::searchers searcher_t;
  
     // https://127.0.0.1:8443/armament/searcher?sort=power,in_service&group=class&filter=in_service,3x,4x
@@ -54,6 +58,7 @@ struct searcher
 private:
     std::vector <searchers_partial> searchers_cache;
     std::vector <searchers_text> text_cache;
+    std::vector <std::vector <picture_t> > pictures_cache;
 };
 
 

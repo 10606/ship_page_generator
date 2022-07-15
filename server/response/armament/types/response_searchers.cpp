@@ -7,7 +7,21 @@
 #include "registrators.h"
 #include "base_compare_predict.h"
 #include "base_comparators.h"
+#include "html_template.h"
 
+static const constexpr pictures_template pictures =
+{
+    {
+        "<li><a href=\"/pictures/searcher/",
+        "\"><img src=\"/pictures/searcher/",
+        "\"></a><br>",
+        "</li>"
+    },
+    {
+        "<ul>",
+        "</ul><br>"
+    }
+};
 
 struct searcher_cmp
 {
@@ -104,7 +118,12 @@ void searcher::response (simple_string & answer, std::string_view query)
             answer.append(text_cache[item.index].in_service);
         
         answer.append(table::end);
-        answer.append("<br>");
+
+        add_pictures_t add_pictures(answer, pictures);
+        for (searchers_partial const & item : list)
+            for (picture_t const & picture : pictures_cache[item.index])
+                add_pictures(picture);
+        add_pictures.close();
     }
 }
 
