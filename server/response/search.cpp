@@ -31,6 +31,7 @@ struct add_ship_t
     {
         if (class_id)
             answer.append("</table>");
+        class_id.reset();
     }
     
     ~add_ship_t ()

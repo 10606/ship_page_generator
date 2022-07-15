@@ -15,7 +15,7 @@ struct table
         } \n\
     </style>\n\
     <table border=1><td>\n";
-    static constexpr std::string_view end = "</td></table><br>\n";
+    static constexpr std::string_view end = "</td></table>\n";
     
     static constexpr std::string_view new_column = "</td>\n<td>\n";
     static constexpr std::string_view new_row = "</td></tr>\n<tr><td>\n";

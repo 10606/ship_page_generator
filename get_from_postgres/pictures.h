@@ -4,22 +4,11 @@
 #include "ship_requests.h"
 
 
-struct ship_requests::pictures_t::ship
+struct ship_requests::pictures_t::picture
 {
-    ship (pqxx::row const & value);
+    picture (pqxx::row const & value);
 
-    int ship_id;
-    std::string path_small;
-    std::string path_full;
-    std::string description;
-};
-
-
-struct ship_requests::pictures_t::aircraft
-{
-    aircraft (pqxx::row const & value);
-
-    int aircraft_id;
+    int id;
     std::string path_small;
     std::string path_full;
     std::string description;

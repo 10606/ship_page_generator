@@ -7,7 +7,21 @@
 #include "registrators.h"
 #include "base_compare_predict.h"
 #include "base_comparators.h"
+#include "html_template.h"
 
+static const constexpr pictures_template pictures =
+{
+    {
+        "<li><a href=\"/pictures/gun/",
+        "\"><img src=\"/pictures/gun/",
+        "\"></a><br>",
+        "</li>"
+    },
+    {
+        "<ul>",
+        "</ul><br>"
+    }
+};
 
 struct guns_cmp
 {
@@ -44,7 +58,7 @@ registrator_cmp <guns::guns_partial> guns_cmp::group
         "in_service", comparators::in_service_10th <guns::guns_partial>
     },
     {
-        "class", comparators::in_service <guns::guns_partial>
+        "class", comparators::classes <guns::guns_partial>
     },
 });
 
@@ -111,6 +125,12 @@ void guns::response (simple_string & answer, std::string_view query)
             answer.append(text_cache[item.index].in_service);
         
         answer.append(table::end);
+
+        add_pictures_t add_pictures(answer, pictures);
+        for (guns_partial const & item : list)
+            for (picture_t const & picture : pictures_cache[item.index])
+                add_pictures(picture);
+        add_pictures.close();
     }
 }
 

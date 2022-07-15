@@ -4,6 +4,7 @@
 #include "ship_event.h"
 #include "response_ship_armament.h"
 #include "simple_string.h"
+#include "html_template.h"
 #include <map>
 
 
@@ -11,8 +12,6 @@ struct ship
 {
     ship (ship_requests * _database, ship_armament & _armament);
     
-    typedef ship_requests::aircraft_info_t::list aircraft_t;
- 
     // http://127.0.0.1:8080/ship?id=0&id=1&id=2&id=3
     void response (simple_string & answer, std::string_view query);
     
@@ -28,25 +27,6 @@ private:
     
     std::unordered_map <int, response_t> modernizations;
     
-    struct html_template
-    {
-        std::string_view begin;
-        std::string_view end;
-    };
-    
-    struct pictures_template
-    {
-        struct picture_template
-        {
-            std::string_view begin__full;
-            std::string_view full__small;
-            std::string_view small__descr;
-            std::string_view descr__end;
-        } picture;
-        
-        html_template all;
-    };
-    
     friend struct add_event;
     
     friend void add_general_info
@@ -54,12 +34,6 @@ private:
         std::string & answer, 
         std::string & modernization_link, 
         ship_requests::ship_info_t::list const & info
-    );
-    
-    friend void add_pictures
-    (
-        std::string & answer,
-        std::vector <ship_requests::pictures_t::ship> const & info
     );
     
     static const constexpr std::string_view query_template = "ship=";
@@ -70,8 +44,8 @@ private:
     static const constexpr pictures_template pictures =
     {
         {
-            "<li><a href=\"/pictures/",
-            "\"><img src=\"/pictures/",
+            "<li><a href=\"/pictures/ship/",
+            "\"><img src=\"/pictures/ship/",
             "\"></a><br>",
             "</li>"
         },

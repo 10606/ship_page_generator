@@ -277,11 +277,10 @@ struct ship_requests
         {}
         
 
-        struct ship;
-        std::vector <ship> get_ship (std::string_view where = "");
-
-        struct aircraft;
-        std::vector <aircraft> get_aircraft (std::string_view where = "");
+        struct picture;
+        std::vector <picture> get_ship (std::string_view where = "");
+        std::vector <picture> get_aircraft (std::string_view where = "");
+        std::vector <picture> get_gun (std::string_view where = "");
         
         
         pictures_t (pictures_t &&) = delete;

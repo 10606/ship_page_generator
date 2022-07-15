@@ -163,29 +163,6 @@ void add_general_info
 }
 
 
-void add_pictures
-(
-    std::string & answer,
-    std::vector <ship_requests::pictures_t::ship> const & info
-)
-{
-    answer.append(ship::pictures.all.begin);
-    
-    for (auto const & i : info)
-    {
-        answer.append(ship::pictures.picture.begin__full)
-              .append(i.path_full)
-              .append(ship::pictures.picture.full__small)
-              .append(i.path_small)
-              .append(ship::pictures.picture.small__descr)
-              .append(i.description)
-              .append(ship::pictures.picture.descr__end);
-    }
-    
-    answer.append(ship::pictures.all.end);
-}
-
-
 
 ship::ship (ship_requests * database, ship_armament & _armament) :
     armament(_armament)
@@ -197,7 +174,7 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
     std::vector <list_t> list =
         database->ship_info.get_list();
 
-    typedef ship_requests::pictures_t::ship picture_t;
+    typedef ship_requests::pictures_t::picture picture_t;
     std::vector <picture_t> ship_pictures_list =
         database->pictures.get_ship();
     
@@ -220,7 +197,7 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
     }
 
     for (auto && item : ship_pictures_list)
-        ship_pictures[item.ship_id].push_back(std::move(item));
+        ship_pictures[item.id].push_back(std::move(item));
 
     for (auto & info : ship_info)
     {
@@ -255,7 +232,12 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
                     .append(answer.armament_link)
                     .append(link.end);
         answer.end.append(new_line);
-        add_pictures(answer.end, ship_pictures[ship_id]);
+        {
+            add_pictures_t add_pictures(answer.end, pictures);
+            for (auto const & info : ship_pictures[ship_id])
+                add_pictures(info);
+            add_pictures.close();
+        }
         answer.end.append(new_line)
                   .append(new_line);
         modernizations.insert({ship_id, std::move(answer)});
