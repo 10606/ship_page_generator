@@ -17,8 +17,7 @@ struct guns
         guns_cache = partial::partial_response <guns_t, guns_partial> (tmp);
         text_cache = partial::text_response <guns_t, guns_text> (tmp);
 
-        std::vector <picture_t> pictures_list =
-            database->pictures.get_gun();
+        std::vector <picture_t> pictures_list = database->pictures.get_gun();
         pictures_cache = partial::pictures_response <guns_t> (pictures_list, tmp);
     }
     

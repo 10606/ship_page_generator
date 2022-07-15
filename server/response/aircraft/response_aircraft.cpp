@@ -6,7 +6,21 @@
 #include "date_to_str.h"
 #include "registrators.h"
 #include "base_compare_predict.h"
+#include "html_template.h"
 
+static const constexpr pictures_template pictures =
+{
+    {
+        "<li><a href=\"/pictures/aircraft/",
+        "\"><img src=\"/pictures/aircraft/",
+        "\"></a><br>",
+        "</li>"
+    },
+    {
+        "<ul>",
+        "</ul><br>"
+    }
+};
 
 struct aircraft_cmp
 {
@@ -176,6 +190,12 @@ void aircraft::response (simple_string & answer, std::string_view query)
             answer.append(text_cache[item.index].in_service);
         
         answer.append(table::end);
+
+        add_pictures_t add_pictures(answer, pictures);
+        for (aircraft_partial const & item : list)
+            for (picture_t const & picture : pictures_cache[item.index])
+                add_pictures(picture);
+        add_pictures.close();
     }
 }
 

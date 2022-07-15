@@ -15,8 +15,12 @@ struct aircraft
         std::vector <aircraft_t> tmp = database->aircraft_info.get_list("");
         aircraft_cache = partial::partial_response <aircraft_t, aircraft_partial> (tmp);
         text_cache = partial::text_response <aircraft_t, aircraft_text> (tmp);
+
+        std::vector <picture_t> pictures_list = database->pictures.get_aircraft();
+        pictures_cache = partial::pictures_response <aircraft_t> (pictures_list, tmp);
     }
     
+    typedef ship_requests::pictures_t::picture picture_t;
     typedef ship_requests::aircraft_info_t::list aircraft_t;
  
     // https://127.0.0.1:8443/aircraft?sort=in_service&group=type&filter=in_service,3x,4x&filter=class,0
@@ -65,6 +69,7 @@ struct aircraft
 private:
     std::vector <aircraft_partial> aircraft_cache;
     std::vector <aircraft_text> text_cache;
+    std::vector <std::vector <picture_t> > pictures_cache;
 };
 
 

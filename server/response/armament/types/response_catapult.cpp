@@ -114,6 +114,7 @@ void catapult::response (simple_string & answer, std::string_view query)
             answer.append(text_cache[item.index].in_service);
         
         answer.append(table::end);
+        answer.append("<br>");
     }
 }
 

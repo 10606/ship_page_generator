@@ -93,7 +93,7 @@ ship_aircrafts::p_response_t ship_aircrafts::partial_response (aircraft_t const 
     if (it != aircraft_class_map.end())
         item.group_name = armament_links::filtered
                           (
-                              "/aircraft?group=in_service&sort=type", 
+                              "/aircraft?group=in_service&sort=type,in_service", 
                               (it != aircraft_class_map.end())? it->second : " ",
                               aircraft.class_id
                           );
