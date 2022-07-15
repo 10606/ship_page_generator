@@ -53,6 +53,7 @@ struct guns
         std::optional <std::string> name_en;
     
         double caliber;
+        int caliber_group;
         std::optional <std::chrono::year_month_day> in_service;
     };
     

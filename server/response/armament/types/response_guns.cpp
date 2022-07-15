@@ -52,7 +52,11 @@ registrator_cmp <guns::guns_partial> guns_cmp::sort
 registrator_cmp <guns::guns_partial> guns_cmp::group
 ({
     {
-        "caliber", comparators::caliber <guns::guns_partial>
+        "caliber",
+        [] (guns::guns_partial const & a, guns::guns_partial const & b) -> std::partial_ordering
+        { 
+            return a.caliber_group <=> b.caliber_group;
+        }
     },
     {
         "in_service", comparators::in_service_10th <guns::guns_partial>
@@ -142,6 +146,9 @@ guns::guns_partial::guns_partial (guns_t const & value, size_t _index) :
     name_ru     (value.gun_ru),
     name_en     (value.gun_en),
     caliber     (value.caliber.value_or(std::numeric_limits <double> ::infinity())),
+    caliber_group(value.caliber?
+        std::floor((std::log(*value.caliber + 1.) + 0.5) / 0.3) :
+        std::numeric_limits <int> ::max()),
     in_service  (value.in_service)
 {}
 

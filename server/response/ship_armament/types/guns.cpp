@@ -97,7 +97,7 @@ ship_guns::p_response_t ship_guns::partial_response (T const & mount)
 {
     p_response_t item;
     item.group = mount.class_id;
-    item.group_name = armament_links::filtered("/armament/guns?sort=caliber,in_service", mount.class_ru.value_or(""), mount.class_id);
+    item.group_name = armament_links::filtered("/armament/guns?sort=caliber,in_service&group=caliber", mount.class_ru.value_or(""), mount.class_id);
     if (mount.caliber)
         item.compare = -std::floor((std::log(*mount.caliber + 1.) + 0.5) / 0.3);
     else
