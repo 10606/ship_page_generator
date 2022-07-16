@@ -21,13 +21,10 @@ std::vector <ship_requests::ship_armament_lt_t::guns> ship_requests::ship_armame
     return request_to_db <guns>
     (
         db,
-        std::string
-        (
-            "select ship_id, mount_id, amount, \
-                    date_from, date_to \
-             from ship_guns "
-        )
-        .append(where)
+        "select ship_id, mount_id, amount, \
+                date_from, date_to \
+         from ship_guns ",
+        where
     );
 }
         
@@ -50,13 +47,10 @@ std::vector <ship_requests::ship_armament_lt_t::torpedo_tubes> ship_requests::sh
     return request_to_db <torpedo_tubes>
     (
         db,
-        std::string
-        (
-            "select ship_id, tube_id, amount, \
-                    date_from, date_to \
-             from ship_torpedo_tubes "
-        )
-        .append(where)
+        "select ship_id, tube_id, amount, \
+                date_from, date_to \
+         from ship_torpedo_tubes ",
+        where
     );
 }
         
@@ -79,13 +73,10 @@ std::vector <ship_requests::ship_armament_lt_t::throwers> ship_requests::ship_ar
     return request_to_db <throwers>
     (
         db,
-        std::string
-        (
-            "select ship_id, throwers_id, amount, \
-                    date_from, date_to \
-             from ship_throwers "
-        )
-        .append(where)
+        "select ship_id, throwers_id, amount, \
+                date_from, date_to \
+         from ship_throwers ",
+        where
     );
 }
         
@@ -108,13 +99,10 @@ std::vector <ship_requests::ship_armament_lt_t::searchers> ship_requests::ship_a
     return request_to_db <searchers>
     (
         db,
-        std::string
-        (
-            "select ship_id, searcher_id, amount, \
-                    date_from, date_to \
-             from ship_searchers "
-        )
-        .append(where)
+        "select ship_id, searcher_id, amount, \
+                date_from, date_to \
+         from ship_searchers ",
+        where
     );
 }
         
@@ -137,13 +125,10 @@ std::vector <ship_requests::ship_armament_lt_t::catapult> ship_requests::ship_ar
     return request_to_db <catapult>
     (
         db,
-        std::string
-        (
-            "select ship_id, catapult_id, amount, \
-                    date_from, date_to \
-             from ship_catapult "
-        )
-        .append(where)
+        "select ship_id, catapult_id, amount, \
+                date_from, date_to \
+         from ship_catapult ",
+        where
     );
 }
         
@@ -167,13 +152,10 @@ std::vector <ship_requests::ship_armament_lt_t::aircraft> ship_requests::ship_ar
     return request_to_db <aircraft>
     (
         db,
-        std::string
-        (
-            "select ship_id, aircraft_id, amount, amount_reserve, \
-                    date_from, date_to \
-             from ship_aircraft "
-        )
-        .append(where)
+        "select ship_id, aircraft_id, amount, amount_reserve, \
+                date_from, date_to \
+         from ship_aircraft ",
+        where
     );
 }
         

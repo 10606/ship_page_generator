@@ -24,13 +24,10 @@ std::vector <ship_requests::armament_info_t::torpedo> ship_requests::armament_in
     return request_to_db <torpedo>
     (
         db,
-        std::string
-        (
-            "select id, name_ru, name_en, caliber, length, \
-                    speed, range, mass, mass_ex, in_service \
-             from torpedo_list "
-        ) 
-        .append(where)
+        "select id, name_ru, name_en, caliber, length, \
+                speed, range, mass, mass_ex, in_service \
+         from torpedo_list ",
+        where
     );
 };
 
@@ -55,17 +52,13 @@ std::vector <ship_requests::armament_info_t::torpedo_tubes> ship_requests::armam
     return request_to_db <torpedo_tubes>
     (
         db,
-        std::string
-        (
-            "select torpedo_tubes.id, torpedo_tubes.class_id, \
-                    torpedo_tubes.name_ru, torpedo_tubes.name_en, \
-                    gun_class.name_ru, gun_class.name_en, \
-                    caliber, tubes_count, in_service \
-             from torpedo_tubes \
-             inner join gun_class on (torpedo_tubes.class_id = gun_class.id) "
-        ) 
-        +
-        std::string(where)
+        "select torpedo_tubes.id, torpedo_tubes.class_id, \
+                torpedo_tubes.name_ru, torpedo_tubes.name_en, \
+                gun_class.name_ru, gun_class.name_en, \
+                caliber, tubes_count, in_service \
+         from torpedo_tubes \
+         inner join gun_class on (torpedo_tubes.class_id = gun_class.id) ",
+        where
     );
 };
 
@@ -82,8 +75,8 @@ std::vector <ship_requests::armament_info_t::classes> ship_requests::armament_in
     return request_to_db <classes>
     (
         db,
-        std::string ("select id, parent_id, name_ru, name_en from gun_class ") 
-            .append(where)
+        "select id, parent_id, name_ru, name_en from gun_class ",
+        where
     );
 };
 
@@ -112,17 +105,14 @@ std::vector <ship_requests::armament_info_t::list> ship_requests::armament_info_
     return request_to_db <list>
     (
         db,
-        std::string
-        (
-            "select gun_list.id, gun_list.class_id, \
-                    gun_list.name_ru, gun_list.name_en, \
-                    gun_class.name_ru, gun_class.name_en, \
-                    caliber, length, rate_of_fire, effective_range, \
-                    mass, build_cnt, in_service \
-             from gun_list \
-             inner join gun_class on (gun_list.class_id = gun_class.id) "
-        ) 
-        .append(where)
+        "select gun_list.id, gun_list.class_id, \
+                gun_list.name_ru, gun_list.name_en, \
+                gun_class.name_ru, gun_class.name_en, \
+                caliber, length, rate_of_fire, effective_range, \
+                mass, build_cnt, in_service \
+         from gun_list \
+         inner join gun_class on (gun_list.class_id = gun_class.id) ",
+        where
     );
 };
 
@@ -150,19 +140,16 @@ std::vector <ship_requests::armament_info_t::mount> ship_requests::armament_info
     return request_to_db <mount>
     (
         db,
-        std::string
-        (
-            "select gun_mount.id, gun_mount.gun_id, gun_class.id, \
-                    gun_mount.name_ru, gun_mount.name_en, \
-                    gun_list.name_ru,  gun_list.name_en, \
-                    gun_class.name_ru, gun_class.name_en, \
-                    caliber, length, rate_of_fire, effective_range, \
-                    gun_count, angle \
-             from gun_mount \
-             inner join gun_list on (gun_mount.gun_id = gun_list.id) \
-             inner join gun_class on (gun_list.class_id = gun_class.id) "
-        ) 
-        .append(where)
+        "select gun_mount.id, gun_mount.gun_id, gun_class.id, \
+                gun_mount.name_ru, gun_mount.name_en, \
+                gun_list.name_ru,  gun_list.name_en, \
+                gun_class.name_ru, gun_class.name_en, \
+                caliber, length, rate_of_fire, effective_range, \
+                gun_count, angle \
+         from gun_mount \
+         inner join gun_list on (gun_mount.gun_id = gun_list.id) \
+         inner join gun_class on (gun_list.class_id = gun_class.id) ",
+        where
     );
 };
 
@@ -188,16 +175,13 @@ std::vector <ship_requests::armament_info_t::mines_charges> ship_requests::armam
     return request_to_db <mines_charges>
     (
         db,
-        std::string
-        (
-            "select mine_list.id, gun_class.id, \
-                    mine_list.name_ru, mine_list.name_en, \
-                    gun_class.name_ru, gun_class.name_en, \
-                    size, mass, mass_ex \
-             from mine_list \
-             inner join gun_class on (mine_list.class_id = gun_class.id) "
-        ) 
-        .append(where)
+        "select mine_list.id, gun_class.id, \
+                mine_list.name_ru, mine_list.name_en, \
+                gun_class.name_ru, gun_class.name_en, \
+                size, mass, mass_ex \
+         from mine_list \
+         inner join gun_class on (mine_list.class_id = gun_class.id) ",
+        where
     );
 };
 
@@ -222,16 +206,13 @@ std::vector <ship_requests::armament_info_t::throwers> ship_requests::armament_i
     return request_to_db <throwers>
     (
         db,
-        std::string
-        (
-            "select throwers.id, gun_class.id, \
-                    throwers.name_ru, throwers.name_en, \
-                    gun_class.name_ru, gun_class.name_en, \
-                    caliber, tubes_count, in_service \
-             from throwers \
-             inner join gun_class on (throwers.class_id = gun_class.id) "
-        ) 
-        .append(where)
+        "select throwers.id, gun_class.id, \
+                throwers.name_ru, throwers.name_en, \
+                gun_class.name_ru, gun_class.name_en, \
+                caliber, tubes_count, in_service \
+         from throwers \
+         inner join gun_class on (throwers.class_id = gun_class.id) ",
+        where
     );
 };
 
@@ -260,17 +241,14 @@ std::vector <ship_requests::armament_info_t::catapult> ship_requests::armament_i
     return request_to_db <catapult>
     (
         db,
-        std::string
-        (
-            "select catapult.id, catapult_class.id, \
-                    catapult.name_ru, catapult.name_en, \
-                    catapult_class.name_ru, catapult_class.name_en, \
-                    length, width, speed, launch_mass, \
-                    alleceration, in_service \
-             from catapult \
-             inner join catapult_class on (catapult.class_id = catapult_class.id) "
-        ) 
-        .append(where)
+        "select catapult.id, catapult_class.id, \
+                catapult.name_ru, catapult.name_en, \
+                catapult_class.name_ru, catapult_class.name_en, \
+                length, width, speed, launch_mass, \
+                alleceration, in_service \
+         from catapult \
+         inner join catapult_class on (catapult.class_id = catapult_class.id) ",
+        where
     );
 };
 
@@ -297,16 +275,13 @@ std::vector <ship_requests::armament_info_t::searchers> ship_requests::armament_
     return request_to_db <searchers>
     (
         db,
-        std::string
-        (
-            "select searchers.id, gun_class.id, \
-                    searchers.name_ru, searchers.name_en, \
-                    gun_class.name_ru, gun_class.name_en, \
-                    mass, frequency, power, build_cnt, in_service \
-             from searchers \
-             inner join gun_class on (searchers.class_id = gun_class.id) "
-        ) 
-        .append(where)
+        "select searchers.id, gun_class.id, \
+                searchers.name_ru, searchers.name_en, \
+                gun_class.name_ru, gun_class.name_en, \
+                mass, frequency, power, build_cnt, in_service \
+         from searchers \
+         inner join gun_class on (searchers.class_id = gun_class.id) ",
+        where
     );
 };
 

@@ -31,18 +31,15 @@ std::vector <ship_requests::ship_armament_t::guns> ship_requests::ship_armament_
     return request_to_db <guns>
     (
         db,
-        std::string
-        (
-            "select gun_class.id, gun_class.name_ru, gun_class.name_en, \
-                    gun_list.id, caliber, length, gun_list.name_ru, gun_list.name_en, \
-                    gun_mount.name_ru, gun_mount.name_en, angle, gun_mount.gun_count, \
-                    amount, date_from, date_to \
-             from ship_guns \
-             inner join gun_mount on (ship_guns.mount_id = gun_mount.id) \
-             inner join gun_list on (gun_mount.gun_id = gun_list.id) \
-             inner join gun_class on (gun_list.class_id = gun_class.id) "
-        )
-        .append(where)
+        "select gun_class.id, gun_class.name_ru, gun_class.name_en, \
+                gun_list.id, caliber, length, gun_list.name_ru, gun_list.name_en, \
+                gun_mount.name_ru, gun_mount.name_en, angle, gun_mount.gun_count, \
+                amount, date_from, date_to \
+         from ship_guns \
+         inner join gun_mount on (ship_guns.mount_id = gun_mount.id) \
+         inner join gun_list on (gun_mount.gun_id = gun_list.id) \
+         inner join gun_class on (gun_list.class_id = gun_class.id) ",
+        where
     );
 }
         
@@ -71,17 +68,14 @@ std::vector <ship_requests::ship_armament_t::torpedo_tubes> ship_requests::ship_
     return request_to_db <torpedo_tubes>
     (
         db,
-        std::string
-        (
-            "select gun_class.id, gun_class.name_ru, gun_class.name_en, \
-                    torpedo_tubes.id, caliber, tubes_count, \
-                    torpedo_tubes.name_ru, torpedo_tubes.name_en, \
-                    amount, date_from, date_to \
-             from ship_torpedo_tubes \
-             inner join torpedo_tubes on (ship_torpedo_tubes.tube_id = torpedo_tubes.id) \
-             inner join gun_class on (torpedo_tubes.class_id = gun_class.id) "
-        )
-        .append(where)
+        "select gun_class.id, gun_class.name_ru, gun_class.name_en, \
+                torpedo_tubes.id, caliber, tubes_count, \
+                torpedo_tubes.name_ru, torpedo_tubes.name_en, \
+                amount, date_from, date_to \
+         from ship_torpedo_tubes \
+         inner join torpedo_tubes on (ship_torpedo_tubes.tube_id = torpedo_tubes.id) \
+         inner join gun_class on (torpedo_tubes.class_id = gun_class.id) ",
+        where
     );
 }
         
@@ -110,17 +104,14 @@ std::vector <ship_requests::ship_armament_t::throwers> ship_requests::ship_armam
     return request_to_db <throwers>
     (
         db,
-        std::string
-        (
-            "select gun_class.id, gun_class.name_ru, gun_class.name_en, \
-                    throwers.id, caliber, tubes_count, \
-                    throwers.name_ru, throwers.name_en, \
-                    amount, date_from, date_to \
-             from ship_throwers \
-             inner join throwers on (ship_throwers.throwers_id = throwers.id) \
-             inner join gun_class on (throwers.class_id = gun_class.id) "
-        )
-        .append(where)
+        "select gun_class.id, gun_class.name_ru, gun_class.name_en, \
+                throwers.id, caliber, tubes_count, \
+                throwers.name_ru, throwers.name_en, \
+                amount, date_from, date_to \
+         from ship_throwers \
+         inner join throwers on (ship_throwers.throwers_id = throwers.id) \
+         inner join gun_class on (throwers.class_id = gun_class.id) ",
+        where
     );
 }
         
@@ -147,16 +138,13 @@ std::vector <ship_requests::ship_armament_t::searchers> ship_requests::ship_arma
     return request_to_db <searchers>
     (
         db,
-        std::string
-        (
-            "select gun_class.id, gun_class.name_ru, gun_class.name_en, \
-                    searchers.id, searchers.name_ru, searchers.name_en, \
-                    amount, date_from, date_to \
-             from ship_searchers \
-             inner join searchers on (ship_searchers.searcher_id = searchers.id) \
-             inner join gun_class on (searchers.class_id = gun_class.id) "
-        )
-        .append(where)
+        "select gun_class.id, gun_class.name_ru, gun_class.name_en, \
+                searchers.id, searchers.name_ru, searchers.name_en, \
+                amount, date_from, date_to \
+         from ship_searchers \
+         inner join searchers on (ship_searchers.searcher_id = searchers.id) \
+         inner join gun_class on (searchers.class_id = gun_class.id) ",
+        where
     );
 }
         
@@ -183,16 +171,13 @@ std::vector <ship_requests::ship_armament_t::catapult> ship_requests::ship_armam
     return request_to_db <catapult>
     (
         db,
-        std::string
-        (
-            "select catapult_class.id, catapult_class.name_ru, catapult_class.name_en, \
-                    catapult.id, catapult.name_ru, catapult.name_en, \
-                    amount, date_from, date_to \
-             from ship_catapult \
-             inner join catapult on (ship_catapult.catapult_id = catapult.id) \
-             inner join catapult_class on (catapult.class_id = catapult_class.id) "
-        )
-        .append(where)
+        "select catapult_class.id, catapult_class.name_ru, catapult_class.name_en, \
+                catapult.id, catapult.name_ru, catapult.name_en, \
+                amount, date_from, date_to \
+         from ship_catapult \
+         inner join catapult on (ship_catapult.catapult_id = catapult.id) \
+         inner join catapult_class on (catapult.class_id = catapult_class.id) ",
+        where
     );
 }
         
@@ -219,16 +204,13 @@ std::vector <ship_requests::ship_armament_t::aircraft> ship_requests::ship_armam
     return request_to_db <aircraft>
     (
         db,
-        std::string
-        (
-            "select aircraft_class.id, aircraft_class.name_ru, aircraft_class.name_en, \
-                    aircraft_list.id, aircraft_list.name_ru, aircraft_list.name_en, \
-                    amount, date_from, date_to \
-             from ship_aircraft \
-             inner join aircraft_list on (ship_aircraft.aircraft_id = aircraft_list.id) \
-             inner join aircraft_class on (aircraft_list.class_id = aircraft_class.id) "
-        )
-        .append(where)
+        "select aircraft_class.id, aircraft_class.name_ru, aircraft_class.name_en, \
+                aircraft_list.id, aircraft_list.name_ru, aircraft_list.name_en, \
+                amount, date_from, date_to \
+         from ship_aircraft \
+         inner join aircraft_list on (ship_aircraft.aircraft_id = aircraft_list.id) \
+         inner join aircraft_class on (aircraft_list.class_id = aircraft_class.id) ",
+        where
     );
 }
         

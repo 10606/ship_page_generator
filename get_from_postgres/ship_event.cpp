@@ -14,8 +14,8 @@ std::vector <ship_requests::ship_event_t::classes> ship_requests::ship_event_t::
     return request_to_db <classes>
     (
         db,
-        std::string("select id, name_ru, name_en from event_class ") 
-            .append(where)
+        "select id, name_ru, name_en from event_class ",
+        where
     );
 };
 
@@ -40,11 +40,11 @@ std::vector <ship_requests::ship_event_t::event> ship_requests::ship_event_t::ge
     return request_to_db <event>
     (
         db,
-        std::string("select class_id, ship_id, name_ru, \
-                            name_en, date_from, date_to, description \
-                     from ship_event_list \
-                     inner join event_class on (ship_event_list.class_id = event_class.id) ") 
-        .append(where)
+        "select class_id, ship_id, name_ru, \
+                name_en, date_from, date_to, description \
+         from ship_event_list \
+         inner join event_class on (ship_event_list.class_id = event_class.id) ",
+        where
     );
 };
 
@@ -65,9 +65,8 @@ std::vector <ship_requests::ship_event_t::event_lt> ship_requests::ship_event_t:
     return request_to_db <event_lt>
     (
         db,
-        std::string("select ship_id,  date_from, date_to \
-                     from ship_event_list ")
-        .append(where)
+        "select ship_id,  date_from, date_to from ship_event_list ",
+        where
     );
 };
 
@@ -91,12 +90,12 @@ std::vector <ship_requests::ship_event_t::event_lt_descr> ship_requests::ship_ev
     return request_to_db <event_lt_descr>
     (
         db,
-        std::string("select ship_id, class_id, \
-                            date_from, date_to, \
-                            name_ru, description \
-                     from ship_event_list \
-                     inner join event_class on (ship_event_list.class_id = event_class.id) ")
-        .append(where)
+        "select ship_id, class_id, \
+                date_from, date_to, \
+                name_ru, description \
+         from ship_event_list \
+         inner join event_class on (ship_event_list.class_id = event_class.id) ",
+        where
     );
 };
 

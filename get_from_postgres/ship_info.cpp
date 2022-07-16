@@ -28,18 +28,15 @@ std::vector <ship_requests::ship_info_t::list> ship_requests::ship_info_t::get_l
     return request_to_db <list>
     (
         db,
-        std::string
-        (
-            "select ship_list.id, ship_list.type_id, ship_list.class_id, \
-                    ship_list.name_ru, ship_list.name_en, \
-                    ship_types.name_ru, ship_types.name_en, \
-                    ship_class.name_ru, ship_class.name_en, \
-                    commissioned, sunk_date, sunk_reason \
-             from ship_list \
-             inner join ship_types on (ship_list.type_id = ship_types.id) \
-             inner join ship_class on (ship_list.class_id = ship_class.id) "
-        ) 
-        .append(where)
+        "select ship_list.id, ship_list.type_id, ship_list.class_id, \
+                ship_list.name_ru, ship_list.name_en, \
+                ship_types.name_ru, ship_types.name_en, \
+                ship_class.name_ru, ship_class.name_en, \
+                commissioned, sunk_date, sunk_reason \
+         from ship_list \
+         inner join ship_types on (ship_list.type_id = ship_types.id) \
+         inner join ship_class on (ship_list.class_id = ship_class.id) ",
+        where
     );
 };
 
@@ -69,15 +66,12 @@ std::vector <ship_requests::ship_info_t::general> ship_requests::ship_info_t::ge
     return request_to_db <general>
     (
         db,
-        std::string
-        (
-            "select ship_id, displacement_standart, displacement_full, \
-                    length, width, draft, \
-                    crew, speed_max, speed_cruise, range, \
-                    date_from, date_to \
-             from general "
-        ) 
-        .append(where)
+        "select ship_id, displacement_standart, displacement_full, \
+                length, width, draft, \
+                crew, speed_max, speed_cruise, range, \
+                date_from, date_to \
+         from general ",
+        where
     );
 };
 
@@ -93,8 +87,8 @@ std::vector <ship_requests::ship_info_t::types> ship_requests::ship_info_t::get_
     return request_to_db <types>
     (
         db,
-        std::string ("select id, name_ru, name_en from ship_types ") 
-            .append(where)
+        "select id, name_ru, name_en from ship_types ",
+        where
     );
 };
 
@@ -111,8 +105,8 @@ std::vector <ship_requests::ship_info_t::classes> ship_requests::ship_info_t::ge
     return request_to_db <classes>
     (
         db,
-        std::string ("select id, parent_id, name_ru, name_en from ship_class ") 
-            .append(where)
+        "select id, parent_id, name_ru, name_en from ship_class ",
+        where
     );
 };
 

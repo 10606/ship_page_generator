@@ -21,8 +21,8 @@ std::vector <ship_requests::aircraft_info_t::bombs> ship_requests::aircraft_info
     return request_to_db <bombs>
     (
         db, 
-        std::string("select id, name_ru, name_en, mass, mass_ex, in_service from bombs ") 
-            .append(where)
+        "select id, name_ru, name_en, mass, mass_ex, in_service from bombs ",
+        where
     );
 };
 
@@ -39,8 +39,8 @@ std::vector <ship_requests::aircraft_info_t::classes> ship_requests::aircraft_in
     return request_to_db <classes>
     (
         db,
-        std::string("select id, parent_id, name_ru, name_en from aircraft_class ") 
-            .append(where)
+        "select id, parent_id, name_ru, name_en from aircraft_class ",
+        where
     );
 };
 
@@ -56,8 +56,8 @@ std::vector <ship_requests::aircraft_info_t::types> ship_requests::aircraft_info
     return request_to_db <types>
     (
         db,
-        std::string("select id, name_ru, name_en from aircraft_types ") 
-            .append(where)
+        "select id, name_ru, name_en from aircraft_types ",
+        where
     );
 };
 
@@ -96,20 +96,17 @@ std::vector <ship_requests::aircraft_info_t::list> ship_requests::aircraft_info_
     return request_to_db <list>
     (
         db,
-        std::string
-        (
-            "select aircraft_list.id, aircraft_types.id, aircraft_class.id, \
-                    aircraft_list.name_ru,  aircraft_list.name_en, \
-                    aircraft_types.name_ru, aircraft_types.name_en, \
-                    aircraft_class.name_ru, aircraft_class.name_en, \
-                    crew, mass, max_mass, engine_power, \
-                    max_speed, cruise_speed, range, range_with_tank, \
-                    ceiling, time_to_altitude, in_service \
-             from aircraft_list \
-             inner join aircraft_types on (aircraft_list.type_id = aircraft_types.id) \
-             inner join aircraft_class on (aircraft_list.class_id = aircraft_class.id) "
-        ) 
-        .append(where)
+        "select aircraft_list.id, aircraft_types.id, aircraft_class.id, \
+                aircraft_list.name_ru,  aircraft_list.name_en, \
+                aircraft_types.name_ru, aircraft_types.name_en, \
+                aircraft_class.name_ru, aircraft_class.name_en, \
+                crew, mass, max_mass, engine_power, \
+                max_speed, cruise_speed, range, range_with_tank, \
+                ceiling, time_to_altitude, in_service \
+         from aircraft_list \
+         inner join aircraft_types on (aircraft_list.type_id = aircraft_types.id) \
+         inner join aircraft_class on (aircraft_list.class_id = aircraft_class.id) ",
+        where
     );
 };
     
