@@ -77,7 +77,7 @@ ship_searchers::p_response_t ship_searchers::partial_response (searcher_t const 
 {
     p_response_t item;
     item.group = searcher.class_id;
-    item.group_name = armament_links::filtered("/armament/searcher?sort=in_service", searcher.class_ru.value_or(""), searcher.class_id);
+    item.group_name = armament_links::filtered("/armament/searcher?group=power&sort=in_service", searcher.class_ru.value_or(""), searcher.class_id);
     item.compare = 0;
     
     item.data += " ";

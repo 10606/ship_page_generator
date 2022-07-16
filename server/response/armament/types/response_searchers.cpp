@@ -64,6 +64,13 @@ registrator_cmp <searcher::searchers_partial> searcher_cmp::group
     {
         "class", comparators::classes <searcher::searchers_partial>
     },
+    {
+        "power",
+        [] (searcher::searchers_partial const & a, searcher::searchers_partial const & b) -> std::partial_ordering
+        {
+            return a.power_group <=> b.power_group;
+        }
+    },
 });
 
 registrator_pred <searcher::searchers_partial> & searcher_cmp::filter ()
@@ -136,6 +143,9 @@ searcher::searchers_partial::searchers_partial (searcher_t const & value, size_t
     name_en     (value.searcher_en),
     mass        (value.mass .value_or(std::numeric_limits <double> ::infinity())),
     power       (value.power.value_or(std::numeric_limits <double> ::infinity())),
+    power_group (value.power? 
+                    std::floor(std::log(*value.power + 1)) : 
+                    std::numeric_limits <int> ::max()),
     in_service  (value.in_service)
 {}
 

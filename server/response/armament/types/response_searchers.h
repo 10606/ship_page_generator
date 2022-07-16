@@ -52,6 +52,7 @@ struct searcher
     
         double mass;
         double power;
+        int power_group;
         std::optional <std::chrono::year_month_day> in_service;
     };
     
