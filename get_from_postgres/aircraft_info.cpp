@@ -1,5 +1,6 @@
 #include "ship_requests.h"
 #include "aircraft_info.h"
+#include "template_request.h"
 
 
 ship_requests::aircraft_info_t::bombs::bombs (pqxx::row const & value) :
@@ -17,17 +18,12 @@ ship_requests::aircraft_info_t::bombs::bombs (pqxx::row const & value) :
 
 std::vector <ship_requests::aircraft_info_t::bombs> ship_requests::aircraft_info_t::get_bombs (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <bombs>
     (
+        db, 
         std::string("select id, name_ru, name_en, mass, mass_ex, in_service from bombs ") 
-        +
-        std::string(where)
+            .append(where)
     );
-    std::vector <bombs> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
 
@@ -40,17 +36,12 @@ ship_requests::aircraft_info_t::classes::classes (pqxx::row const & value) :
 
 std::vector <ship_requests::aircraft_info_t::classes> ship_requests::aircraft_info_t::get_classes (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <classes>
     (
+        db,
         std::string("select id, parent_id, name_ru, name_en from aircraft_class ") 
-        +
-        std::string(where)
+            .append(where)
     );
-    std::vector <classes> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
 
@@ -62,17 +53,12 @@ ship_requests::aircraft_info_t::types::types (pqxx::row const & value) :
 
 std::vector <ship_requests::aircraft_info_t::types> ship_requests::aircraft_info_t::get_types (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <types>
     (
+        db,
         std::string("select id, name_ru, name_en from aircraft_types ") 
-        +
-        std::string(where)
+            .append(where)
     );
-    std::vector <types> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
 
@@ -107,8 +93,9 @@ ship_requests::aircraft_info_t::list::list (pqxx::row const & value) :
 
 std::vector <ship_requests::aircraft_info_t::list> ship_requests::aircraft_info_t::get_list (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <list>
     (
+        db,
         std::string
         (
             "select aircraft_list.id, aircraft_types.id, aircraft_class.id, \
@@ -122,14 +109,8 @@ std::vector <ship_requests::aircraft_info_t::list> ship_requests::aircraft_info_
              inner join aircraft_types on (aircraft_list.type_id = aircraft_types.id) \
              inner join aircraft_class on (aircraft_list.class_id = aircraft_class.id) "
         ) 
-        +
-        std::string(where)
+        .append(where)
     );
-    std::vector <list> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
     
     

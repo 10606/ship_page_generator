@@ -1,5 +1,6 @@
 #include "ship_requests.h"
 #include "ship_event.h"
+#include "template_request.h"
 
 
 ship_requests::ship_event_t::classes::classes (pqxx::row const & value) :
@@ -10,17 +11,12 @@ ship_requests::ship_event_t::classes::classes (pqxx::row const & value) :
 
 std::vector <ship_requests::ship_event_t::classes> ship_requests::ship_event_t::get_classes (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <classes>
     (
+        db,
         std::string("select id, name_ru, name_en from event_class ") 
-        +
-        std::string(where)
+            .append(where)
     );
-    std::vector <classes> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
 
@@ -41,20 +37,15 @@ ship_requests::ship_event_t::event::event (pqxx::row const & value) :
 
 std::vector <ship_requests::ship_event_t::event> ship_requests::ship_event_t::get_event (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <event>
     (
+        db,
         std::string("select class_id, ship_id, name_ru, \
                             name_en, date_from, date_to, description \
                      from ship_event_list \
                      inner join event_class on (ship_event_list.class_id = event_class.id) ") 
-        +
-        std::string(where)
+        .append(where)
     );
-    std::vector <event> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
 
@@ -71,18 +62,13 @@ ship_requests::ship_event_t::event_lt::event_lt (pqxx::row const & value) :
 
 std::vector <ship_requests::ship_event_t::event_lt> ship_requests::ship_event_t::get_event_lt (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <event_lt>
     (
+        db,
         std::string("select ship_id,  date_from, date_to \
                      from ship_event_list ")
-        +
-        std::string(where)
+        .append(where)
     );
-    std::vector <event_lt> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
 
@@ -102,21 +88,16 @@ ship_requests::ship_event_t::event_lt_descr::event_lt_descr (pqxx::row const & v
 
 std::vector <ship_requests::ship_event_t::event_lt_descr> ship_requests::ship_event_t::get_event_lt_descr (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <event_lt_descr>
     (
+        db,
         std::string("select ship_id, class_id, \
                             date_from, date_to, \
                             name_ru, description \
                      from ship_event_list \
                      inner join event_class on (ship_event_list.class_id = event_class.id) ")
-        +
-        std::string(where)
+        .append(where)
     );
-    std::vector <event_lt_descr> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
 

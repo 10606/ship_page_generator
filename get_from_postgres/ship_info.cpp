@@ -1,5 +1,6 @@
 #include "ship_requests.h"
 #include "ship_info.h"
+#include "template_request.h"
 
 
 ship_requests::ship_info_t::list::list (pqxx::row const & value) :
@@ -24,8 +25,9 @@ ship_requests::ship_info_t::list::list (pqxx::row const & value) :
 
 std::vector <ship_requests::ship_info_t::list> ship_requests::ship_info_t::get_list (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <list>
     (
+        db,
         std::string
         (
             "select ship_list.id, ship_list.type_id, ship_list.class_id, \
@@ -37,14 +39,8 @@ std::vector <ship_requests::ship_info_t::list> ship_requests::ship_info_t::get_l
              inner join ship_types on (ship_list.type_id = ship_types.id) \
              inner join ship_class on (ship_list.class_id = ship_class.id) "
         ) 
-        +
-        std::string(where)
+        .append(where)
     );
-    std::vector <list> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
 
@@ -70,8 +66,9 @@ ship_requests::ship_info_t::general::general (pqxx::row const & value) :
     
 std::vector <ship_requests::ship_info_t::general> ship_requests::ship_info_t::get_general (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <general>
     (
+        db,
         std::string
         (
             "select ship_id, displacement_standart, displacement_full, \
@@ -80,14 +77,8 @@ std::vector <ship_requests::ship_info_t::general> ship_requests::ship_info_t::ge
                     date_from, date_to \
              from general "
         ) 
-        +
-        std::string(where)
+        .append(where)
     );
-    std::vector <general> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
     
@@ -99,17 +90,12 @@ ship_requests::ship_info_t::types::types (pqxx::row const & value) :
     
 std::vector <ship_requests::ship_info_t::types> ship_requests::ship_info_t::get_types (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <types>
     (
+        db,
         std::string ("select id, name_ru, name_en from ship_types ") 
-        +
-        std::string(where)
+            .append(where)
     );
-    std::vector <types> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
     
@@ -122,17 +108,12 @@ ship_requests::ship_info_t::classes::classes (pqxx::row const & value) :
     
 std::vector <ship_requests::ship_info_t::classes> ship_requests::ship_info_t::get_classes (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <classes>
     (
+        db,
         std::string ("select id, parent_id, name_ru, name_en from ship_class ") 
-        +
-        std::string(where)
+            .append(where)
     );
-    std::vector <classes> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
 

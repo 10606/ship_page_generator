@@ -1,5 +1,6 @@
 #include "ship_requests.h"
 #include "armament_info.h"
+#include "template_request.h"
 
 
 ship_requests::armament_info_t::torpedo::torpedo (pqxx::row const & value) :
@@ -20,22 +21,17 @@ ship_requests::armament_info_t::torpedo::torpedo (pqxx::row const & value) :
 
 std::vector <ship_requests::armament_info_t::torpedo> ship_requests::armament_info_t::get_torpedo (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <torpedo>
     (
+        db,
         std::string
         (
             "select id, name_ru, name_en, caliber, length, \
                     speed, range, mass, mass_ex, in_service \
              from torpedo_list "
         ) 
-        +
-        std::string(where)
+        .append(where)
     );
-    std::vector <torpedo> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
 
@@ -56,8 +52,9 @@ ship_requests::armament_info_t::torpedo_tubes::torpedo_tubes (pqxx::row const & 
 
 std::vector <ship_requests::armament_info_t::torpedo_tubes> ship_requests::armament_info_t::get_torpedo_tubes (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <torpedo_tubes>
     (
+        db,
         std::string
         (
             "select torpedo_tubes.id, torpedo_tubes.class_id, \
@@ -70,11 +67,6 @@ std::vector <ship_requests::armament_info_t::torpedo_tubes> ship_requests::armam
         +
         std::string(where)
     );
-    std::vector <torpedo_tubes> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
 
@@ -87,17 +79,12 @@ ship_requests::armament_info_t::classes::classes (pqxx::row const & value) :
 
 std::vector <ship_requests::armament_info_t::classes> ship_requests::armament_info_t::get_classes (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <classes>
     (
+        db,
         std::string ("select id, parent_id, name_ru, name_en from gun_class ") 
-        +
-        std::string(where)
+            .append(where)
     );
-    std::vector <classes> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
 
@@ -122,8 +109,9 @@ ship_requests::armament_info_t::list::list (pqxx::row const & value) :
 
 std::vector <ship_requests::armament_info_t::list> ship_requests::armament_info_t::get_list (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <list>
     (
+        db,
         std::string
         (
             "select gun_list.id, gun_list.class_id, \
@@ -134,14 +122,8 @@ std::vector <ship_requests::armament_info_t::list> ship_requests::armament_info_
              from gun_list \
              inner join gun_class on (gun_list.class_id = gun_class.id) "
         ) 
-        +
-        std::string(where)
+        .append(where)
     );
-    std::vector <list> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
     
@@ -165,8 +147,9 @@ ship_requests::armament_info_t::mount::mount (pqxx::row const & value) :
 
 std::vector <ship_requests::armament_info_t::mount> ship_requests::armament_info_t::get_mount (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <mount>
     (
+        db,
         std::string
         (
             "select gun_mount.id, gun_mount.gun_id, gun_class.id, \
@@ -179,14 +162,8 @@ std::vector <ship_requests::armament_info_t::mount> ship_requests::armament_info
              inner join gun_list on (gun_mount.gun_id = gun_list.id) \
              inner join gun_class on (gun_list.class_id = gun_class.id) "
         ) 
-        +
-        std::string(where)
+        .append(where)
     );
-    std::vector <mount> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
 
@@ -208,8 +185,9 @@ ship_requests::armament_info_t::mines_charges::mines_charges (pqxx::row const & 
 
 std::vector <ship_requests::armament_info_t::mines_charges> ship_requests::armament_info_t::get_mines_charges (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <mines_charges>
     (
+        db,
         std::string
         (
             "select mine_list.id, gun_class.id, \
@@ -219,14 +197,8 @@ std::vector <ship_requests::armament_info_t::mines_charges> ship_requests::armam
              from mine_list \
              inner join gun_class on (mine_list.class_id = gun_class.id) "
         ) 
-        +
-        std::string(where)
+        .append(where)
     );
-    std::vector <mines_charges> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
 
@@ -247,8 +219,9 @@ ship_requests::armament_info_t::throwers::throwers (pqxx::row const & value) :
 
 std::vector <ship_requests::armament_info_t::throwers> ship_requests::armament_info_t::get_throwers (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <throwers>
     (
+        db,
         std::string
         (
             "select throwers.id, gun_class.id, \
@@ -258,14 +231,8 @@ std::vector <ship_requests::armament_info_t::throwers> ship_requests::armament_i
              from throwers \
              inner join gun_class on (throwers.class_id = gun_class.id) "
         ) 
-        +
-        std::string(where)
+        .append(where)
     );
-    std::vector <throwers> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
 
@@ -290,8 +257,9 @@ ship_requests::armament_info_t::catapult::catapult (pqxx::row const & value) :
 
 std::vector <ship_requests::armament_info_t::catapult> ship_requests::armament_info_t::get_catapult (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <catapult>
     (
+        db,
         std::string
         (
             "select catapult.id, catapult_class.id, \
@@ -302,14 +270,8 @@ std::vector <ship_requests::armament_info_t::catapult> ship_requests::armament_i
              from catapult \
              inner join catapult_class on (catapult.class_id = catapult_class.id) "
         ) 
-        +
-        std::string(where)
+        .append(where)
     );
-    std::vector <catapult> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
 
@@ -332,8 +294,9 @@ ship_requests::armament_info_t::searchers::searchers (pqxx::row const & value) :
 
 std::vector <ship_requests::armament_info_t::searchers> ship_requests::armament_info_t::get_searchers (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <searchers>
     (
+        db,
         std::string
         (
             "select searchers.id, gun_class.id, \
@@ -343,14 +306,8 @@ std::vector <ship_requests::armament_info_t::searchers> ship_requests::armament_
              from searchers \
              inner join gun_class on (searchers.class_id = gun_class.id) "
         ) 
-        +
-        std::string(where)
+        .append(where)
     );
-    std::vector <searchers> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 };
 
 

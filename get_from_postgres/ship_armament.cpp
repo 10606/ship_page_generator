@@ -1,5 +1,6 @@
 #include "ship_requests.h"
 #include "ship_armament.h"
+#include "template_request.h"
 
 
 ship_requests::ship_armament_t::guns::guns (pqxx::row const & value) :
@@ -27,8 +28,9 @@ ship_requests::ship_armament_t::guns::guns (pqxx::row const & value) :
 
 std::vector <ship_requests::ship_armament_t::guns> ship_requests::ship_armament_t::get_guns (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <guns>
     (
+        db,
         std::string
         (
             "select gun_class.id, gun_class.name_ru, gun_class.name_en, \
@@ -40,14 +42,8 @@ std::vector <ship_requests::ship_armament_t::guns> ship_requests::ship_armament_
              inner join gun_list on (gun_mount.gun_id = gun_list.id) \
              inner join gun_class on (gun_list.class_id = gun_class.id) "
         )
-        +
-        std::string(where)
+        .append(where)
     );
-    std::vector <guns> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 }
         
         
@@ -72,8 +68,9 @@ ship_requests::ship_armament_t::torpedo_tubes::torpedo_tubes (pqxx::row const & 
 
 std::vector <ship_requests::ship_armament_t::torpedo_tubes> ship_requests::ship_armament_t::get_torpedo_tubes (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <torpedo_tubes>
     (
+        db,
         std::string
         (
             "select gun_class.id, gun_class.name_ru, gun_class.name_en, \
@@ -84,14 +81,8 @@ std::vector <ship_requests::ship_armament_t::torpedo_tubes> ship_requests::ship_
              inner join torpedo_tubes on (ship_torpedo_tubes.tube_id = torpedo_tubes.id) \
              inner join gun_class on (torpedo_tubes.class_id = gun_class.id) "
         )
-        +
-        std::string(where)
+        .append(where)
     );
-    std::vector <torpedo_tubes> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 }
         
         
@@ -116,8 +107,9 @@ ship_requests::ship_armament_t::throwers::throwers (pqxx::row const & value) :
 
 std::vector <ship_requests::ship_armament_t::throwers> ship_requests::ship_armament_t::get_throwers (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <throwers>
     (
+        db,
         std::string
         (
             "select gun_class.id, gun_class.name_ru, gun_class.name_en, \
@@ -128,14 +120,8 @@ std::vector <ship_requests::ship_armament_t::throwers> ship_requests::ship_armam
              inner join throwers on (ship_throwers.throwers_id = throwers.id) \
              inner join gun_class on (throwers.class_id = gun_class.id) "
         )
-        +
-        std::string(where)
+        .append(where)
     );
-    std::vector <throwers> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 }
         
         
@@ -158,8 +144,9 @@ ship_requests::ship_armament_t::searchers::searchers (pqxx::row const & value) :
 
 std::vector <ship_requests::ship_armament_t::searchers> ship_requests::ship_armament_t::get_searchers (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <searchers>
     (
+        db,
         std::string
         (
             "select gun_class.id, gun_class.name_ru, gun_class.name_en, \
@@ -169,14 +156,8 @@ std::vector <ship_requests::ship_armament_t::searchers> ship_requests::ship_arma
              inner join searchers on (ship_searchers.searcher_id = searchers.id) \
              inner join gun_class on (searchers.class_id = gun_class.id) "
         )
-        +
-        std::string(where)
+        .append(where)
     );
-    std::vector <searchers> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 }
         
         
@@ -199,8 +180,9 @@ ship_requests::ship_armament_t::catapult::catapult (pqxx::row const & value) :
         
 std::vector <ship_requests::ship_armament_t::catapult> ship_requests::ship_armament_t::get_catapult (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <catapult>
     (
+        db,
         std::string
         (
             "select catapult_class.id, catapult_class.name_ru, catapult_class.name_en, \
@@ -210,14 +192,8 @@ std::vector <ship_requests::ship_armament_t::catapult> ship_requests::ship_armam
              inner join catapult on (ship_catapult.catapult_id = catapult.id) \
              inner join catapult_class on (catapult.class_id = catapult_class.id) "
         )
-        +
-        std::string(where)
+        .append(where)
     );
-    std::vector <catapult> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 }
         
         
@@ -240,8 +216,9 @@ ship_requests::ship_armament_t::aircraft::aircraft (pqxx::row const & value) :
         
 std::vector <ship_requests::ship_armament_t::aircraft> ship_requests::ship_armament_t::get_aircraft (std::string_view where)
 {
-    pqxx::result response = db->exec
+    return request_to_db <aircraft>
     (
+        db,
         std::string
         (
             "select aircraft_class.id, aircraft_class.name_ru, aircraft_class.name_en, \
@@ -251,14 +228,8 @@ std::vector <ship_requests::ship_armament_t::aircraft> ship_requests::ship_armam
              inner join aircraft_list on (ship_aircraft.aircraft_id = aircraft_list.id) \
              inner join aircraft_class on (aircraft_list.class_id = aircraft_class.id) "
         )
-        +
-        std::string(where)
+        .append(where)
     );
-    std::vector <aircraft> answer;
-    
-    for (pqxx::result::const_iterator row = response.begin(); row != response.end(); ++row)
-        answer.emplace_back(*row);  
-    return answer;
 }
         
 
