@@ -32,10 +32,20 @@ void add_modernizations
                     return std::is_lt(compare_null_last(a.begin, b.begin)); 
                 });
     
+    std::vector <std::chrono::year_month_day> modernizations;
+    modernizations.reserve(part - segments.begin());
+
     for (std::vector <segment> :: iterator it = segments.begin(); it != part; ++it)
         if (it->end && commisioned && (*commisioned <= *it->end))
-            answer.append("&date=")
-                  .append(to_string(*it->end));
+        {
+            while (!modernizations.empty() && it->begin && modernizations.back() >= *it->begin)
+                modernizations.pop_back();
+            modernizations.push_back(*it->end);
+        }
+
+    for (auto const & date : modernizations)
+        answer.append("&date=")
+              .append(to_string(date));
 }
 
 

@@ -12,22 +12,42 @@ ship_requests::pictures_t::picture::picture (pqxx::row const & value) :
 
 std::vector <ship_requests::pictures_t::picture> ship_requests::pictures_t::get_ship (std::string_view where)
 {
-    return request_to_db <picture> (db, "select ship_id, path_small, path_full, description from pictures_ship ", where);
+    return request_to_db <picture> 
+    (
+        db, 
+        "select ship_id, path_small, path_full, description from pictures_ship ", 
+        where
+    );
 };
 
 std::vector <ship_requests::pictures_t::picture> ship_requests::pictures_t::get_aircraft (std::string_view where)
 {
-    return request_to_db <picture> (db, "select aircraft_id, path_small, path_full, description from pictures_aircraft ", where);
+    return request_to_db <picture> 
+    (
+        db, 
+        "select aircraft_id, path_small, path_full, description from pictures_aircraft ", 
+        where
+    );
 };
 
 std::vector <ship_requests::pictures_t::picture> ship_requests::pictures_t::get_gun (std::string_view where)
 {
-    return request_to_db <picture> (db, "select gun_id, path_small, path_full, description from pictures_gun ", where);
+    return request_to_db <picture> 
+    (
+        db, 
+        "select gun_id, path_small, path_full, description from pictures_gun ", 
+        where
+    );
 };
 
 std::vector <ship_requests::pictures_t::picture> ship_requests::pictures_t::get_searcher (std::string_view where)
 {
-    return request_to_db <picture> (db, "select searcher_id, path_small, path_full, description from pictures_searcher ", where);
+    return request_to_db <picture> 
+    (
+        db, 
+        "select searcher_id, path_small, path_full, description from pictures_searcher ", 
+        where
+    );
 };
 
 
