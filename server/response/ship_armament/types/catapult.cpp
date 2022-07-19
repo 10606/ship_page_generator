@@ -26,13 +26,17 @@ ship_catapult::ship_catapult (ship_requests * database, std::string_view _new_li
     
     std::unordered_map <int, size_t> catapults_index;
     catapults.reserve(used.size());
-    for (catapult_t & catapult : catapults_full)
+    std::vector <size_t> old_index;
+    old_index.reserve(used.size());
+    for (size_t i = 0; i != catapults_full.size(); ++i)
     {
+        catapult_t & catapult = catapults_full[i];
         int catapult_id = catapult.id;
         if (used.find(catapult_id) == used.end())
             continue;
         catapults_index.insert({catapult_id, catapults.size()});
         catapults.push_back(partial_response(catapult));
+        old_index.push_back(i);
     }
     
     for (ship_catapults_t & catapult : catapult_list)
@@ -45,11 +49,11 @@ ship_catapult::ship_catapult (ship_requests * database, std::string_view _new_li
     // sorting
     {
         auto torpedo_order = 
-            [&catapults_full] (ship_catapults_lt const & a, ship_catapults_lt const & b) -> bool
+            [&catapults_full, &old_index] (ship_catapults_lt const & a, ship_catapults_lt const & b) -> bool
             {
                 // class_id, catapult_id
-                catapult_t const & a_info = catapults_full[a.catapult_id];
-                catapult_t const & b_info = catapults_full[b.catapult_id];
+                catapult_t const & a_info = catapults_full[old_index[a.catapult_id]];
+                catapult_t const & b_info = catapults_full[old_index[b.catapult_id]];
                 
                 std::strong_ordering class_cmp = a_info.class_id <=> b_info.class_id;
                 if (class_cmp != std::strong_ordering::equal)

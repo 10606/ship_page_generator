@@ -24,13 +24,17 @@ ship_torpedo_tubes::ship_torpedo_tubes (ship_requests * database, std::string_vi
     
     std::unordered_map <int, size_t> torpedo_tubes_index;
     torpedo_tubes.reserve(used.size());
-    for (tube_t & tube : torpedo_tubes_full)
+    std::vector <size_t> old_index;
+    old_index.reserve(used.size());
+    for (size_t i = 0; i != torpedo_tubes_full.size(); ++i)
     {
+        tube_t & tube = torpedo_tubes_full[i];
         int tube_id = tube.id;
         if (used.find(tube_id) == used.end())
             continue;
         torpedo_tubes_index.insert({tube_id, torpedo_tubes.size()});
         torpedo_tubes.push_back(partial_response(tube));
+        old_index.push_back(i);
     }
     
     for (ship_tubes_t & tube : tube_list)
@@ -43,11 +47,11 @@ ship_torpedo_tubes::ship_torpedo_tubes (ship_requests * database, std::string_vi
     // sorting
     {
         auto torpedo_order = 
-            [&torpedo_tubes_full] (ship_tubes_lt const & a, ship_tubes_lt const & b) -> bool
+            [&torpedo_tubes_full, &old_index] (ship_tubes_lt const & a, ship_tubes_lt const & b) -> bool
             {
                 // class_id, -caliber, tube_count, tube_id
-                tube_t const & a_info = torpedo_tubes_full[a.tube_id];
-                tube_t const & b_info = torpedo_tubes_full[b.tube_id];
+                tube_t const & a_info = torpedo_tubes_full[old_index[a.tube_id]];
+                tube_t const & b_info = torpedo_tubes_full[old_index[b.tube_id]];
                 
                 std::strong_ordering class_cmp = a_info.class_id <=> b_info.class_id;
                 if (class_cmp != std::strong_ordering::equal)

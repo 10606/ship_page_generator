@@ -27,13 +27,17 @@ ship_guns::ship_guns (ship_requests * database, std::string_view _new_line) :
 
     std::unordered_map <int, size_t> mounts_index;
     mounts.reserve(used.size());
-    for (mount_t & mount : mounts_full)
+    std::vector <size_t> old_index;
+    old_index.reserve(used.size());
+    for (size_t i = 0; i != mounts_full.size(); ++i)
     {
+        mount_t & mount = mounts_full[i];
         int mount_id = mount.id;
         if (used.find(mount_id) == used.end())
             continue;
         mounts_index.insert({mount_id, mounts.size()});
         mounts.push_back(partial_response(mount));
+        old_index.push_back(i);
     }
 
     for (ship_guns_t & gun : guns_list)
@@ -46,11 +50,11 @@ ship_guns::ship_guns (ship_requests * database, std::string_view _new_line) :
     // sorting
     {
         auto guns_order = 
-            [&mounts_full] (ship_guns_lt const & a, ship_guns_lt const & b) -> bool
+            [&mounts_full, &old_index] (ship_guns_lt const & a, ship_guns_lt const & b) -> bool
             {
                 // class_id, -caliber, gun_id, -gun_count, mount_id
-                mount_t const & a_info = mounts_full[a.mount_id];
-                mount_t const & b_info = mounts_full[b.mount_id];
+                mount_t const & a_info = mounts_full[old_index[a.mount_id]];
+                mount_t const & b_info = mounts_full[old_index[b.mount_id]];
                 
                 std::strong_ordering class_cmp = a_info.class_id <=> b_info.class_id;
                 if (class_cmp != std::strong_ordering::equal)

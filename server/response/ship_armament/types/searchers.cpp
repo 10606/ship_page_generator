@@ -25,13 +25,17 @@ ship_searchers::ship_searchers (ship_requests * database, std::string_view _new_
 
     std::unordered_map <int, size_t> searchers_index;
     searchers.reserve(used.size());
-    for (searcher_t & searcher : searchers_full)
+    std::vector <size_t> old_index;
+    old_index.reserve(used.size());
+    for (size_t i = 0; i != searchers_full.size(); ++i)
     {
+        searcher_t & searcher = searchers_full[i];
         int searcher_id = searcher.id;
         if (used.find(searcher_id) == used.end())
             continue;
         searchers_index.insert({searcher_id, searchers.size()});
         searchers.push_back(partial_response(searcher));
+        old_index.push_back(i);
     }
     
     for (ship_searchers_t & searcher : searcher_list)
@@ -44,11 +48,11 @@ ship_searchers::ship_searchers (ship_requests * database, std::string_view _new_
     // sorting
     {
         auto torpedo_order = 
-            [&searchers_full] (ship_searchers_lt const & a, ship_searchers_lt const & b) -> bool
+            [&searchers_full, &old_index] (ship_searchers_lt const & a, ship_searchers_lt const & b) -> bool
             {
                 // class_id, searcher_id
-                searcher_t const & a_info = searchers_full[a.searcher_id];
-                searcher_t const & b_info = searchers_full[b.searcher_id];
+                searcher_t const & a_info = searchers_full[old_index[a.searcher_id]];
+                searcher_t const & b_info = searchers_full[old_index[b.searcher_id]];
                 
                 std::strong_ordering class_cmp = a_info.class_id <=> b_info.class_id;
                 if (class_cmp != std::strong_ordering::equal)

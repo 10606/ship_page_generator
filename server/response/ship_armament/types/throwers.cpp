@@ -26,13 +26,17 @@ ship_throwers::ship_throwers (ship_requests * database, std::string_view _new_li
     
     std::unordered_map <int, size_t> throwers_index;
     throwers.reserve(used.size());
-    for (throwers_t & thrower : throwers_full)
+    std::vector <size_t> old_index;
+    old_index.reserve(used.size());
+    for (size_t i = 0; i != throwers_full.size(); ++i)
     {
+        throwers_t & thrower = throwers_full[i];
         int thrower_id = thrower.id;
         if (used.find(thrower_id) == used.end())
             continue;
         throwers_index.insert({thrower_id, throwers.size()});
         throwers.push_back(partial_response(thrower));
+        old_index.push_back(i);
     }
     
     for (ship_throwers_t & thrower : thrower_list)
@@ -45,11 +49,11 @@ ship_throwers::ship_throwers (ship_requests * database, std::string_view _new_li
     // sorting
     {
         auto torpedo_order = 
-            [&throwers_full] (ship_throwers_lt const & a, ship_throwers_lt const & b) -> bool
+            [&throwers_full, &old_index] (ship_throwers_lt const & a, ship_throwers_lt const & b) -> bool
             {
                 // class_id, -caliber, tube_count, thrower_id
-                throwers_t const & a_info = throwers_full[a.thrower_id];
-                throwers_t const & b_info = throwers_full[b.thrower_id];
+                throwers_t const & a_info = throwers_full[old_index[a.thrower_id]];
+                throwers_t const & b_info = throwers_full[old_index[b.thrower_id]];
                 
                 std::strong_ordering class_cmp = a_info.class_id <=> b_info.class_id;
                 if (class_cmp != std::strong_ordering::equal)

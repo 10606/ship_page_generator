@@ -34,13 +34,17 @@ ship_aircrafts::ship_aircrafts (ship_requests * database, std::string_view _new_
 
     std::unordered_map <int, size_t> aircrafts_index;
     aircrafts.reserve(used.size());
-    for (aircraft_t & aircraft : aircrafts_full)
+    std::vector <size_t> old_index;
+    old_index.reserve(used.size());
+    for (size_t i = 0; i != aircrafts_full.size(); ++i)
     {
+        aircraft_t & aircraft = aircrafts_full[i];
         int aircraft_id = aircraft.id;
         if (used.find(aircraft_id) == used.end())
             continue;
         aircrafts_index.insert({aircraft_id, aircrafts.size()});
         aircrafts.push_back(partial_response(aircraft, aircraft_class_map));
+        old_index.push_back(i);
     }
     
     for (ship_aircrafts_t & aircraft : aircraft_list)
@@ -53,11 +57,11 @@ ship_aircrafts::ship_aircrafts (ship_requests * database, std::string_view _new_
     // sorting
     {
         auto torpedo_order = 
-            [&aircrafts_full] (ship_aircrafts_lt const & a, ship_aircrafts_lt const & b) -> bool
+            [&aircrafts_full, &old_index] (ship_aircrafts_lt const & a, ship_aircrafts_lt const & b) -> bool
             {
                 // class_id, aircraft_id
-                aircraft_t const & a_info = aircrafts_full[a.aircraft_id];
-                aircraft_t const & b_info = aircrafts_full[b.aircraft_id];
+                aircraft_t const & a_info = aircrafts_full[old_index[a.aircraft_id]];
+                aircraft_t const & b_info = aircrafts_full[old_index[b.aircraft_id]];
                 
                 std::strong_ordering class_cmp = a_info.class_id <=> b_info.class_id;
                 if (class_cmp != std::strong_ordering::equal)
