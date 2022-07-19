@@ -1,5 +1,6 @@
 #include "response_aircraft.h"
 
+#include "armament_info.h"
 #include "group_and_sorting.h"
 #include "parse_query.h"
 #include "table.h"
@@ -188,7 +189,19 @@ void aircraft::response (simple_string & answer, std::string_view query)
         answer.append("на вооружении");
         for (aircraft_partial const & item : list)
             answer.append(text_cache[item.index].in_service);
+        answer.append(table::new_row);
         
+        answer.append("вооружение");
+        for (aircraft_partial const & item : list)
+        {
+            answer.append(table::new_column);
+            for (size_t i = 0; i != armament[item.index].size(); ++i)
+            {
+                add_value(answer, armament[item.index][i].count);
+                answer.append(guns[armament[item.index][i].gun_index]);
+            }
+        }
+
         answer.append(table::end);
 
         add_pictures_t add_pictures(answer, pictures);
@@ -248,4 +261,55 @@ aircraft::aircraft_partial::aircraft_partial (aircraft_t const & value, size_t _
     in_service      (value.in_service)
 {}
 
+
+void aircraft::fill_aircraft_armament
+(
+    ship_requests * database,
+    std::vector <aircraft_t> const & aircraft_list
+)
+{
+    typedef ship_requests::armament_info_t::list gun_t;
+    typedef ship_requests::aircraft_info_t::guns guns_raw_t;
+    std::vector <gun_t> guns_list =
+        database->armament_info.get_list();
+
+    std::vector <guns_raw_t> guns_raw =
+        database->aircraft_info.get_guns();
+    
+    std::set <int> used;
+    for (guns_raw_t const & gun : guns_raw)
+        used.insert(gun.gun_id);
+
+    std::unordered_map <int, size_t> gun_index;
+    guns.reserve(used.size());
+    for (gun_t & gun : guns_list)
+    {
+        int gun_id = gun.id;
+        if (used.find(gun_id) == used.end())
+            continue;
+        gun_index.insert({gun_id, guns.size()});
+
+        std::string answer = " ";
+        if (gun.caliber)
+            answer.append(to_string_10(*gun.caliber) + "мм");
+        answer.append("  ");
+        answer += gun.gun_ru.value_or("  ");
+        answer.append(table::new_line);
+        guns.push_back(answer);
+    }
+
+    std::unordered_map <int, size_t> aircraft_index;
+    for (size_t i = 0; i != aircraft_list.size(); ++i)
+        aircraft_index.insert({aircraft_list[i].id, i});
+
+    armament.resize(aircraft_list.size());
+    for (guns_raw_t & gun : guns_raw)
+    {
+        std::unordered_map <int, size_t> ::iterator it_gun = gun_index.find(gun.gun_id);
+        std::unordered_map <int, size_t> ::iterator it_aircraft = aircraft_index.find(gun.aircraft_id);
+        if (it_gun != gun_index.end() &&
+            it_aircraft != aircraft_index.end())
+            armament[it_aircraft->second].emplace_back(it_gun->second, gun.count);
+    }
+}
 

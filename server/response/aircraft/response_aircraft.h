@@ -10,7 +10,10 @@ struct aircraft
 {
     aircraft (ship_requests * database) :
         aircraft_cache(),
-        text_cache()
+        text_cache(),
+        pictures_cache(),
+        guns(),
+        armament()
     {
         std::vector <aircraft_t> tmp = database->aircraft_info.get_list("");
         aircraft_cache = partial::partial_response <aircraft_t, aircraft_partial> (tmp);
@@ -18,6 +21,8 @@ struct aircraft
 
         std::vector <picture_t> pictures_list = database->pictures.get_aircraft();
         pictures_cache = partial::pictures_response <aircraft_t> (pictures_list, tmp);
+
+        fill_aircraft_armament(database, tmp);
     }
     
     typedef ship_requests::pictures_t::picture picture_t;
@@ -66,10 +71,30 @@ struct aircraft
         std::optional <std::chrono::year_month_day> in_service;
     };
     
+    struct link_to_gun
+    {
+        link_to_gun (size_t _gun_index, uint32_t _count) :
+            gun_index(_gun_index),
+            count(_count)
+        {}
+        
+        size_t gun_index;
+        uint32_t count;
+    };
+
+    void fill_aircraft_armament
+    (
+        ship_requests * database,
+        std::vector <aircraft_t> const & aircraft_list
+    );
+    
 private:
     std::vector <aircraft_partial> aircraft_cache;
     std::vector <aircraft_text> text_cache;
     std::vector <std::vector <picture_t> > pictures_cache;
+
+    std::vector <std::string> guns;
+    std::vector <std::vector <link_to_gun> > armament;
 };
 
 

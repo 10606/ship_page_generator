@@ -50,7 +50,8 @@ struct simple_string
     {
         if (value.size() + _size > capacity)
             realloc(3 * value.size() + _size * 4 + 64);
-        memcpy(_data + _size, value.data(), value.size());
+        if (!value.empty())
+            memcpy(_data + _size, value.data(), value.size());
         _size += value.size();
         return *this;
     }

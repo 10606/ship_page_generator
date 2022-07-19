@@ -109,5 +109,21 @@ std::vector <ship_requests::aircraft_info_t::list> ship_requests::aircraft_info_
         where
     );
 };
-    
-    
+ 
+
+ship_requests::aircraft_info_t::guns::guns (pqxx::row const & value) :
+    aircraft_id     (value[0].as <int> ()),
+    gun_id          (value[1].as <int> ()),
+    count           (value[2].as <uint32_t> ())
+{}
+
+std::vector <ship_requests::aircraft_info_t::guns> ship_requests::aircraft_info_t::get_guns (std::string_view where)
+{
+    return request_to_db <guns>
+    (
+        db,
+        "select aircraft_id, gun_id, count from aircraft_guns ",
+        where
+    );
+}
+

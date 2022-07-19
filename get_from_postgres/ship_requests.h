@@ -227,6 +227,9 @@ struct ship_requests
         struct list;
         std::vector <list> get_list (std::string_view where);
  
+        struct guns;
+        std::vector <guns> get_guns (std::string_view where = std::string_view());
+
         
         aircraft_info_t (aircraft_info_t &&) = delete;
         aircraft_info_t (aircraft_info_t const &) = delete;

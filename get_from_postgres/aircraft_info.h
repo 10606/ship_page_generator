@@ -67,6 +67,16 @@ struct ship_requests::aircraft_info_t::list
     std::optional <std::chrono::year_month_day> in_service;
 };
     
+
+struct ship_requests::aircraft_info_t::guns
+{
+    guns (pqxx::row const & value);
+    
+    int aircraft_id;
+    int gun_id;
+    uint32_t count;
+};
+
     
 #endif
 
