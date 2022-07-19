@@ -3,6 +3,7 @@
 #include <vector>
 #include <chrono>
 #include <cmath>
+#include <set>
 #include "ship_requests.h"
 #include "ship_armament.h"
 #include "date_to_str.h"
@@ -16,16 +17,24 @@ ship_catapult::ship_catapult (ship_requests * database, std::string_view _new_li
 {
     std::vector <catapult_t> catapults_full =
         database->armament_info.get_catapult();
+    std::vector <ship_catapults_t> catapult_list =
+        database->ship_armament_lt.get_catapult("");
+
+    std::set <int> used; // add only used
+    for (ship_catapults_t & catapult : catapult_list)
+        used.insert(catapult.catapult_id);
+    
     std::unordered_map <int, size_t> catapults_index;
+    catapults.reserve(used.size());
     for (catapult_t & catapult : catapults_full)
     {
         int catapult_id = catapult.id;
+        if (used.find(catapult_id) == used.end())
+            continue;
         catapults_index.insert({catapult_id, catapults.size()});
         catapults.push_back(partial_response(catapult));
     }
     
-    std::vector <ship_catapults_t> catapult_list =
-        database->ship_armament_lt.get_catapult("");
     for (ship_catapults_t & catapult : catapult_list)
     {
         std::unordered_map <int, size_t> ::iterator it = catapults_index.find(catapult.catapult_id);

@@ -3,6 +3,7 @@
 #include <vector>
 #include <chrono>
 #include <cmath>
+#include <set>
 #include "ship_requests.h"
 #include "ship_armament.h"
 #include "date_to_str.h"
@@ -24,17 +25,24 @@ ship_aircrafts::ship_aircrafts (ship_requests * database, std::string_view _new_
     
     std::vector <aircraft_t> aircrafts_full =
         database->aircraft_info.get_list("");
-    std::unordered_map <int, size_t> aircrafts_index;
+    std::vector <ship_aircrafts_t> aircraft_list =
+        database->ship_armament_lt.get_aircraft("");
     
+    std::set <int> used; // add only used
+    for (ship_aircrafts_t const & aircraft : aircraft_list)
+        used.insert(aircraft.aircraft_id);
+
+    std::unordered_map <int, size_t> aircrafts_index;
+    aircrafts.reserve(used.size());
     for (aircraft_t & aircraft : aircrafts_full)
     {
         int aircraft_id = aircraft.id;
+        if (used.find(aircraft_id) == used.end())
+            continue;
         aircrafts_index.insert({aircraft_id, aircrafts.size()});
         aircrafts.push_back(partial_response(aircraft, aircraft_class_map));
     }
     
-    std::vector <ship_aircrafts_t> aircraft_list =
-        database->ship_armament_lt.get_aircraft("");
     for (ship_aircrafts_t & aircraft : aircraft_list)
     {
         std::unordered_map <int, size_t> ::iterator it = aircrafts_index.find(aircraft.aircraft_id);

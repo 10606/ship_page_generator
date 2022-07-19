@@ -3,6 +3,7 @@
 #include <vector>
 #include <chrono>
 #include <cmath>
+#include <set>
 #include "ship_requests.h"
 #include "ship_armament.h"
 #include "ship_armament_lt.h"
@@ -17,16 +18,24 @@ ship_guns::ship_guns (ship_requests * database, std::string_view _new_line) :
 {
     std::vector <mount_t> mounts_full =
         database->armament_info.get_mount();
+    std::vector <ship_guns_t> guns_list =
+        database->ship_armament_lt.get_guns("");
+    
+    std::set <int> used; // add only used
+    for (ship_guns_t const & gun : guns_list)
+        used.insert(gun.mount_id);
+
     std::unordered_map <int, size_t> mounts_index;
+    mounts.reserve(used.size());
     for (mount_t & mount : mounts_full)
     {
         int mount_id = mount.id;
+        if (used.find(mount_id) == used.end())
+            continue;
         mounts_index.insert({mount_id, mounts.size()});
         mounts.push_back(partial_response(mount));
     }
 
-    std::vector <ship_guns_t> guns_list =
-        database->ship_armament_lt.get_guns("");
     for (ship_guns_t & gun : guns_list)
     {
         std::unordered_map <int, size_t> ::iterator it = mounts_index.find(gun.mount_id);

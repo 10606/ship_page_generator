@@ -3,6 +3,7 @@
 #include <vector>
 #include <chrono>
 #include <cmath>
+#include <set>
 #include "ship_requests.h"
 #include "ship_armament.h"
 #include "date_to_str.h"
@@ -16,16 +17,24 @@ ship_throwers::ship_throwers (ship_requests * database, std::string_view _new_li
 {
     std::vector <throwers_t> throwers_full =
         database->armament_info.get_throwers();
+    std::vector <ship_throwers_t> thrower_list =
+        database->ship_armament_lt.get_throwers("");
+    
+    std::set <int> used; // add only used
+    for (ship_throwers_t & thrower : thrower_list)
+        used.insert(thrower.throwers_id);
+    
     std::unordered_map <int, size_t> throwers_index;
+    throwers.reserve(used.size());
     for (throwers_t & thrower : throwers_full)
     {
         int thrower_id = thrower.id;
+        if (used.find(thrower_id) == used.end())
+            continue;
         throwers_index.insert({thrower_id, throwers.size()});
         throwers.push_back(partial_response(thrower));
     }
     
-    std::vector <ship_throwers_t> thrower_list =
-        database->ship_armament_lt.get_throwers("");
     for (ship_throwers_t & thrower : thrower_list)
     {
         std::unordered_map <int, size_t> ::iterator it = throwers_index.find(thrower.throwers_id);

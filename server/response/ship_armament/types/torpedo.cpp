@@ -1,5 +1,6 @@
 #include "torpedo.h"
 
+#include <set>
 #include "ship_requests.h"
 #include "ship_armament.h"
 #include "ship_armament_lt.h"
@@ -14,16 +15,24 @@ ship_torpedo_tubes::ship_torpedo_tubes (ship_requests * database, std::string_vi
 {
     std::vector <tube_t> torpedo_tubes_full =
         database->armament_info.get_torpedo_tubes();
+    std::vector <ship_tubes_t> tube_list =
+        database->ship_armament_lt.get_torpedo_tubes("");
+    
+    std::set <int> used; // add only used
+    for (ship_tubes_t & tube : tube_list)
+        used.insert(tube.tube_id);
+    
     std::unordered_map <int, size_t> torpedo_tubes_index;
+    torpedo_tubes.reserve(used.size());
     for (tube_t & tube : torpedo_tubes_full)
     {
         int tube_id = tube.id;
+        if (used.find(tube_id) == used.end())
+            continue;
         torpedo_tubes_index.insert({tube_id, torpedo_tubes.size()});
         torpedo_tubes.push_back(partial_response(tube));
     }
     
-    std::vector <ship_tubes_t> tube_list =
-        database->ship_armament_lt.get_torpedo_tubes("");
     for (ship_tubes_t & tube : tube_list)
     {
         std::unordered_map <int, size_t> ::iterator it = torpedo_tubes_index.find(tube.tube_id);
