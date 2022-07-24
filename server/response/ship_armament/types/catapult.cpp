@@ -9,46 +9,31 @@
 #include "date_to_str.h"
 #include "ship_armament_utils.h"
 #include "armament_links.h"
+#include "common.h"
 
 
 ship_catapult::ship_catapult (ship_requests * database, std::string_view _new_line) :
     new_line(_new_line),
     group_name(armament_links::base("/armament/catapult?group=class&sort=in_service", "катапульта"))
 {
-    std::vector <catapult_t> catapults_full =
-        database->armament_info.get_catapult();
-    std::vector <ship_catapults_t> catapult_list =
-        database->ship_armament_lt.get_catapult("");
-
-    std::set <int> used; // add only used
-    for (ship_catapults_t & catapult : catapult_list)
-        used.insert(catapult.catapult_id);
-    
-    std::unordered_map <int, size_t> catapults_index;
-    catapults.reserve(used.size());
-    std::vector <size_t> old_index;
-    old_index.reserve(used.size());
-    for (size_t i = 0; i != catapults_full.size(); ++i)
-    {
-        catapult_t & catapult = catapults_full[i];
-        int catapult_id = catapult.id;
-        if (used.find(catapult_id) == used.end())
-            continue;
-        catapults_index.insert({catapult_id, catapults.size()});
-        catapults.push_back(partial_response(catapult));
-        old_index.push_back(i);
-    }
-    
-    for (ship_catapults_t & catapult : catapult_list)
-    {
-        std::unordered_map <int, size_t> ::iterator it = catapults_index.find(catapult.catapult_id);
-        if (it != catapults_index.end())
-            ship_catapults_list[catapult.ship_id].emplace_back(it->second, catapult);
-    }
-
-    // sorting
-    {
-        auto torpedo_order = 
+    fill_data_structures
+    <
+        ship_catapult,
+        ship_catapults_t,
+        ship_catapults_lt,
+        catapult_t,
+        &ship_catapult::catapults,
+        &ship_catapult::ship_catapults_list,
+        &ship_catapults_t::catapult_id
+    >
+    (
+        *this, 
+        database->armament_info.get_catapult(),
+        database->ship_armament_lt.get_catapult(""),
+        
+        [] (std::vector <catapult_t> const & catapults_full, std::vector <size_t> const & old_index)
+        {
+            return
             [&catapults_full, &old_index] (ship_catapults_lt const & a, ship_catapults_lt const & b) -> bool
             {
                 // class_id, catapult_id
@@ -61,10 +46,8 @@ ship_catapult::ship_catapult (ship_requests * database, std::string_view _new_li
                     
                 return a_info.id < b_info.id;
             };
-        
-        for (auto & item : ship_catapults_list)
-            std::sort(item.second.begin(), item.second.end(), torpedo_order);
-    }
+        }
+    );
 }
 
 std::vector <ship_catapult::response_t> ship_catapult::response (int id, std::chrono::year_month_day date) const

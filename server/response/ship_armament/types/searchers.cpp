@@ -9,45 +9,30 @@
 #include "date_to_str.h"
 #include "ship_armament_utils.h"
 #include "armament_links.h"
+#include "common.h"
 
 
 ship_searchers::ship_searchers (ship_requests * database, std::string_view _new_line) :
     new_line(_new_line)
 {
-    std::vector <searcher_t> searchers_full =
-        database->armament_info.get_searchers();
-    std::vector <ship_searchers_t> searcher_list =
-        database->ship_armament_lt.get_searchers("");
-    
-    std::set <int> used; // add only used
-    for (ship_searchers_t & searcher : searcher_list)
-        used.insert(searcher.searcher_id);
-
-    std::unordered_map <int, size_t> searchers_index;
-    searchers.reserve(used.size());
-    std::vector <size_t> old_index;
-    old_index.reserve(used.size());
-    for (size_t i = 0; i != searchers_full.size(); ++i)
-    {
-        searcher_t & searcher = searchers_full[i];
-        int searcher_id = searcher.id;
-        if (used.find(searcher_id) == used.end())
-            continue;
-        searchers_index.insert({searcher_id, searchers.size()});
-        searchers.push_back(partial_response(searcher));
-        old_index.push_back(i);
-    }
-    
-    for (ship_searchers_t & searcher : searcher_list)
-    {
-        std::unordered_map <int, size_t> ::iterator it = searchers_index.find(searcher.searcher_id);
-        if (it != searchers_index.end())
-            ship_searchers_list[searcher.ship_id].emplace_back(it->second, searcher);
-    }
-
-    // sorting
-    {
-        auto torpedo_order = 
+    fill_data_structures
+    <
+        ship_searchers,
+        ship_searchers_t,
+        ship_searchers_lt,
+        searcher_t,
+        &ship_searchers::searchers,
+        &ship_searchers::ship_searchers_list,
+        &ship_searchers_t::searcher_id
+    >
+    (
+        *this, 
+        database->armament_info.get_searchers(),
+        database->ship_armament_lt.get_searchers(""),
+        
+        [] (std::vector <searcher_t> const & searchers_full, std::vector <size_t> const & old_index)
+        {
+            return
             [&searchers_full, &old_index] (ship_searchers_lt const & a, ship_searchers_lt const & b) -> bool
             {
                 // class_id, searcher_id
@@ -60,10 +45,8 @@ ship_searchers::ship_searchers (ship_requests * database, std::string_view _new_
                     
                 return a_info.id < b_info.id;
             };
-        
-        for (auto & item : ship_searchers_list)
-            std::sort(item.second.begin(), item.second.end(), torpedo_order);
-    }
+        }
+    );
 }
 
 std::vector <ship_searchers::response_t> ship_searchers::response (int id, std::chrono::year_month_day date) const

@@ -9,46 +9,31 @@
 #include "date_to_str.h"
 #include "ship_armament_utils.h"
 #include "armament_links.h"
+#include "common.h"
 
 
 ship_throwers::ship_throwers (ship_requests * database, std::string_view _new_line) :
     new_line(_new_line),
     group_name(armament_links::base("/armament/mines_charges?filter=class,4&sort=mass_ex", "противолодочное вооружение"))
 {
-    std::vector <throwers_t> throwers_full =
-        database->armament_info.get_throwers();
-    std::vector <ship_throwers_t> thrower_list =
-        database->ship_armament_lt.get_throwers("");
-    
-    std::set <int> used; // add only used
-    for (ship_throwers_t & thrower : thrower_list)
-        used.insert(thrower.throwers_id);
-    
-    std::unordered_map <int, size_t> throwers_index;
-    throwers.reserve(used.size());
-    std::vector <size_t> old_index;
-    old_index.reserve(used.size());
-    for (size_t i = 0; i != throwers_full.size(); ++i)
-    {
-        throwers_t & thrower = throwers_full[i];
-        int thrower_id = thrower.id;
-        if (used.find(thrower_id) == used.end())
-            continue;
-        throwers_index.insert({thrower_id, throwers.size()});
-        throwers.push_back(partial_response(thrower));
-        old_index.push_back(i);
-    }
-    
-    for (ship_throwers_t & thrower : thrower_list)
-    {
-        std::unordered_map <int, size_t> ::iterator it = throwers_index.find(thrower.throwers_id);
-        if (it != throwers_index.end())
-            ship_throwers_list[thrower.ship_id].emplace_back(it->second, thrower);
-    }
-
-    // sorting
-    {
-        auto torpedo_order = 
+    fill_data_structures
+    <
+        ship_throwers,
+        ship_throwers_t,
+        ship_throwers_lt,
+        throwers_t,
+        &ship_throwers::throwers,
+        &ship_throwers::ship_throwers_list,
+        &ship_throwers_t::throwers_id
+    >
+    (
+        *this, 
+        database->armament_info.get_throwers(),
+        database->ship_armament_lt.get_throwers(""),
+        
+        [] (std::vector <throwers_t> const & throwers_full, std::vector <size_t> const & old_index)
+        {
+            return
             [&throwers_full, &old_index] (ship_throwers_lt const & a, ship_throwers_lt const & b) -> bool
             {
                 // class_id, -caliber, tube_count, thrower_id
@@ -72,10 +57,8 @@ ship_throwers::ship_throwers (ship_requests * database, std::string_view _new_li
                     
                 return a_info.id < b_info.id;
             };
-        
-        for (auto & item : ship_throwers_list)
-            std::sort(item.second.begin(), item.second.end(), torpedo_order);
-    }
+        }
+    );
 }
 
 std::vector <ship_throwers::response_t> ship_throwers::response (int id, std::chrono::year_month_day date) const

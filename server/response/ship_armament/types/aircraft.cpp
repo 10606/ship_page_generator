@@ -10,6 +10,7 @@
 #include "ship_armament_utils.h"
 #include "aircraft_info.h"
 #include "armament_links.h"
+#include "common.h"
 
 
 ship_aircrafts::ship_aircrafts (ship_requests * database, std::string_view _new_line) :
@@ -18,45 +19,27 @@ ship_aircrafts::ship_aircrafts (ship_requests * database, std::string_view _new_
     std::vector <aircraft_class> aircraft_class_list =
         database->aircraft_info.get_classes("");
     std::unordered_map <int, std::string> aircraft_class_map;
-    
     for (aircraft_class const & cur_class : aircraft_class_list)
         aircraft_class_map.insert({cur_class.class_id, cur_class.class_ru.value_or(" ")});
     
-    
-    std::vector <aircraft_t> aircrafts_full =
-        database->aircraft_info.get_list("");
-    std::vector <ship_aircrafts_t> aircraft_list =
-        database->ship_armament_lt.get_aircraft("");
-    
-    std::set <int> used; // add only used
-    for (ship_aircrafts_t const & aircraft : aircraft_list)
-        used.insert(aircraft.aircraft_id);
-
-    std::unordered_map <int, size_t> aircrafts_index;
-    aircrafts.reserve(used.size());
-    std::vector <size_t> old_index;
-    old_index.reserve(used.size());
-    for (size_t i = 0; i != aircrafts_full.size(); ++i)
-    {
-        aircraft_t & aircraft = aircrafts_full[i];
-        int aircraft_id = aircraft.id;
-        if (used.find(aircraft_id) == used.end())
-            continue;
-        aircrafts_index.insert({aircraft_id, aircrafts.size()});
-        aircrafts.push_back(partial_response(aircraft, aircraft_class_map));
-        old_index.push_back(i);
-    }
-    
-    for (ship_aircrafts_t & aircraft : aircraft_list)
-    {
-        std::unordered_map <int, size_t> ::iterator it = aircrafts_index.find(aircraft.aircraft_id);
-        if (it != aircrafts_index.end())
-            ship_aircrafts_list[aircraft.ship_id].emplace_back(it->second, aircraft);
-    }
-
-    // sorting
-    {
-        auto torpedo_order = 
+    fill_data_structures
+    <
+        ship_aircrafts,
+        ship_aircrafts_t,
+        ship_aircrafts_lt,
+        aircraft_t,
+        &ship_aircrafts::aircrafts,
+        &ship_aircrafts::ship_aircrafts_list,
+        &ship_aircrafts_t::aircraft_id
+    >
+    (
+        *this, 
+        database->aircraft_info.get_list(""),
+        database->ship_armament_lt.get_aircraft(""),
+        
+        [] (std::vector <aircraft_t> const & aircrafts_full, std::vector <size_t> const & old_index)
+        {
+            return
             [&aircrafts_full, &old_index] (ship_aircrafts_lt const & a, ship_aircrafts_lt const & b) -> bool
             {
                 // class_id, aircraft_id
@@ -69,10 +52,9 @@ ship_aircrafts::ship_aircrafts (ship_requests * database, std::string_view _new_
                     
                 return a_info.id < b_info.id;
             };
-        
-        for (auto & item : ship_aircrafts_list)
-            std::sort(item.second.begin(), item.second.end(), torpedo_order);
-    }
+        },
+        aircraft_class_map
+    );
 }
 
 std::vector <ship_aircrafts::response_t> ship_aircrafts::response (int id, std::chrono::year_month_day date) const

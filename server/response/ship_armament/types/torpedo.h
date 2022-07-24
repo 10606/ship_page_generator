@@ -40,12 +40,13 @@ struct ship_torpedo_tubes
         std::string_view data_end;
     };
 
-    std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
-
-private:
     typedef ship_requests::ship_armament_lt_t::torpedo_tubes ship_tubes_t;
     typedef ship_requests::armament_info_t::torpedo_tubes tube_t;
     
+    std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
+    p_response_t partial_response (tube_t const & tube);
+
+private:
     struct ship_tubes_lt
     {
         ship_tubes_lt (size_t _tube_id, ship_tubes_t const & value) :
@@ -63,8 +64,6 @@ private:
     
     std::unordered_map <int, std::vector <ship_tubes_lt> > ship_tubes_list;
     std::vector <p_response_t> torpedo_tubes;
-    
-    p_response_t partial_response (tube_t const & tube);
     
     std::string new_line;
     std::string group_name;

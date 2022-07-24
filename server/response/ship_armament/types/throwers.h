@@ -40,12 +40,13 @@ struct ship_throwers
         std::string_view data_end;
     };
 
-    std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
-
-private:
     typedef ship_requests::ship_armament_lt_t::throwers ship_throwers_t;
     typedef ship_requests::armament_info_t::throwers throwers_t;
     
+    std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
+    p_response_t partial_response (throwers_t const & thrower);
+
+private:
     struct ship_throwers_lt
     {
         ship_throwers_lt (size_t _thrower_id, ship_throwers_t const & value) :
@@ -63,8 +64,6 @@ private:
     
     std::unordered_map <int, std::vector <ship_throwers_lt> > ship_throwers_list;
     std::vector <p_response_t> throwers;
-    
-    p_response_t partial_response (throwers_t const & thrower);
     
     std::string new_line;
     std::string group_name;

@@ -40,12 +40,13 @@ struct ship_catapult
         std::string_view data_end;
     };
 
+    typedef ship_requests::armament_info_t::catapult catapult_t;
+    typedef ship_requests::ship_armament_lt_t::catapult ship_catapults_t;
+    
     std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
+    p_response_t partial_response (catapult_t const & catapult);
 
 private:
-    typedef ship_requests::ship_armament_lt_t::catapult ship_catapults_t;
-    typedef ship_requests::armament_info_t::catapult catapult_t;
-    
     struct ship_catapults_lt
     {
         ship_catapults_lt (size_t _catapult_id, ship_catapults_t const & value) :
@@ -63,8 +64,6 @@ private:
     
     std::unordered_map <int, std::vector <ship_catapults_lt> > ship_catapults_list;
     std::vector <p_response_t> catapults;
-    
-    p_response_t partial_response (catapult_t const & catapult);
     
     std::string new_line;
     std::string group_name;

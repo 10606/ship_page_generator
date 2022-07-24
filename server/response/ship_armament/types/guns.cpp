@@ -10,46 +10,31 @@
 #include "date_to_str.h"
 #include "ship_armament_utils.h"
 #include "armament_links.h"
+#include "common.h"
 
 
 ship_guns::ship_guns (ship_requests * database, std::string_view _new_line) :
     ship_guns_list(),
     new_line(_new_line)
 {
-    std::vector <mount_t> mounts_full =
-        database->armament_info.get_mount();
-    std::vector <ship_guns_t> guns_list =
-        database->ship_armament_lt.get_guns("");
-    
-    std::set <int> used; // add only used
-    for (ship_guns_t const & gun : guns_list)
-        used.insert(gun.mount_id);
-
-    std::unordered_map <int, size_t> mounts_index;
-    mounts.reserve(used.size());
-    std::vector <size_t> old_index;
-    old_index.reserve(used.size());
-    for (size_t i = 0; i != mounts_full.size(); ++i)
-    {
-        mount_t & mount = mounts_full[i];
-        int mount_id = mount.id;
-        if (used.find(mount_id) == used.end())
-            continue;
-        mounts_index.insert({mount_id, mounts.size()});
-        mounts.push_back(partial_response(mount));
-        old_index.push_back(i);
-    }
-
-    for (ship_guns_t & gun : guns_list)
-    {
-        std::unordered_map <int, size_t> ::iterator it = mounts_index.find(gun.mount_id);
-        if (it != mounts_index.end())
-            ship_guns_list[gun.ship_id].emplace_back(it->second, gun);
-    }
-
-    // sorting
-    {
-        auto guns_order = 
+    fill_data_structures
+    <
+        ship_guns,
+        ship_guns_t,
+        ship_guns_lt,
+        mount_t,
+        &ship_guns::mounts,
+        &ship_guns::ship_guns_list,
+        &ship_guns_t::mount_id
+    >
+    (
+        *this, 
+        database->armament_info.get_mount(),
+        database->ship_armament_lt.get_guns(""),
+        
+        [] (std::vector <mount_t> const & mounts_full, std::vector <size_t> const & old_index)
+        {
+            return
             [&mounts_full, &old_index] (ship_guns_lt const & a, ship_guns_lt const & b) -> bool
             {
                 // class_id, -caliber, gun_id, -gun_count, mount_id
@@ -77,10 +62,8 @@ ship_guns::ship_guns (ship_requests * database, std::string_view _new_line) :
                     
                 return a_info.id < b_info.id;
             };
-        
-        for (auto & item : ship_guns_list)
-            std::sort(item.second.begin(), item.second.end(), guns_order);
-    }
+        }
+    );
 }
 
 

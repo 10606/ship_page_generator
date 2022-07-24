@@ -7,46 +7,31 @@
 #include "date_to_str.h"
 #include "ship_armament_utils.h"
 #include "armament_links.h"
+#include "common.h"
 
 
 ship_torpedo_tubes::ship_torpedo_tubes (ship_requests * database, std::string_view _new_line) :
     new_line(_new_line),
     group_name(armament_links::base("/armament/torpedo?group=caliber&sort=in_service", "торпедный аппарат"))
 {
-    std::vector <tube_t> torpedo_tubes_full =
-        database->armament_info.get_torpedo_tubes();
-    std::vector <ship_tubes_t> tube_list =
-        database->ship_armament_lt.get_torpedo_tubes("");
-    
-    std::set <int> used; // add only used
-    for (ship_tubes_t & tube : tube_list)
-        used.insert(tube.tube_id);
-    
-    std::unordered_map <int, size_t> torpedo_tubes_index;
-    torpedo_tubes.reserve(used.size());
-    std::vector <size_t> old_index;
-    old_index.reserve(used.size());
-    for (size_t i = 0; i != torpedo_tubes_full.size(); ++i)
-    {
-        tube_t & tube = torpedo_tubes_full[i];
-        int tube_id = tube.id;
-        if (used.find(tube_id) == used.end())
-            continue;
-        torpedo_tubes_index.insert({tube_id, torpedo_tubes.size()});
-        torpedo_tubes.push_back(partial_response(tube));
-        old_index.push_back(i);
-    }
-    
-    for (ship_tubes_t & tube : tube_list)
-    {
-        std::unordered_map <int, size_t> ::iterator it = torpedo_tubes_index.find(tube.tube_id);
-        if (it != torpedo_tubes_index.end())
-            ship_tubes_list[tube.ship_id].emplace_back(it->second, tube);
-    }
-
-    // sorting
-    {
-        auto torpedo_order = 
+    fill_data_structures
+    <
+        ship_torpedo_tubes,
+        ship_tubes_t,
+        ship_tubes_lt,
+        tube_t,
+        &ship_torpedo_tubes::torpedo_tubes,
+        &ship_torpedo_tubes::ship_tubes_list,
+        &ship_tubes_t::tube_id
+    >
+    (
+        *this, 
+        database->armament_info.get_torpedo_tubes(),
+        database->ship_armament_lt.get_torpedo_tubes(""),
+        
+        [] (std::vector <tube_t> const & torpedo_tubes_full, std::vector <size_t> const & old_index)
+        {
+            return
             [&torpedo_tubes_full, &old_index] (ship_tubes_lt const & a, ship_tubes_lt const & b) -> bool
             {
                 // class_id, -caliber, tube_count, tube_id
@@ -70,10 +55,8 @@ ship_torpedo_tubes::ship_torpedo_tubes (ship_requests * database, std::string_vi
                     
                 return a_info.id < b_info.id;
             };
-        
-        for (auto & item : ship_tubes_list)
-            std::sort(item.second.begin(), item.second.end(), torpedo_order);
-    }
+        }
+    );
 }
 
 std::vector <ship_torpedo_tubes::response_t> ship_torpedo_tubes::response (int id, std::chrono::year_month_day date) const

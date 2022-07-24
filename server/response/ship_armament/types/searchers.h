@@ -40,12 +40,13 @@ struct ship_searchers
         std::string_view data_end;
     };
 
-    std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
-
-private:
     typedef ship_requests::ship_armament_lt_t::searchers ship_searchers_t;
     typedef ship_requests::armament_info_t::searchers searcher_t;
     
+    std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
+    p_response_t partial_response (searcher_t const & searcher);
+
+private:
     struct ship_searchers_lt
     {
         ship_searchers_lt (size_t _searcher_id, ship_searchers_t const & value) :
@@ -63,8 +64,6 @@ private:
     
     std::unordered_map <int, std::vector <ship_searchers_lt> > ship_searchers_list;
     std::vector <p_response_t> searchers;
-    
-    p_response_t partial_response (searcher_t const & searcher);
     
     std::string new_line;
 };

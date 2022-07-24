@@ -40,12 +40,15 @@ struct ship_guns
         std::string_view data_end;
     };
 
-    std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
-
-private:
     typedef ship_requests::ship_armament_lt_t::guns ship_guns_t;
     typedef ship_requests::armament_info_t::mount mount_t;
     
+    std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
+
+    template <typename T>
+    p_response_t partial_response (T const & mount);
+
+private:
     struct ship_guns_lt
     {
         ship_guns_lt (size_t _mount_id, ship_guns_t const & value) :
@@ -64,9 +67,6 @@ private:
     std::unordered_map <int, std::vector <ship_guns_lt> > ship_guns_list;
     std::vector <p_response_t> mounts;
 
-    template <typename T>
-    p_response_t partial_response (T const & mount);
-    
     std::string new_line;
 };
 

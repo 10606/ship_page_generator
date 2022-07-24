@@ -41,13 +41,14 @@ struct ship_aircrafts
         std::string_view data_end;
     };
 
-    std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
-
-private:
     typedef ship_requests::ship_armament_lt_t::aircraft ship_aircrafts_t;
     typedef ship_requests::aircraft_info_t::list aircraft_t;
     typedef ship_requests::aircraft_info_t::classes aircraft_class;
     
+    std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
+    p_response_t partial_response (aircraft_t const & aircraft, std::unordered_map <int, std::string> aircraft_class_map);
+
+private:
     struct ship_aircrafts_lt
     {
         ship_aircrafts_lt (size_t _aircraft_id, ship_aircrafts_t const & value) :
@@ -73,8 +74,6 @@ private:
     
     std::unordered_map <int, std::vector <ship_aircrafts_lt> > ship_aircrafts_list;
     std::vector <p_response_t> aircrafts;
-    
-    p_response_t partial_response (aircraft_t const & aircraft, std::unordered_map <int, std::string> aircraft_class_map);
     
     std::string new_line;
 };
