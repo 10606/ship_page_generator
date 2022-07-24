@@ -47,9 +47,9 @@ struct ship_searchers
     p_response_t partial_response (searcher_t const & searcher);
 
 private:
-    struct ship_searchers_lt
+    struct ship_items_lt
     {
-        ship_searchers_lt (size_t _searcher_id, ship_searchers_t const & value) :
+        ship_items_lt (size_t _searcher_id, ship_searchers_t const & value) :
             searcher_id(_searcher_id),
             count    (value.count),
             date_from(value.date_from),
@@ -62,7 +62,7 @@ private:
         std::optional <std::chrono::year_month_day> date_to;
     };
     
-    std::unordered_map <int, std::vector <ship_searchers_lt> > ship_searchers_list;
+    std::unordered_map <int, std::vector <ship_items_lt> > ship_searchers_list;
     std::vector <p_response_t> searchers;
     
     std::string new_line;

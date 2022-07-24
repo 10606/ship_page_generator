@@ -47,9 +47,9 @@ struct ship_torpedo_tubes
     p_response_t partial_response (tube_t const & tube);
 
 private:
-    struct ship_tubes_lt
+    struct ship_items_lt
     {
-        ship_tubes_lt (size_t _tube_id, ship_tubes_t const & value) :
+        ship_items_lt (size_t _tube_id, ship_tubes_t const & value) :
             tube_id(_tube_id),
             mount_count(value.mount_count),
             date_from  (value.date_from),
@@ -62,7 +62,7 @@ private:
         std::optional <std::chrono::year_month_day> date_to;
     };
     
-    std::unordered_map <int, std::vector <ship_tubes_lt> > ship_tubes_list;
+    std::unordered_map <int, std::vector <ship_items_lt> > ship_tubes_list;
     std::vector <p_response_t> torpedo_tubes;
     
     std::string new_line;

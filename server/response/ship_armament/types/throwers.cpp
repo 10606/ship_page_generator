@@ -20,7 +20,6 @@ ship_throwers::ship_throwers (ship_requests * database, std::string_view _new_li
     <
         ship_throwers,
         ship_throwers_t,
-        ship_throwers_lt,
         throwers_t,
         &ship_throwers::throwers,
         &ship_throwers::ship_throwers_list,
@@ -34,7 +33,7 @@ ship_throwers::ship_throwers (ship_requests * database, std::string_view _new_li
         [] (std::vector <throwers_t> const & throwers_full, std::vector <size_t> const & old_index)
         {
             return
-            [&throwers_full, &old_index] (ship_throwers_lt const & a, ship_throwers_lt const & b) -> bool
+            [&throwers_full, &old_index] (ship_items_lt const & a, ship_items_lt const & b) -> bool
             {
                 // class_id, -caliber, tube_count, thrower_id
                 throwers_t const & a_info = throwers_full[old_index[a.thrower_id]];
@@ -65,10 +64,10 @@ std::vector <ship_throwers::response_t> ship_throwers::response (int id, std::ch
 {
     std::vector <response_t> answer;
 
-    std::unordered_map <int, std::vector <ship_throwers_lt> > :: const_iterator it = ship_throwers_list.find(id);
+    std::unordered_map <int, std::vector <ship_items_lt> > :: const_iterator it = ship_throwers_list.find(id);
     if (it == ship_throwers_list.end())
         return answer;
-    for (ship_throwers_lt const & thrower : it->second)
+    for (ship_items_lt const & thrower : it->second)
     {
         if (between(thrower.date_from, date, thrower.date_to))
         {

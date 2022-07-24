@@ -20,7 +20,6 @@ ship_catapult::ship_catapult (ship_requests * database, std::string_view _new_li
     <
         ship_catapult,
         ship_catapults_t,
-        ship_catapults_lt,
         catapult_t,
         &ship_catapult::catapults,
         &ship_catapult::ship_catapults_list,
@@ -34,7 +33,7 @@ ship_catapult::ship_catapult (ship_requests * database, std::string_view _new_li
         [] (std::vector <catapult_t> const & catapults_full, std::vector <size_t> const & old_index)
         {
             return
-            [&catapults_full, &old_index] (ship_catapults_lt const & a, ship_catapults_lt const & b) -> bool
+            [&catapults_full, &old_index] (ship_items_lt const & a, ship_items_lt const & b) -> bool
             {
                 // class_id, catapult_id
                 catapult_t const & a_info = catapults_full[old_index[a.catapult_id]];
@@ -54,10 +53,10 @@ std::vector <ship_catapult::response_t> ship_catapult::response (int id, std::ch
 {
     std::vector <response_t> answer;
 
-    std::unordered_map <int, std::vector <ship_catapults_lt> > :: const_iterator it = ship_catapults_list.find(id);
+    std::unordered_map <int, std::vector <ship_items_lt> > :: const_iterator it = ship_catapults_list.find(id);
     if (it == ship_catapults_list.end())
         return answer;
-    for (ship_catapults_lt const & catapult : it->second)
+    for (ship_items_lt const & catapult : it->second)
     {
         if (between(catapult.date_from, date, catapult.date_to))
         {

@@ -11,10 +11,9 @@ template
 <
     typename T,
     typename ship_item_raw_t,
-    typename ship_item_t,
     typename item_raw_t,
     std::vector <typename T::p_response_t> T::* items,
-    std::unordered_map <int, std::vector <ship_item_t> > T::* items_on_ship,
+    std::unordered_map <int, std::vector <typename T::ship_items_lt> > T::* items_on_ship,
     int ship_item_raw_t::* item_id_ptr,
     typename compare_gen_t,
     typename ... additional_args_t

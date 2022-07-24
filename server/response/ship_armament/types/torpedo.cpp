@@ -18,7 +18,6 @@ ship_torpedo_tubes::ship_torpedo_tubes (ship_requests * database, std::string_vi
     <
         ship_torpedo_tubes,
         ship_tubes_t,
-        ship_tubes_lt,
         tube_t,
         &ship_torpedo_tubes::torpedo_tubes,
         &ship_torpedo_tubes::ship_tubes_list,
@@ -32,7 +31,7 @@ ship_torpedo_tubes::ship_torpedo_tubes (ship_requests * database, std::string_vi
         [] (std::vector <tube_t> const & torpedo_tubes_full, std::vector <size_t> const & old_index)
         {
             return
-            [&torpedo_tubes_full, &old_index] (ship_tubes_lt const & a, ship_tubes_lt const & b) -> bool
+            [&torpedo_tubes_full, &old_index] (ship_items_lt const & a, ship_items_lt const & b) -> bool
             {
                 // class_id, -caliber, tube_count, tube_id
                 tube_t const & a_info = torpedo_tubes_full[old_index[a.tube_id]];
@@ -63,10 +62,10 @@ std::vector <ship_torpedo_tubes::response_t> ship_torpedo_tubes::response (int i
 {
     std::vector <response_t> answer;
 
-    std::unordered_map <int, std::vector <ship_tubes_lt> > :: const_iterator it = ship_tubes_list.find(id);
+    std::unordered_map <int, std::vector <ship_items_lt> > :: const_iterator it = ship_tubes_list.find(id);
     if (it == ship_tubes_list.end())
         return answer;
-    for (ship_tubes_lt const & tube : it->second)
+    for (ship_items_lt const & tube : it->second)
     {
         if (between(tube.date_from, date, tube.date_to))
         {

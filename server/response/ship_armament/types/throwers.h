@@ -47,9 +47,9 @@ struct ship_throwers
     p_response_t partial_response (throwers_t const & thrower);
 
 private:
-    struct ship_throwers_lt
+    struct ship_items_lt
     {
-        ship_throwers_lt (size_t _thrower_id, ship_throwers_t const & value) :
+        ship_items_lt (size_t _thrower_id, ship_throwers_t const & value) :
             thrower_id(_thrower_id),
             mount_count(value.mount_count),
             date_from  (value.date_from),
@@ -62,7 +62,7 @@ private:
         std::optional <std::chrono::year_month_day> date_to;
     };
     
-    std::unordered_map <int, std::vector <ship_throwers_lt> > ship_throwers_list;
+    std::unordered_map <int, std::vector <ship_items_lt> > ship_throwers_list;
     std::vector <p_response_t> throwers;
     
     std::string new_line;

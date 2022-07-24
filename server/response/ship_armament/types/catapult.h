@@ -47,9 +47,9 @@ struct ship_catapult
     p_response_t partial_response (catapult_t const & catapult);
 
 private:
-    struct ship_catapults_lt
+    struct ship_items_lt
     {
-        ship_catapults_lt (size_t _catapult_id, ship_catapults_t const & value) :
+        ship_items_lt (size_t _catapult_id, ship_catapults_t const & value) :
             catapult_id(_catapult_id),
             count    (value.count),
             date_from(value.date_from),
@@ -62,7 +62,7 @@ private:
         std::optional <std::chrono::year_month_day> date_to;
     };
     
-    std::unordered_map <int, std::vector <ship_catapults_lt> > ship_catapults_list;
+    std::unordered_map <int, std::vector <ship_items_lt> > ship_catapults_list;
     std::vector <p_response_t> catapults;
     
     std::string new_line;

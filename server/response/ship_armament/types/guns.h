@@ -49,9 +49,9 @@ struct ship_guns
     p_response_t partial_response (T const & mount);
 
 private:
-    struct ship_guns_lt
+    struct ship_items_lt
     {
-        ship_guns_lt (size_t _mount_id, ship_guns_t const & value) :
+        ship_items_lt (size_t _mount_id, ship_guns_t const & value) :
             mount_id(_mount_id),
             mount_count(value.mount_count),
             date_from  (value.date_from),
@@ -64,7 +64,7 @@ private:
         std::optional <std::chrono::year_month_day> date_to;
     };
     
-    std::unordered_map <int, std::vector <ship_guns_lt> > ship_guns_list;
+    std::unordered_map <int, std::vector <ship_items_lt> > ship_guns_list;
     std::vector <p_response_t> mounts;
 
     std::string new_line;

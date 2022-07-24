@@ -19,7 +19,6 @@ ship_searchers::ship_searchers (ship_requests * database, std::string_view _new_
     <
         ship_searchers,
         ship_searchers_t,
-        ship_searchers_lt,
         searcher_t,
         &ship_searchers::searchers,
         &ship_searchers::ship_searchers_list,
@@ -33,7 +32,7 @@ ship_searchers::ship_searchers (ship_requests * database, std::string_view _new_
         [] (std::vector <searcher_t> const & searchers_full, std::vector <size_t> const & old_index)
         {
             return
-            [&searchers_full, &old_index] (ship_searchers_lt const & a, ship_searchers_lt const & b) -> bool
+            [&searchers_full, &old_index] (ship_items_lt const & a, ship_items_lt const & b) -> bool
             {
                 // class_id, searcher_id
                 searcher_t const & a_info = searchers_full[old_index[a.searcher_id]];
@@ -53,10 +52,10 @@ std::vector <ship_searchers::response_t> ship_searchers::response (int id, std::
 {
     std::vector <response_t> answer;
 
-    std::unordered_map <int, std::vector <ship_searchers_lt> > :: const_iterator it = ship_searchers_list.find(id);
+    std::unordered_map <int, std::vector <ship_items_lt> > :: const_iterator it = ship_searchers_list.find(id);
     if (it == ship_searchers_list.end())
         return answer;
-    for (ship_searchers_lt const & searcher : it->second)
+    for (ship_items_lt const & searcher : it->second)
     {
         if (between(searcher.date_from, date, searcher.date_to))
         {

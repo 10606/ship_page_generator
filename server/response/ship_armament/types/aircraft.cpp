@@ -26,7 +26,6 @@ ship_aircrafts::ship_aircrafts (ship_requests * database, std::string_view _new_
     <
         ship_aircrafts,
         ship_aircrafts_t,
-        ship_aircrafts_lt,
         aircraft_t,
         &ship_aircrafts::aircrafts,
         &ship_aircrafts::ship_aircrafts_list,
@@ -40,7 +39,7 @@ ship_aircrafts::ship_aircrafts (ship_requests * database, std::string_view _new_
         [] (std::vector <aircraft_t> const & aircrafts_full, std::vector <size_t> const & old_index)
         {
             return
-            [&aircrafts_full, &old_index] (ship_aircrafts_lt const & a, ship_aircrafts_lt const & b) -> bool
+            [&aircrafts_full, &old_index] (ship_items_lt const & a, ship_items_lt const & b) -> bool
             {
                 // class_id, aircraft_id
                 aircraft_t const & a_info = aircrafts_full[old_index[a.aircraft_id]];
@@ -61,10 +60,10 @@ std::vector <ship_aircrafts::response_t> ship_aircrafts::response (int id, std::
 {
     std::vector <response_t> answer;
 
-    std::unordered_map <int, std::vector <ship_aircrafts_lt> > :: const_iterator it = ship_aircrafts_list.find(id);
+    std::unordered_map <int, std::vector <ship_items_lt> > :: const_iterator it = ship_aircrafts_list.find(id);
     if (it == ship_aircrafts_list.end())
         return answer;
-    for (ship_aircrafts_lt const & aircraft : it->second)
+    for (ship_items_lt const & aircraft : it->second)
     {
         if (between(aircraft.date_from, date, aircraft.date_to))
         {

@@ -21,7 +21,6 @@ ship_guns::ship_guns (ship_requests * database, std::string_view _new_line) :
     <
         ship_guns,
         ship_guns_t,
-        ship_guns_lt,
         mount_t,
         &ship_guns::mounts,
         &ship_guns::ship_guns_list,
@@ -35,7 +34,7 @@ ship_guns::ship_guns (ship_requests * database, std::string_view _new_line) :
         [] (std::vector <mount_t> const & mounts_full, std::vector <size_t> const & old_index)
         {
             return
-            [&mounts_full, &old_index] (ship_guns_lt const & a, ship_guns_lt const & b) -> bool
+            [&mounts_full, &old_index] (ship_items_lt const & a, ship_items_lt const & b) -> bool
             {
                 // class_id, -caliber, gun_id, -gun_count, mount_id
                 mount_t const & a_info = mounts_full[old_index[a.mount_id]];
@@ -71,10 +70,10 @@ std::vector <ship_guns::response_t> ship_guns::response (int id, std::chrono::ye
 {
     std::vector <response_t> answer;
 
-    std::unordered_map <int, std::vector <ship_guns_lt> > :: const_iterator it = ship_guns_list.find(id);
+    std::unordered_map <int, std::vector <ship_items_lt> > :: const_iterator it = ship_guns_list.find(id);
     if (it == ship_guns_list.end())
         return answer;
-    for (ship_guns_lt const & value : it->second)
+    for (ship_items_lt const & value : it->second)
     {
         if (between(value.date_from, date, value.date_to))
         {
