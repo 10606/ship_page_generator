@@ -17,7 +17,7 @@ struct ship_searchers
     {
         int group;
         bool compare;
-        std::string group_name;
+        std::string_view group_name;
         std::string data;
     };
 
@@ -64,6 +64,7 @@ private:
     
     std::unordered_map <int, std::vector <ship_items_lt> > ship_searchers_list;
     std::vector <p_response_t> searchers;
+    std::unordered_map <int, std::string> cache_class_names;
     
     std::string new_line;
 };

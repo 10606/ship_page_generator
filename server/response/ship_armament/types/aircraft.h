@@ -18,7 +18,7 @@ struct ship_aircrafts
     {
         int group;
         bool compare;
-        std::string group_name;
+        std::string_view group_name;
         std::string data;
     };
 
@@ -46,7 +46,7 @@ struct ship_aircrafts
     typedef ship_requests::aircraft_info_t::classes aircraft_class;
     
     std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
-    p_response_t partial_response (aircraft_t const & aircraft, std::unordered_map <int, std::string> aircraft_class_map);
+    p_response_t partial_response (aircraft_t const & aircraft);
 
 private:
     struct ship_items_lt
@@ -74,6 +74,7 @@ private:
     
     std::unordered_map <int, std::vector <ship_items_lt> > ship_aircrafts_list;
     std::vector <p_response_t> aircrafts;
+    std::unordered_map <int, std::string> cache_class_names;
     
     std::string new_line;
 };

@@ -17,6 +17,18 @@ ship_guns::ship_guns (ship_requests * database, std::string_view _new_line) :
     ship_guns_list(),
     new_line(_new_line)
 {
+    typedef ship_requests::armament_info_t::classes classes;
+    std::vector <classes> gun_class_list =
+        database->armament_info.get_classes("");
+    for (classes const & cur_class : gun_class_list)
+        cache_class_names.insert
+        (
+            {
+                cur_class.class_id,
+                armament_links::filtered("/armament/guns?sort=caliber,in_service&group=caliber", cur_class.class_ru.value_or(""), cur_class.class_id)
+            }
+        );
+                
     fill_data_structures
     <
         ship_guns,
@@ -87,12 +99,14 @@ std::vector <ship_guns::response_t> ship_guns::response (int id, std::chrono::ye
 }
 
 
-template <typename T>
-ship_guns::p_response_t ship_guns::partial_response (T const & mount)
+ship_guns::p_response_t ship_guns::partial_response (mount_t const & mount)
 {
     p_response_t item;
     item.group = mount.class_id;
-    item.group_name = armament_links::filtered("/armament/guns?sort=caliber,in_service&group=caliber", mount.class_ru.value_or(""), mount.class_id);
+
+    std::unordered_map <int, std::string> ::iterator it = cache_class_names.find(mount.class_id);
+    if (it != cache_class_names.end())
+        item.group_name = it->second;
     if (mount.caliber)
         item.compare = -std::floor((std::log(*mount.caliber + 1.) + 0.5) / 0.3);
     else

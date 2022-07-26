@@ -15,6 +15,18 @@
 ship_searchers::ship_searchers (ship_requests * database, std::string_view _new_line) :
     new_line(_new_line)
 {
+    typedef ship_requests::armament_info_t::classes classes;
+    std::vector <classes> gun_class_list =
+        database->armament_info.get_classes("");
+    for (classes const & cur_class : gun_class_list)
+        cache_class_names.insert
+        (
+            {
+                cur_class.class_id,
+                armament_links::filtered("/armament/searcher?group=power&sort=in_service", cur_class.class_ru.value_or(""), cur_class.class_id),
+            }
+        );
+
     fill_data_structures
     <
         ship_searchers,
@@ -72,9 +84,11 @@ ship_searchers::p_response_t ship_searchers::partial_response (searcher_t const 
 {
     p_response_t item;
     item.group = searcher.class_id;
-    item.group_name = armament_links::filtered("/armament/searcher?group=power&sort=in_service", searcher.class_ru.value_or(""), searcher.class_id);
+
+    std::unordered_map <int, std::string> ::iterator it = cache_class_names.find(searcher.class_id);
+    if (it != cache_class_names.end())
+        item.group_name = it->second;
     item.compare = 0;
-    
     item.data += " ";
     item.data += searcher.searcher_ru.value_or("  ");
     return item;

@@ -17,7 +17,7 @@ struct ship_guns
     {
         int group;
         double compare;
-        std::string group_name;
+        std::string_view group_name;
         std::string data;
     };
 
@@ -45,8 +45,7 @@ struct ship_guns
     
     std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
 
-    template <typename T>
-    p_response_t partial_response (T const & mount);
+    p_response_t partial_response (mount_t const & mount);
 
 private:
     struct ship_items_lt
@@ -66,6 +65,7 @@ private:
     
     std::unordered_map <int, std::vector <ship_items_lt> > ship_guns_list;
     std::vector <p_response_t> mounts;
+    std::unordered_map <int, std::string> cache_class_names;
 
     std::string new_line;
 };

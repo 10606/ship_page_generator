@@ -18,9 +18,14 @@ ship_aircrafts::ship_aircrafts (ship_requests * database, std::string_view _new_
 {
     std::vector <aircraft_class> aircraft_class_list =
         database->aircraft_info.get_classes("");
-    std::unordered_map <int, std::string> aircraft_class_map;
     for (aircraft_class const & cur_class : aircraft_class_list)
-        aircraft_class_map.insert({cur_class.class_id, cur_class.class_ru.value_or(" ")});
+        cache_class_names.insert
+        (
+            {
+                cur_class.class_id,
+                armament_links::filtered("/aircraft?group=in_service&sort=type,in_service", cur_class.class_ru.value_or(" "), cur_class.class_id)
+            }
+        );
     
     fill_data_structures
     <
@@ -51,8 +56,7 @@ ship_aircrafts::ship_aircrafts (ship_requests * database, std::string_view _new_
                     
                 return a_info.id < b_info.id;
             };
-        },
-        aircraft_class_map
+        }
     );
 }
 
@@ -76,21 +80,15 @@ std::vector <ship_aircrafts::response_t> ship_aircrafts::response (int id, std::
     return answer;
 }
 
-ship_aircrafts::p_response_t ship_aircrafts::partial_response (aircraft_t const & aircraft, std::unordered_map <int, std::string> aircraft_class_map)
+ship_aircrafts::p_response_t ship_aircrafts::partial_response (aircraft_t const & aircraft)
 {
     p_response_t item;
     item.compare = 0;
     item.group = aircraft.class_id;
     
-    std::unordered_map <int, std::string> :: iterator it = aircraft_class_map.find(aircraft.class_id);
-    if (it != aircraft_class_map.end())
-        item.group_name = armament_links::filtered
-                          (
-                              "/aircraft?group=in_service&sort=type,in_service", 
-                              (it != aircraft_class_map.end())? it->second : " ",
-                              aircraft.class_id
-                          );
-    
+    std::unordered_map <int, std::string> :: iterator it = cache_class_names.find(aircraft.class_id);
+    if (it != cache_class_names.end())
+        item.group_name = it->second;
     item.data += " ";
     if (aircraft.aircraft_en)
         item.data += *aircraft.aircraft_en;
