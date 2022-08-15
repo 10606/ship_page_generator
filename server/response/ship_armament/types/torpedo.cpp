@@ -12,7 +12,7 @@
 
 ship_torpedo_tubes::ship_torpedo_tubes (ship_requests * database, std::string_view _new_line) :
     new_line(_new_line),
-    group_name(armament_links::base("/armament/torpedo?group=caliber&sort=in_service", "торпедный аппарат"))
+    group_name(armament_links::base("/armament/torpedo?group=caliber,in_service&sort=in_service", "торпедный аппарат"))
 {
     fill_data_structures
     <
@@ -85,11 +85,16 @@ ship_torpedo_tubes::p_response_t ship_torpedo_tubes::partial_response (tube_t co
     item.group = 0;
     item.compare = tube.class_id;;
     
-    item.data += "x";
+    item.data.append("x<b>");
     if (tube.tubes_count)
         add_value(item.data, *tube.tubes_count);
     item.data += " ";
-    item.data += (tube.caliber? (to_string_10(*tube.caliber) + "мм  ") : "  ");
+    if (tube.caliber)
+        item.data.append("<b>")
+                 .append(to_string_10(*tube.caliber))
+                 .append("мм");
+    item.data.append("</b>");
+    item.data += ("  ");
     item.data += tube.tube_ru.value_or("  ") + new_line;
     return item;
 }

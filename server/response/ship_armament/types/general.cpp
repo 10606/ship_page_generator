@@ -52,12 +52,14 @@ ship_general::response_with_time_label ship_general::partial_response (general_t
         item.compare = 0;
         item.group_name = "характеристики";
         
+        item.data.append("<b>");
         if (general.displacement_standart)
             item.data += to_string_10(*general.displacement_standart) + "т";
         if (general.displacement_standart || general.displacement_full)
             item.data += " .. ";
         if (general.displacement_full)
             item.data += to_string_10(*general.displacement_full) + "т";
+        item.data.append("</b>");
         answer.push_back(item);
     }
     
@@ -98,8 +100,10 @@ ship_general::response_with_time_label ship_general::partial_response (general_t
         item.group_name = "характеристики";
         item.compare = 3;
         
+        item.data.append("<b>");
         if (general.speed_max)
             item.data += to_string_10(*general.speed_max) + "узлов";
+        item.data.append("</b>");
         answer.push_back(item);
     }
     

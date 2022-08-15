@@ -112,16 +112,20 @@ ship_guns::p_response_t ship_guns::partial_response (mount_t const & mount)
     else
         item.compare = 0;
     
-    item.data += "x";
+    item.data.append("x<b>");
     add_value(item.data, mount.gun_count);
     item.data += " ";
     if (mount.caliber)
-        item.data.append(to_string_10(*mount.caliber) + "мм");
+        item.data.append(to_string_10(*mount.caliber))
+                 .append("мм");
+    item.data.append("</b>");
     if (mount.length)
         item.data.append("/")
                  .append(to_string_10(*mount.length));
-    item.data.append("  ");
-    item.data += mount.gun_ru.value_or("  ") + new_line;
+    item.data.append("  <b>")
+             .append(mount.gun_ru.value_or("  "))
+             .append("</b>")
+             .append(new_line);
     if (mount.mount_ru || mount.angle)
     {
         item.data += "&emsp;(";

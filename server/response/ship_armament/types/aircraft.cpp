@@ -91,7 +91,9 @@ ship_aircrafts::p_response_t ship_aircrafts::partial_response (aircraft_t const 
         item.group_name = it->second;
     item.data += " ";
     if (aircraft.aircraft_en)
-        item.data += *aircraft.aircraft_en;
+        item.data.append("<b>")
+                 .append(*aircraft.aircraft_en)
+                 .append("</b>");
     if (aircraft.aircraft_en && aircraft.aircraft_ru) 
         item.data += new_line;
     if (aircraft.aircraft_ru)

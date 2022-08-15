@@ -70,7 +70,7 @@ menu_item_template::item const menu_item_template::all_template =
             торпедное вооружение\n\
         </button><br>\n\
         <div class = \"content\">\n\
-            <a href=\"/armament/torpedo?group=caliber&sort=in_service\">\n\
+            <a href=\"/armament/torpedo?group=caliber,in_service&sort=in_service\">\n\
                 торпеды\n\
             </a><br>\n\
             <a href=\"/armament/torpedo_tubes?group=caliber&sort=in_service\">\n\
