@@ -41,6 +41,7 @@ menu_item_template::item const menu_item_template::all_template =
         "} \n"
         ".content > a:hover { color: #ff2222; } \n"
         "input { width: 100% }\n"
+        "h2 { display: inline }\n"
     "</style>\n"
     "<form action = \"/search\" method = \"get\">\n"
         "<input name = \"search\" type = \"text\" placeholder = \"Поиск...\"><br>\n"

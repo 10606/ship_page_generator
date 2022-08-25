@@ -72,6 +72,7 @@ struct add_event
         
         for (size_t i = 0; i != shift; ++i)
             answer.append(ship::shift);
+        answer.append("<b>");
         if (events[index].date_from)
             answer.append(to_string(*events[index].date_from));
         else
@@ -81,6 +82,7 @@ struct add_event
             answer.append(to_string(*events[index].date_to));
         else
             answer.append(date_placeholder);
+        answer.append("</b>");
         answer.append(" ");
         if (events[index].class_ru)
             answer.append(*events[index].class_ru)
@@ -135,8 +137,9 @@ void add_general_info
 )
 {
     if (info.ship_ru)
-        answer.append(*info.ship_ru)
-              .append(" ");
+        answer.append("<h2>")
+              .append(*info.ship_ru)
+              .append("</h2> ");
     if (info.class_ru || info.type_ru)
     {
         answer.append("(");
@@ -151,6 +154,7 @@ void add_general_info
     }
     answer.append(ship::new_line);
     
+    answer.append("<b>");
     if (info.commissioned)
     {
         std::string commissioned_str = to_string(*info.commissioned);
@@ -161,7 +165,8 @@ void add_general_info
     answer.append(" -> ");
     if (info.sunk_date)
     {
-        answer.append(to_string(*info.sunk_date));
+        answer.append(to_string(*info.sunk_date))
+              .append("</b>");
         if (info.sunk_reason)
         {
             answer.append(" (")
@@ -169,6 +174,8 @@ void add_general_info
                   .append(") ");
         }
     }
+    else
+        answer.append("</b>");
     answer.append(ship::new_line);
 }
 
