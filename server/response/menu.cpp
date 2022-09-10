@@ -5,9 +5,10 @@
 
 #include "ship_info.h"
 #include "date_to_str.h"
+#include "search.h"
 
 
-menu_item_template::item const menu_item_template::all_template =
+html_template_3 const menu_item_template::all_template =
 {
 "<div class = \"menu\"> \n"
     "<style> \n"
@@ -44,7 +45,8 @@ menu_item_template::item const menu_item_template::all_template =
         "h2 { display: inline }\n"
     "</style>\n"
     "<form action = \"/search\" method = \"get\">\n"
-        "<input name = \"search\" type = \"text\" placeholder = \"Поиск...\"><br>\n"
+        "<input name = \"search\" type = \"text\" placeholder = \"Поиск корабликов...\" value = \"",
+        "\"><br>\n"
     "</form>\n"
     "\n"
     "\n"
@@ -264,7 +266,7 @@ struct inserter_t
 };
 
 
-std::string menu::response_impl (ship_requests * database)
+menu::cache_t menu::response_impl (ship_requests * database)
 {
     try
     {
@@ -372,24 +374,26 @@ std::string menu::response_impl (ship_requests * database)
             }
         }
         
-        std::string answer(menu_item.all.begin);
-        inserter_t inserter(classes_graph, classes, answer);
+        cache_t answer{std::string(menu_item.all.begin), std::string(menu_item.all.middle)};
+        inserter_t inserter(classes_graph, classes, answer.end);
         for (int root : classes_root)
             inserter(root);
-        answer.append(menu_item.all.end);
+        answer.end.append(menu_item.all.end);
         
         return answer;
     }
     catch (...)
     {
-        return "";
+        return cache_t();
     }
 }
 
 
-void menu::response (simple_string & answer)
+void menu::response (simple_string & answer, std::string_view request)
 {
-    answer.append(cache);
+    answer.append(cache.begin);
+    answer.append(search::get_search_parameter(request));
+    answer.append(cache.end);
 }
 
 

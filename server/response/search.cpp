@@ -52,8 +52,10 @@ private:
 };
 
 
-std::string search::percent_dec (std::string_view request_percent_enc)
+std::string search::percent_dec (std::string_view request_percent_enc, bool need_escape)
 {
+    static const constexpr std::string_view quot = "&quot;";
+
     std::string answer;
     answer.reserve(request_percent_enc.size());
     
@@ -62,7 +64,10 @@ std::string search::percent_dec (std::string_view request_percent_enc)
         if (request_percent_enc[i] != '%' ||
             i + 2 >= request_percent_enc.size())
         {
-            answer.push_back(request_percent_enc[i]);
+            if (need_escape && request_percent_enc[i] == '"')
+                answer.append(quot);
+            else
+                answer.push_back(request_percent_enc[i]);
             continue;
         }
         if (!std::isxdigit(request_percent_enc[i + 1]) ||
@@ -74,7 +79,10 @@ std::string search::percent_dec (std::string_view request_percent_enc)
         uint8_t cur = 0;
         cur = (cur << 4) + from_hex(request_percent_enc[i + 1]);
         cur = (cur << 4) + from_hex(request_percent_enc[i + 2]);
-        answer.push_back(cur);
+        if (need_escape && cur == '"')
+            answer.append(quot);
+        else
+            answer.push_back(cur);
         i += 2;
     }
     return answer;
@@ -82,7 +90,6 @@ std::string search::percent_dec (std::string_view request_percent_enc)
 
 void search::response (simple_string & answer, std::string_view request_percent_enc)
 {
-    static const constexpr std::string_view search_keyword = "search=";
     if (request_percent_enc.starts_with(search_keyword))
         request_percent_enc = request_percent_enc.substr(search_keyword.size());
     std::string request = percent_dec(request_percent_enc);
@@ -203,5 +210,20 @@ uint32_t search::calc_index_4 (std::string_view request)
         index += static_cast <uint8_t> (request[pos - 1]);
     }
     return index;
+}
+
+std::string search::get_search_parameter (std::string_view request)
+{
+    size_t begin = request.find(search_keyword);
+    if (begin == std::string_view::npos)
+        return std::string();
+    if (begin != 0 && request[begin - 1] != '&')
+        return std::string();
+
+    size_t end = request.find('&', begin);
+
+    begin += search_keyword.size();
+    request = request.substr(begin, (end == std::string_view::npos)? end : end - begin);
+    return percent_dec(request, 1);
 }
 

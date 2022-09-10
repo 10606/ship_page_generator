@@ -8,33 +8,49 @@
 #include "menu.h"
 #include "ship_requests.h"
 #include "simple_string.h"
+#include "html_template.h"
 
-static const constexpr std::string_view style = 
-"<div class = \"wrapper\"> \n"
-    "<style> \n"
-        ".menu { \n"
-            "display:    inline; \n"
-            "min-width:  170pt; \n"
-            "width:      170pt; \n"
-            "max-width:  170pt; \n"
-            "padding: 0px 10px 0px 0px; \n"
-        "} \n"
-        ".main { display:    inline; } \n"
-        ".main img { \n"
-            "object-fit: contain; \n"
-            "min-width: 180px; \n"
-            "max-width: 180px; \n"
-            "min-height: 180px; \n"
-            "max-height: 180px; \n"
-            "background-color: #f5f5f5; \n"
-        "} \n"
-        ".main li { \n"
-            "display: inline-block; \n"
-            "margin: 10px; \n"
-            "max-width: 180px; \n"
-            "vertical-align: top; \n"
-        "} \n"
-    "</style>\n";
+static const constexpr html_template style = 
+{
+"<html>\n"
+    "<head>\n"
+        "<title>\n"
+            "japan ships"
+        "</title>\n"
+    "</head>\n"
+    "<body>\n"
+        "<style> \n"
+            ".wrapper { display: flex; } \n"
+        "</style>\n"
+        "<div class = \"wrapper\"> \n"
+            "<style> \n"
+                ".menu { \n"
+                    "display:    inline; \n"
+                    "min-width:  170pt; \n"
+                    "width:      170pt; \n"
+                    "max-width:  170pt; \n"
+                    "padding: 0px 10px 0px 0px; \n"
+                "} \n"
+                ".main { display:    inline; } \n"
+                ".main img { \n"
+                    "object-fit: contain; \n"
+                    "min-width: 180px; \n"
+                    "max-width: 180px; \n"
+                    "min-height: 180px; \n"
+                    "max-height: 180px; \n"
+                    "background-color: #f5f5f5; \n"
+                "} \n"
+                ".main li { \n"
+                    "display: inline-block; \n"
+                    "margin: 10px; \n"
+                    "max-width: 180px; \n"
+                    "vertical-align: top; \n"
+                "} \n"
+            "</style>\n",
+        "</div>\n"
+    "</body>\n"
+"</html>"
+};
 
 struct responser
 {
@@ -90,14 +106,12 @@ struct responser
 
         answer.reserve(100000);
 
-        answer.append("<style> \n"
-                          ".wrapper { display: flex; } \n"
-                      "</style>\n");
-        answer.append(style);
-        ship_list.response(answer);
+        answer.append(style.begin);
+        ship_list.response(answer, query);
         answer.append("<div class = \"main\">\n");
         it->second->response(answer, query);
-        answer.append("</div>\n</div>");
+        answer.append("</div>\n");
+        answer.append(style.end);
         
         return 1;
     }

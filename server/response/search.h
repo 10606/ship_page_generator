@@ -12,6 +12,7 @@
 #include "simple_string.h"
 #include "armament_links.h"
 
+
 struct search
 {
     search (ship_requests * database)
@@ -32,8 +33,12 @@ struct search
     }
     
     void response (simple_string & answer, std::string_view request);
+
+    static std::string get_search_parameter (std::string_view request);
     
 private:
+    static const constexpr std::string_view search_keyword = "search=";
+
     friend struct add_ship_t;
     typedef ship_requests::ship_info_t::list ship_info_long;
 
@@ -79,7 +84,7 @@ private:
     std::unordered_map <uint32_t, std::vector <position_t> > by_4_chars; // last chars for multi byte
     
     void add (std::string_view value, size_t name_index);
-    static std::string percent_dec (std::string_view request);
+    static std::string percent_dec (std::string_view request, bool need_escape = 0);
     
     static uint8_t from_hex (char c)
     {

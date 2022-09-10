@@ -3,17 +3,11 @@
 
 #include <string>
 #include <string_view>
+#include "html_template.h"
 
 namespace armament_links
 {
-    struct templat
-    {
-        std::string_view begin;
-        std::string_view middle;
-        std::string_view end;
-    };
-    
-    static const constexpr templat link_template = {"<a href=\"", "\">", "</a>"};
+    static const constexpr html_template_3 link_template = {"<a href=\"", "\">", "</a>"};
 
     inline std::string filtered (std::string_view link, std::string_view text, size_t class_id)
     {

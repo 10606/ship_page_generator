@@ -11,6 +11,13 @@ struct html_template
     std::string_view end;
 };
 
+struct html_template_3
+{
+    std::string_view begin;
+    std::string_view middle;
+    std::string_view end;
+};
+
 struct pictures_template
 {
     struct picture_template

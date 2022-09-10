@@ -5,34 +5,29 @@
 #include <vector>
 #include "ship_requests.h"
 #include "simple_string.h"
+#include "html_template.h"
 
 
 struct menu_item_template
 {
-    struct item
-    {
-        std::string_view begin;
-        std::string_view end;
-    };
+    html_template_3 all = all_template;
     
-    item all = all_template;
-    
-    item new_class = {"<button type = \"button\" class = \"collapsible\">\n", 
+    html_template new_class = {"<button type = \"button\" class = \"collapsible\">\n", 
                       "</button><br><div class = \"content\">\n"};
     
-    item new_type_link = {"<button type = \"button\" class = \"collapsible\">\n&nbsp;&nbsp;&nbsp;<a href=\"/ship?id=", 
+    html_template new_type_link = {"<button type = \"button\" class = \"collapsible\">\n&nbsp;&nbsp;&nbsp;<a href=\"/ship?id=", 
                           "\">"};
-    item new_type = {"", 
+    html_template new_type = {"", 
                      "</a></button><br><div class = \"content\">\n"};
     
     std::string_view close_type = "</div>";
     std::string_view close_class = "</div>";
 
-    item new_ship = {"&nbsp;&nbsp;", "</a><br>"};
-    item new_ship_link = {"<a href=\"/ship?id=", "\">"};
+    html_template new_ship = {"&nbsp;&nbsp;", "</a><br>"};
+    html_template new_ship_link = {"<a href=\"/ship?id=", "\">"};
     
 private:
-    static const item all_template;
+    static const html_template_3 all_template;
 };
 
 struct menu
@@ -42,13 +37,19 @@ struct menu
         cache(response_impl(database))
     {}
     
-    void response (simple_string & answer);
+    void response (simple_string & answer, std::string_view request);
     
 private:
-    std::string response_impl (ship_requests * database);
+    struct cache_t
+    {
+        std::string begin;
+        std::string end;
+    };
+
+    cache_t response_impl (ship_requests * database);
     
     menu_item_template menu_item;
-    std::string cache;
+    cache_t cache;
 };
 
 #endif
