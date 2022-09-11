@@ -58,6 +58,7 @@ add_executable(ship_server
     server/response/aircraft/response_aircraft.cpp
     server/response/ship_names.cpp
     server/response/menu.cpp
+    server/response/menu_html.cpp
     server/response/search.cpp
     server/response/ship/ship.cpp
     server/response/ship/date_order/nested_segments.cpp

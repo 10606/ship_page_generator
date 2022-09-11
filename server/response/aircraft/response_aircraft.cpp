@@ -8,6 +8,7 @@
 #include "registrators.h"
 #include "base_compare_predict.h"
 #include "html_template.h"
+#include "append_row.h"
 
 static const constexpr pictures_template pictures =
 {
@@ -132,64 +133,40 @@ void aircraft::response (simple_string & answer, std::string_view query)
     {
         answer.append(table::begin);
         
-        for (aircraft_partial const & item : list)
-            answer.append(text_cache[item.index].name);
-        answer.append(table::new_row);
+        append_row <aircraft_text, &aircraft_text::name> (answer, list, text_cache);
         
         answer.append("экипаж");
-        for (aircraft_partial const & item : list)
-            answer.append(text_cache[item.index].crew);
-        answer.append(table::new_row);
+        append_row <aircraft_text, &aircraft_text::crew> (answer, list, text_cache);
         
         answer.append("масса");
-        for (aircraft_partial const & item : list)
-            answer.append(text_cache[item.index].mass);
-        answer.append(table::new_row);
+        append_row <aircraft_text, &aircraft_text::mass> (answer, list, text_cache);
         
         answer.append("макс. масса");
-        for (aircraft_partial const & item : list)
-            answer.append(text_cache[item.index].max_mass);
-        answer.append(table::new_row);
+        append_row <aircraft_text, &aircraft_text::max_mass> (answer, list, text_cache);
         
         answer.append("мощность двигателя");
-        for (aircraft_partial const & item : list)
-            answer.append(text_cache[item.index].engine_power);
-        answer.append(table::new_row);
+        append_row <aircraft_text, &aircraft_text::engine_power> (answer, list, text_cache);
         
         answer.append("макс. скорость");
-        for (aircraft_partial const & item : list)
-            answer.append(text_cache[item.index].max_speed);
-        answer.append(table::new_row);
+        append_row <aircraft_text, &aircraft_text::max_speed> (answer, list, text_cache);
         
         answer.append("крейсерская скорость");
-        for (aircraft_partial const & item : list)
-            answer.append(text_cache[item.index].cruise_speed);
-        answer.append(table::new_row);
+        append_row <aircraft_text, &aircraft_text::cruise_speed> (answer, list, text_cache);
         
         answer.append("дальность");
-        for (aircraft_partial const & item : list)
-            answer.append(text_cache[item.index].range);
-        answer.append(table::new_row);
+        append_row <aircraft_text, &aircraft_text::range> (answer, list, text_cache);
         
         answer.append("дальность с баками");
-        for (aircraft_partial const & item : list)
-            answer.append(text_cache[item.index].range_with_tank);
-        answer.append(table::new_row);
+        append_row <aircraft_text, &aircraft_text::range_with_tank> (answer, list, text_cache);
         
         answer.append("потолок");
-        for (aircraft_partial const & item : list)
-            answer.append(text_cache[item.index].ceiling);
-        answer.append(table::new_row);
+        append_row <aircraft_text, &aircraft_text::ceiling> (answer, list, text_cache);
         
         answer.append("сокроподьемность");
-        for (aircraft_partial const & item : list)
-            answer.append(text_cache[item.index].time_to_altitude);
-        answer.append(table::new_row);
+        append_row <aircraft_text, &aircraft_text::time_to_altitude> (answer, list, text_cache);
         
         answer.append("на вооружении");
-        for (aircraft_partial const & item : list)
-            answer.append(text_cache[item.index].in_service);
-        answer.append(table::new_row);
+        append_row <aircraft_text, &aircraft_text::in_service> (answer, list, text_cache);
         
         answer.append("вооружение");
         for (aircraft_partial const & item : list)

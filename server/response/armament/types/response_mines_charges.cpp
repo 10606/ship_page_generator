@@ -7,6 +7,7 @@
 #include "registrators.h"
 #include "base_compare_predict.h"
 #include "base_comparators.h"
+#include "append_row.h"
 
 
 struct mines_charges_cmp
@@ -70,24 +71,16 @@ void mines_charges::response (simple_string & answer, std::string_view query)
     {
         answer.append(table::begin);
         
-        for (mines_charges_partial const & item : list)
-            answer.append(text_cache[item.index].name);
-        answer.append(table::new_row);
+        append_row <mines_charges_text, &mines_charges_text::name> (answer, list, text_cache);
         
         answer.append("масса");
-        for (mines_charges_partial const & item : list)
-            answer.append(text_cache[item.index].mass);
-        answer.append(table::new_row);
+        append_row <mines_charges_text, &mines_charges_text::mass> (answer, list, text_cache);
         
         answer.append("масса ВВ");
-        for (mines_charges_partial const & item : list)
-            answer.append(text_cache[item.index].mass_ex);
-        answer.append(table::new_row);
+        append_row <mines_charges_text, &mines_charges_text::mass_ex> (answer, list, text_cache);
         
         answer.append("размер");
-        for (mines_charges_partial const & item : list)
-            answer.append(text_cache[item.index].size);
-        answer.append(table::new_row);
+        append_row <mines_charges_text, &mines_charges_text::size> (answer, list, text_cache);
         
         answer.append("на вооружении");
         for (mines_charges_partial const & item : list)

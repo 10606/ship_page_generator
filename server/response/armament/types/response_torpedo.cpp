@@ -7,6 +7,7 @@
 #include "registrators.h"
 #include "base_compare_predict.h"
 #include "base_comparators.h"
+#include "append_row.h"
 
 
 struct torpedo_cmp
@@ -70,39 +71,25 @@ void torpedo::response (simple_string & answer, std::string_view query)
     {
         answer.append(table::begin);
         
-        for (torpedo_partial const & item : list)
-            answer.append(text_cache[item.index].name);
-        answer.append(table::new_row);
+        append_row <torpedo_text, &torpedo_text::name> (answer, list, text_cache);
         
         answer.append("калибр");
-        for (torpedo_partial const & item : list)
-            answer.append(text_cache[item.index].caliber);
-        answer.append(table::new_row);
+        append_row <torpedo_text, &torpedo_text::caliber> (answer, list, text_cache);
         
         answer.append("длина");
-        for (torpedo_partial const & item : list)
-            answer.append(text_cache[item.index].length);
-        answer.append(table::new_row);
+        append_row <torpedo_text, &torpedo_text::length> (answer, list, text_cache);
         
         answer.append("скорость");
-        for (torpedo_partial const & item : list)
-            answer.append(text_cache[item.index].speed);
-        answer.append(table::new_row);
+        append_row <torpedo_text, &torpedo_text::speed> (answer, list, text_cache);
         
         answer.append("дальность");
-        for (torpedo_partial const & item : list)
-            answer.append(text_cache[item.index].range);
-        answer.append(table::new_row);
+        append_row <torpedo_text, &torpedo_text::range> (answer, list, text_cache);
         
         answer.append("масса");
-        for (torpedo_partial const & item : list)
-            answer.append(text_cache[item.index].mass);
-        answer.append(table::new_row);
+        append_row <torpedo_text, &torpedo_text::mass> (answer, list, text_cache);
         
         answer.append("масса ВВ");
-        for (torpedo_partial const & item : list)
-            answer.append(text_cache[item.index].mass_ex);
-        answer.append(table::new_row);
+        append_row <torpedo_text, &torpedo_text::mass_ex> (answer, list, text_cache);
         
         answer.append("на вооружении");
         for (torpedo_partial const & item : list)

@@ -8,6 +8,7 @@
 #include "base_compare_predict.h"
 #include "base_comparators.h"
 #include "html_template.h"
+#include "append_row.h"
 
 static const constexpr pictures_template pictures =
 {
@@ -96,29 +97,19 @@ void searcher::response (simple_string & answer, std::string_view query)
     {
         answer.append(table::begin);
         
-        for (searchers_partial const & item : list)
-            answer.append(text_cache[item.index].name);
-        answer.append(table::new_row);
+        append_row <searchers_text, &searchers_text::name> (answer, list, text_cache);
         
         answer.append("масса");
-        for (searchers_partial const & item : list)
-            answer.append(text_cache[item.index].mass);
-        answer.append(table::new_row);
+        append_row <searchers_text, &searchers_text::mass> (answer, list, text_cache);
         
         answer.append("частота");
-        for (searchers_partial const & item : list)
-            answer.append(text_cache[item.index].frequency);
-        answer.append(table::new_row);
+        append_row <searchers_text, &searchers_text::frequency> (answer, list, text_cache);
         
         answer.append("мощность");
-        for (searchers_partial const & item : list)
-            answer.append(text_cache[item.index].power);
-        answer.append(table::new_row);
+        append_row <searchers_text, &searchers_text::power> (answer, list, text_cache);
         
         answer.append("построено");
-        for (searchers_partial const & item : list)
-            answer.append(text_cache[item.index].build_cnt);
-        answer.append(table::new_row);
+        append_row <searchers_text, &searchers_text::build_cnt> (answer, list, text_cache);
         
         answer.append("на вооружении");
         for (searchers_partial const & item : list)

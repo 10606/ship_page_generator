@@ -7,6 +7,7 @@
 #include "registrators.h"
 #include "base_compare_predict.h"
 #include "base_comparators.h"
+#include "append_row.h"
 
 
 struct torpedo_tubes_cmp
@@ -72,19 +73,13 @@ void torpedo_tubes::response (simple_string & answer, std::string_view query)
     {
         answer.append(table::begin);
         
-        for (torpedo_tubes_partial const & item : list)
-            answer.append(text_cache[item.index].name);
-        answer.append(table::new_row);
+        append_row <torpedo_tubes_text, &torpedo_tubes_text::name> (answer, list, text_cache);
         
         answer.append("калибр");
-        for (torpedo_tubes_partial const & item : list)
-            answer.append(text_cache[item.index].caliber);
-        answer.append(table::new_row);
+        append_row <torpedo_tubes_text, &torpedo_tubes_text::caliber> (answer, list, text_cache);
         
         answer.append("количество труб");
-        for (torpedo_tubes_partial const & item : list)
-            answer.append(text_cache[item.index].tubes_count);
-        answer.append(table::new_row);
+        append_row <torpedo_tubes_text, &torpedo_tubes_text::tubes_count> (answer, list, text_cache);
         
         answer.append("на вооружении");
         for (torpedo_tubes_partial const & item : list)

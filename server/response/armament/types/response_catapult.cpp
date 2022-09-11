@@ -7,6 +7,7 @@
 #include "registrators.h"
 #include "base_compare_predict.h"
 #include "base_comparators.h"
+#include "append_row.h"
 
 
 struct catapult_cmp
@@ -80,34 +81,22 @@ void catapult::response (simple_string & answer, std::string_view query)
     {
         answer.append(table::begin);
         
-        for (catapult_partial const & item : list)
-            answer.append(text_cache[item.index].name);
-        answer.append(table::new_row);
+        append_row <catapult_text, &catapult_text::name> (answer, list, text_cache);
         
         answer.append("длина");
-        for (catapult_partial const & item : list)
-            answer.append(text_cache[item.index].length);
-        answer.append(table::new_row);
+        append_row <catapult_text, &catapult_text::length> (answer, list, text_cache);
         
         answer.append("ширина");
-        for (catapult_partial const & item : list)
-            answer.append(text_cache[item.index].width);
-        answer.append(table::new_row);
+        append_row <catapult_text, &catapult_text::width> (answer, list, text_cache);
         
         answer.append("скорость");
-        for (catapult_partial const & item : list)
-            answer.append(text_cache[item.index].speed);
-        answer.append(table::new_row);
+        append_row <catapult_text, &catapult_text::speed> (answer, list, text_cache);
         
         answer.append("запускаемая масса");
-        for (catapult_partial const & item : list)
-            answer.append(text_cache[item.index].launch_mass);
-        answer.append(table::new_row);
+        append_row <catapult_text, &catapult_text::launch_mass> (answer, list, text_cache);
         
         answer.append("ускорение");
-        for (catapult_partial const & item : list)
-            answer.append(text_cache[item.index].alleceration);
-        answer.append(table::new_row);
+        append_row <catapult_text, &catapult_text::alleceration> (answer, list, text_cache);
         
         answer.append("на вооружении");
         for (catapult_partial const & item : list)

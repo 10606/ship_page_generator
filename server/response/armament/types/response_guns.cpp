@@ -8,6 +8,7 @@
 #include "base_compare_predict.h"
 #include "base_comparators.h"
 #include "html_template.h"
+#include "append_row.h"
 
 static const constexpr pictures_template pictures =
 {
@@ -90,39 +91,25 @@ void guns::response (simple_string & answer, std::string_view query)
     {
         answer.append(table::begin);
         
-        for (guns_partial const & item : list)
-            answer.append(text_cache[item.index].name);
-        answer.append(table::new_row);
+        append_row <guns_text, &guns_text::name> (answer, list, text_cache);
         
         answer.append("калибр");
-        for (guns_partial const & item : list)
-            answer.append(text_cache[item.index].caliber);
-        answer.append(table::new_row);
+        append_row <guns_text, &guns_text::caliber> (answer, list, text_cache);
         
         answer.append("длина ствола");
-        for (guns_partial const & item : list)
-            answer.append(text_cache[item.index].length);
-        answer.append(table::new_row);
+        append_row <guns_text, &guns_text::length> (answer, list, text_cache);
         
         answer.append("скорострельность");
-        for (guns_partial const & item : list)
-            answer.append(text_cache[item.index].rate_of_fire);
-        answer.append(table::new_row);
+        append_row <guns_text, &guns_text::rate_of_fire> (answer, list, text_cache);
         
         answer.append("эффективная дальность");
-        for (guns_partial const & item : list)
-            answer.append(text_cache[item.index].effective_range);
-        answer.append(table::new_row);
+        append_row <guns_text, &guns_text::effective_range> (answer, list, text_cache);
         
         answer.append("масса");
-        for (guns_partial const & item : list)
-            answer.append(text_cache[item.index].mass);
-        answer.append(table::new_row);
+        append_row <guns_text, &guns_text::mass> (answer, list, text_cache);
         
         answer.append("построено");
-        for (guns_partial const & item : list)
-            answer.append(text_cache[item.index].build_cnt);
-        answer.append(table::new_row);
+        append_row <guns_text, &guns_text::build_cnt> (answer, list, text_cache);
         
         answer.append("на вооружении");
         for (guns_partial const & item : list)
