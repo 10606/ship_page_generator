@@ -16,7 +16,7 @@ set(CMAKE_CXX_COMPILER clang++)
 
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${release_flags} -DMG_ENABLE_OPENSSL=1")
 set(CMAKE_C_FLAGS    "${CMAKE_C_FLAGS}  -O3 -flto -march=native \
-                                        -DNDEBUG -DMG_ENABLE_OPENSSL=1")
+                                        -DNDEBUG -DMG_ENABLE_OPENSSL=1 -DMG_ENABLE_IPV6=1")
 
 message("CMAKE_CXX_FLAGS" ${CMAKE_CXX_FLAGS})
 

@@ -54,23 +54,30 @@ const std::map <uint32_t, std::string_view> get_resp_code_str_t::answer =
 };
 
 
+struct http_addresses
+{
+    std::string http;
+    std::string https;
+};
+
 struct https_server
 {
     https_server 
     (
-        std::string const & http_port,
-        std::string const & https_port,
-        std::string const & _response_value
+        std::initializer_list <http_addresses> addr_list
     ) :
         database(std::in_place),
         resp(*database),
-        response_value(_response_value),
         http_mark{this, 0},
         https_mark{this, 1}
     {
         mg_mgr_init(&mgr);
-        nc_http  = mg_http_listen(&mgr, http_port.c_str(),  ev_handler, &http_mark);
-        nc_https = mg_http_listen(&mgr, https_port.c_str(), ev_handler, &https_mark);
+        
+        for (http_addresses const & addr : addr_list)
+        {
+            mg_http_listen(&mgr, addr.http.c_str(),  ev_handler, &http_mark);
+            mg_http_listen(&mgr, addr.https.c_str(), ev_handler, &https_mark);
+        }
         
         mg_mgr_poll(&mgr, 100);
         mg_log_set("0");
@@ -217,11 +224,7 @@ private:
     std::optional <ship_requests> database;
     responser resp;
     
-    std::string response_value;
-
     struct mg_mgr mgr;
-    struct mg_connection * nc_http;
-    struct mg_connection * nc_https;
     std::pair <https_server *, bool> http_mark;
     std::pair <https_server *, bool> https_mark;
 };
@@ -254,7 +257,7 @@ int main ()
     {
         set_sig_handler(SIGTERM, handler_exit);
         set_sig_handler(SIGINT, handler_exit);
-        https_server server("http://0.0.0.0:8080", "https://0.0.0.0:8443", "________");
+        https_server server{{"http://[::]:8080", "https://[::]:8443"}};
 
         while (run)
             server.main();
