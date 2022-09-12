@@ -179,23 +179,6 @@ struct https_server
                 }
             }
             
-            /*
-            mbuf * io = &nc->recv_mbuf;
-            std::string request(io->buf, io->len);
-            response = cur->response_value.append("\r\n")
-                .append(http_msg->uri.p, http_msg->uri.len).append("\r\n") 
-                .append(http_msg->query_string.p, http_msg->query_string.len).append("\r\n")
-                .append(http_msg->body.p, http_msg->body.len).append("\r\n")
-                .append(http_msg->message.p, http_msg->message.len);
-            
-            // history
-            for (size_t i = 0; i != 40; ++i)
-            {
-                response.append(http_msg->header_names[i].p, http_msg->header_names[i].len).append(" ");
-                response.append(http_msg->header_values[i].p, http_msg->header_values[i].len).append("\r\n");
-            }
-            */
-            
             response.rewrite(http_begin.size(), get_resp_code_str(code).data());
             std::string length = std::to_string(response.size() - http_header_size);
             response.rewrite(http_begin.size() +

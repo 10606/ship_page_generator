@@ -1,8 +1,29 @@
 #include "menu.h"
+#include "aircraft_info.h"
 
 
-html_template_3 const menu_item_template::all_template =
+std::string menu_item_template::generate_aircraft_links (ship_requests * database, html_template around, html_template_3 link)
 {
+    typedef ship_requests::aircraft_info_t::classes aircraft_class;
+    std::vector <ship_requests::aircraft_info_t::classes> aircraft_classes =
+        database->aircraft_info.get_classes("order by id");
+
+    std::string answer = std::string(around.begin);
+
+    for (aircraft_class const & item : aircraft_classes)
+    {
+        answer.append(link.begin)
+              .append(std::to_string(item.class_id))
+              .append(link.middle)
+              .append(item.class_ru.value_or("---"))
+              .append(link.end);
+    }
+
+    answer.append(around.end);
+    return answer;
+}
+
+std::string_view menu_item_template::menu_begin =
 "<div class = \"menu\"> \n"
     "<style> \n"
         ".collapsible { \n"
@@ -38,7 +59,10 @@ html_template_3 const menu_item_template::all_template =
         "h2 { display: inline }\n"
     "</style>\n"
     "<form action = \"/search\" method = \"get\">\n"
-        "<input name = \"search\" type = \"text\" placeholder = \"Поиск корабликов...\" value = \"",
+        "<input name = \"search\" type = \"text\" placeholder = \"Поиск корабликов...\" value = \"";
+
+html_template menu_item_template::around =
+{
         "\"><br>\n"
     "</form>\n"
     "\n"
@@ -77,37 +101,8 @@ html_template_3 const menu_item_template::all_template =
         "<button type = \"button\" class = \"collapsible\">\n"
             "авиация\n"
         "</button><br>\n"
-        "<div class = \"content\">\n"
-            "<a href=\"/aircraft?group=in_service&sort=type,in_service&filter=class,0\">\n"
-                "истребители\n"
-            "</a><br>\n"
-            "<a href=\"/aircraft?group=in_service&sort=type,in_service&filter=class,1\">\n"
-                "торпедоносецы\n"
-            "</a><br>\n"
-            "<a href=\"/aircraft?group=in_service&sort=type,in_service&filter=class,2\">\n"
-                "разведчики\n"
-            "</a><br>\n"
-            "<a href=\"/aircraft?group=in_service&sort=type,in_service&filter=class,3\">\n"
-                "пикировщики\n"
-            "</a><br>\n"
-            "<a href=\"/aircraft?group=in_service&sort=type,in_service&filter=class,4\">\n"
-                "легкие бомбардировщики\n"
-            "</a><br>\n"
-            "<a href=\"/aircraft?group=in_service&sort=type,in_service&filter=class,5\">\n"
-                "тяжелые бомбардировщики\n"
-            "</a><br>\n"
-            "<a href=\"/aircraft?group=in_service&sort=type,in_service&filter=class,6\">\n"
-                "гидросамолеты разведчики\n"
-            "</a><br>\n"
-            "<a href=\"/aircraft?group=in_service&sort=type,in_service&filter=class,7\">\n"
-                "летающие лодки\n"
-            "</a><br>\n"
-            "<a href=\"/aircraft?group=in_service&sort=type,in_service&filter=class,9\">\n"
-                "транспорты\n"
-            "</a><br>\n"
-            "<a href=\"/aircraft?group=in_service&sort=type,in_service&filter=class,10\">\n"
-                "реактивные снаряды\n"
-            "</a><br>\n"
+        "<div class = \"content\">\n",
+
             "<a href=\"/armament/catapult?group=class&sort=in_service\">\n"
                 "катапульты\n"
             "</a><br>\n"
@@ -137,8 +132,17 @@ html_template_3 const menu_item_template::all_template =
             "</a><br>\n"
         "</div>\n"
     "</div>\n"
-    "<br>",
+    "<br>"
+};
+
+html_template_3 menu_item_template::link_template =
+{
+    "<a href=\"/aircraft?group=in_service&sort=type,in_service&filter=class,",
+    "\">\n",
+    "\n</a><br>\n"
+};
     
+std::string_view menu_item_template::menu_end =
     "<script>\n"
         "var coll = document.getElementsByClassName(\"collapsible\");\n"
         "var i;\n"
@@ -155,5 +159,10 @@ html_template_3 const menu_item_template::all_template =
             "});\n"
         "}\n"
     "</script>\n"
-"</div>\n"
-};
+"</div>\n";
+
+menu_item_template::menu_item_template (ship_requests * database) :
+    something_needed(generate_aircraft_links(database, around, link_template)),
+    all{menu_begin, something_needed, menu_end}
+{}
+

@@ -10,7 +10,19 @@
 
 struct menu_item_template
 {
-    html_template_3 all = all_template;
+    menu_item_template (ship_requests * database);
+
+private:
+    std::string something_needed;
+    static std::string generate_aircraft_links (ship_requests * database, html_template around, html_template_3 link);
+
+    static std::string_view menu_begin;
+    static html_template around;
+    static html_template_3 link_template;
+    static std::string_view menu_end;
+
+public:
+    html_template_3 all;
     
     html_template new_class = {"<button type = \"button\" class = \"collapsible\">\n", 
                       "</button><br><div class = \"content\">\n"};
@@ -25,15 +37,12 @@ struct menu_item_template
 
     html_template new_ship = {"&nbsp;&nbsp;", "</a><br>"};
     html_template new_ship_link = {"<a href=\"/ship?id=", "\">"};
-    
-private:
-    static const html_template_3 all_template;
 };
 
 struct menu
 {
-    menu (ship_requests * database, menu_item_template const & _menu_item = menu_item_template()) :
-        menu_item(_menu_item),
+    menu (ship_requests * database) :
+        menu_item(database),
         cache(response_impl(database))
     {}
     
