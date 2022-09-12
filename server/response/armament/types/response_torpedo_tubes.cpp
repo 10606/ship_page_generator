@@ -19,34 +19,18 @@ struct torpedo_tubes_cmp
 
 registrator_cmp <torpedo_tubes::torpedo_tubes_partial> torpedo_tubes_cmp::sort
 ({
-    {
-        "caliber", comparators::caliber <torpedo_tubes::torpedo_tubes_partial>
-    },
-    {
-        "in_service", comparators::in_service <torpedo_tubes::torpedo_tubes_partial>
-    },
-    {
-        "name_ru", comparators::name_ru <torpedo_tubes::torpedo_tubes_partial>
-    },
-    {
-        "name_en", comparators::name_en <torpedo_tubes::torpedo_tubes_partial>
-    },
-    {
-        "class", comparators::classes <torpedo_tubes::torpedo_tubes_partial>
-    },
+    { "name_ru",    comparators::name_ru <torpedo_tubes::torpedo_tubes_partial> },
+    { "name_en",    comparators::name_en <torpedo_tubes::torpedo_tubes_partial> },
+    { "class",      comparators::classes <torpedo_tubes::torpedo_tubes_partial> },
+    { "in_service", comparators::in_service <torpedo_tubes::torpedo_tubes_partial> },
+    { "caliber",    comparators::caliber <torpedo_tubes::torpedo_tubes_partial> },
 });
 
 registrator_cmp <torpedo_tubes::torpedo_tubes_partial> torpedo_tubes_cmp::group
 ({
-    {
-        "caliber", comparators::caliber <torpedo_tubes::torpedo_tubes_partial>
-    },
-    {
-        "in_service", comparators::in_service_10th <torpedo_tubes::torpedo_tubes_partial>
-    },
-    {
-        "class", comparators::classes <torpedo_tubes::torpedo_tubes_partial>
-    },
+    { "class",      comparators::classes <torpedo_tubes::torpedo_tubes_partial> },
+    { "in_service", comparators::in_service_10th <torpedo_tubes::torpedo_tubes_partial> },
+    { "caliber",    comparators::caliber <torpedo_tubes::torpedo_tubes_partial> },
 });
 
 registrator_pred <torpedo_tubes::torpedo_tubes_partial> & torpedo_tubes_cmp::filter ()

@@ -19,43 +19,19 @@ struct catapult_cmp
 
 registrator_cmp <catapult::catapult_partial> catapult_cmp::sort
 ({
-    {
-        "in_service", comparators::in_service <catapult::catapult_partial>
-    },
-    {
-        "acceleration", 
-        [] (catapult::catapult_partial const & a, catapult::catapult_partial const & b)
-            { return a.acceleration <=> b.acceleration; }
-    },
-    {
-        "speed", 
-        [] (catapult::catapult_partial const & a, catapult::catapult_partial const & b)
-            { return a.speed <=> b.speed; }
-    },
-    {
-        "launch_mass", 
-        [] (catapult::catapult_partial const & a, catapult::catapult_partial const & b)
-            { return a.launch_mass <=> b.launch_mass; }
-    },
-    {
-        "name_ru", comparators::name_ru <catapult::catapult_partial>
-    },
-    {
-        "name_en", comparators::name_en <catapult::catapult_partial>
-    },
-    {
-        "class", comparators::classes <catapult::catapult_partial>
-    },
+    { "name_ru",        comparators::name_ru <catapult::catapult_partial> },
+    { "name_en",        comparators::name_en <catapult::catapult_partial> },
+    { "class",          comparators::classes <catapult::catapult_partial> },
+    { "in_service",     comparators::in_service <catapult::catapult_partial> },
+    { "acceleration",   comparators::universal <catapult::catapult_partial, double, &catapult::catapult_partial::acceleration> },
+    { "speed",          comparators::universal <catapult::catapult_partial, double, &catapult::catapult_partial::speed> },
+    { "launch_mass",    comparators::universal <catapult::catapult_partial, double, &catapult::catapult_partial::launch_mass> },
 });
 
 registrator_cmp <catapult::catapult_partial> catapult_cmp::group
 ({
-    {
-        "in_service", comparators::in_service_10th <catapult::catapult_partial>
-    },
-    {
-        "class", comparators::classes <catapult::catapult_partial>
-    },
+    { "class",      comparators::classes <catapult::catapult_partial> },
+    { "in_service", comparators::in_service_10th <catapult::catapult_partial> },
 });
 
 registrator_pred <catapult::catapult_partial> & catapult_cmp::filter ()

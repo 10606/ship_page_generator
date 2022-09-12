@@ -8,6 +8,7 @@
 #include "registrators.h"
 #include "base_compare_predict.h"
 #include "html_template.h"
+#include "base_comparators.h"
 #include "append_row.h"
 
 static const constexpr pictures_template pictures =
@@ -33,80 +34,32 @@ struct aircraft_cmp
 
 registrator_cmp <aircraft::aircraft_partial> aircraft_cmp::sort
 ({
+    { "class",          comparators::classes <aircraft::aircraft_partial> },
+    { "in_service",     comparators::in_service <aircraft::aircraft_partial> },
+    { "type",           comparators::universal <aircraft::aircraft_partial, int, &aircraft::aircraft_partial::type_id> },
+    { "mass",           comparators::universal <aircraft::aircraft_partial, double, &aircraft::aircraft_partial::mass> },
+    { "engine_power",   comparators::universal <aircraft::aircraft_partial, double, &aircraft::aircraft_partial::engine_power> },
+    { "max_speed",      comparators::universal <aircraft::aircraft_partial, double, &aircraft::aircraft_partial::max_speed> },
+    { "range",          comparators::universal <aircraft::aircraft_partial, double, &aircraft::aircraft_partial::range> },
+    { "ceiling",        comparators::universal <aircraft::aircraft_partial, double, &aircraft::aircraft_partial::ceiling> },
+    { "time_alt",       comparators::universal <aircraft::aircraft_partial, double, &aircraft::aircraft_partial::time_to_altitude> },
     {
-        "in_service", 
-        [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
-            { return compare_null_last(a.in_service, b.in_service); }
-    },
-    {
-        "mass", 
-        [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
-            { return a.mass <=> b.mass; }
-    },
-    {
-        "engine_power", 
-        [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
-            { return a.engine_power <=> b.engine_power; }
-    },
-    {
-        "max_speed", 
-        [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
-            { return a.max_speed <=> b.max_speed; }
-    },
-    {
-        "range", 
-        [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
-            { return a.range <=> b.range; }
-    },
-    {
-        "ceiling", 
-        [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
-            { return a.ceiling <=> b.ceiling; }
-    },
-    {
-        "time_alt", 
-        [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
-            { return a.time_to_altitude <=> b.time_to_altitude; }
-    },
-    {
-        "name_ru", 
+        "name_ru",
         [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
             { return compare_null_last(a.aircraft_ru, b.aircraft_ru); }
     },
     {
-        "name_en", 
+        "name_en",
         [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
             { return compare_null_last(a.aircraft_en, b.aircraft_en); }
-    },
-    {
-        "class", 
-        [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
-            { return a.class_id <=> b.class_id; }
-    },
-    {
-        "type", 
-        [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
-            { return a.type_id <=> b.type_id; }
     },
 });
 
 registrator_cmp <aircraft::aircraft_partial> aircraft_cmp::group
 ({
-    {
-        "in_service", 
-        [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
-            { return compare_date_10th(a.in_service, b.in_service); }
-    },
-    {
-        "class", 
-        [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
-            { return a.class_id <=> b.class_id; }
-    },
-    {
-        "type", 
-        [] (aircraft::aircraft_partial const & a, aircraft::aircraft_partial const & b)
-            { return a.type_id <=> b.type_id; }
-    },
+    { "class",      comparators::classes <aircraft::aircraft_partial> },
+    { "in_service", comparators::in_service_10th <aircraft::aircraft_partial> },
+    { "type",       comparators::universal <aircraft::aircraft_partial, int, &aircraft::aircraft_partial::type_id> },
 });
 
 registrator_pred <aircraft::aircraft_partial> & aircraft_cmp::filter ()

@@ -43,6 +43,12 @@ std::partial_ordering name_en (T const & a, T const & b)
     return compare_null_last(a.name_en, b.name_en);
 }
 
+template <typename T, typename member_t, member_t T::* member>
+std::partial_ordering universal (T const & a, T const & b)
+{
+    return a.*member <=> b.*member;
+}
+
 };
 
 #endif

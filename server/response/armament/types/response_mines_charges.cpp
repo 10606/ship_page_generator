@@ -19,33 +19,17 @@ struct mines_charges_cmp
 
 registrator_cmp <mines_charges::mines_charges_partial> mines_charges_cmp::sort
 ({
-    {
-        "in_service", comparators::in_service <mines_charges::mines_charges_partial>
-    },
-    {
-        "mass_ex", 
-        [] (mines_charges::mines_charges_partial const & a, mines_charges::mines_charges_partial const & b)
-            { return a.mass_ex <=> b.mass_ex; }
-    },
-    {
-        "name_ru", comparators::name_ru <mines_charges::mines_charges_partial>
-    },
-    {
-        "name_en", comparators::name_en <mines_charges::mines_charges_partial>
-    },
-    {
-        "class", comparators::classes <mines_charges::mines_charges_partial>
-    },
+    { "name_ru",    comparators::name_ru <mines_charges::mines_charges_partial> },
+    { "name_en",    comparators::name_en <mines_charges::mines_charges_partial> },
+    { "class",      comparators::classes <mines_charges::mines_charges_partial> },
+    { "in_service", comparators::in_service <mines_charges::mines_charges_partial> },
+    { "mass_ex",    comparators::universal <mines_charges::mines_charges_partial, double, &mines_charges::mines_charges_partial::mass_ex> },
 });
 
 registrator_cmp <mines_charges::mines_charges_partial> mines_charges_cmp::group
 ({
-    {
-        "in_service", comparators::in_service_10th <mines_charges::mines_charges_partial>
-    },
-    {
-        "class", comparators::classes <mines_charges::mines_charges_partial>
-    },
+    { "class",      comparators::classes <mines_charges::mines_charges_partial> },
+    { "in_service", comparators::in_service_10th <mines_charges::mines_charges_partial> },
 });
 
 registrator_pred <mines_charges::mines_charges_partial> & mines_charges_cmp::filter ()

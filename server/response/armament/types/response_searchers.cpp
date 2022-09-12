@@ -33,45 +33,19 @@ struct searcher_cmp
 
 registrator_cmp <searcher::searchers_partial> searcher_cmp::sort
 ({
-    {
-        "in_service", comparators::in_service <searcher::searchers_partial>
-    },
-    {
-        "mass", 
-        [] (searcher::searchers_partial const & a, searcher::searchers_partial const & b)
-            { return a.mass <=> b.mass; }
-    },
-    {
-        "power", 
-        [] (searcher::searchers_partial const & a, searcher::searchers_partial const & b)
-            { return a.power <=> b.power; }
-    },
-    {
-        "name_ru", comparators::name_ru <searcher::searchers_partial>
-    },
-    {
-        "name_en", comparators::name_en <searcher::searchers_partial>
-    },
-    {
-        "class", comparators::classes <searcher::searchers_partial>
-    },
+    { "name_ru",    comparators::name_ru <searcher::searchers_partial> },
+    { "name_en",    comparators::name_en <searcher::searchers_partial> },
+    { "class",      comparators::classes <searcher::searchers_partial> },
+    { "in_service", comparators::in_service <searcher::searchers_partial> },
+    { "mass",       comparators::universal <searcher::searchers_partial, double, &searcher::searchers_partial::mass> },
+    { "power",      comparators::universal <searcher::searchers_partial, double, &searcher::searchers_partial::power> },
 });
 
 registrator_cmp <searcher::searchers_partial> searcher_cmp::group
 ({
-    {
-        "in_service", comparators::in_service_10th <searcher::searchers_partial>
-    },
-    {
-        "class", comparators::classes <searcher::searchers_partial>
-    },
-    {
-        "power",
-        [] (searcher::searchers_partial const & a, searcher::searchers_partial const & b) -> std::partial_ordering
-        {
-            return a.power_group <=> b.power_group;
-        }
-    },
+    { "class",      comparators::classes <searcher::searchers_partial> },
+    { "in_service", comparators::in_service_10th <searcher::searchers_partial> },
+    { "power",      comparators::universal <searcher::searchers_partial, int, &searcher::searchers_partial::power_group> },
 });
 
 registrator_pred <searcher::searchers_partial> & searcher_cmp::filter ()

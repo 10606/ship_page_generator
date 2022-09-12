@@ -19,33 +19,17 @@ struct torpedo_cmp
 
 registrator_cmp <torpedo::torpedo_partial> torpedo_cmp::sort
 ({
-    {
-        "caliber", comparators::caliber <torpedo::torpedo_partial>
-    },
-    {
-        "mass_ex", 
-        [] (torpedo::torpedo_partial const & a, torpedo::torpedo_partial const & b)
-            { return a.mass_ex <=> b.mass_ex; }
-    },
-    {
-        "in_service", comparators::in_service <torpedo::torpedo_partial>
-    },
-    {
-        "name_ru", comparators::name_ru <torpedo::torpedo_partial>
-    },
-    {
-        "name_en", comparators::name_en <torpedo::torpedo_partial>
-    },
+    { "name_ru",    comparators::name_ru <torpedo::torpedo_partial> },
+    { "name_en",    comparators::name_en <torpedo::torpedo_partial> },
+    { "in_service", comparators::in_service <torpedo::torpedo_partial> },
+    { "caliber",    comparators::caliber <torpedo::torpedo_partial> },
+    { "mass_ex",    comparators::universal <torpedo::torpedo_partial, double, &torpedo::torpedo_partial::mass_ex> },
 });
 
 registrator_cmp <torpedo::torpedo_partial> torpedo_cmp::group
 ({
-    {
-        "caliber", comparators::caliber <torpedo::torpedo_partial>
-    },
-    {
-        "in_service", comparators::in_service_10th <torpedo::torpedo_partial>
-    },
+    { "in_service", comparators::in_service_10th <torpedo::torpedo_partial> },
+    { "caliber",    comparators::caliber <torpedo::torpedo_partial> },
 });
 
 registrator_pred <torpedo::torpedo_partial> & torpedo_cmp::filter ()

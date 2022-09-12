@@ -33,38 +33,18 @@ struct guns_cmp
 
 registrator_cmp <guns::guns_partial> guns_cmp::sort
 ({
-    {
-        "caliber", comparators::caliber <guns::guns_partial>
-    },
-    {
-        "in_service", comparators::in_service <guns::guns_partial>
-    },
-    {
-        "name_ru", comparators::name_ru <guns::guns_partial>
-    },
-    {
-        "name_en", comparators::name_en <guns::guns_partial>
-    },
-    {
-        "class", comparators::in_service <guns::guns_partial>
-    },
+    { "name_ru",    comparators::name_ru <guns::guns_partial> },
+    { "name_en",    comparators::name_en <guns::guns_partial> },
+    { "class",      comparators::in_service <guns::guns_partial> },
+    { "in_service", comparators::in_service <guns::guns_partial> },
+    { "caliber",    comparators::caliber <guns::guns_partial> },
 });
 
 registrator_cmp <guns::guns_partial> guns_cmp::group
 ({
-    {
-        "caliber",
-        [] (guns::guns_partial const & a, guns::guns_partial const & b) -> std::partial_ordering
-        { 
-            return a.caliber_group <=> b.caliber_group;
-        }
-    },
-    {
-        "in_service", comparators::in_service_10th <guns::guns_partial>
-    },
-    {
-        "class", comparators::classes <guns::guns_partial>
-    },
+    { "class",      comparators::classes <guns::guns_partial> },
+    { "in_service", comparators::in_service_10th <guns::guns_partial> },
+    { "caliber",    comparators::universal <guns::guns_partial, int, &guns::guns_partial::caliber_group> },
 });
 
 registrator_pred <guns::guns_partial> & guns_cmp::filter ()
