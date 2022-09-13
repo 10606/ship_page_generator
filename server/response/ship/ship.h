@@ -20,6 +20,8 @@ private:
     
     struct response_t
     {
+        std::string short_info;
+
         std::string begin;
         std::string armament_link;
         std::string end;
@@ -27,12 +29,18 @@ private:
     
     std::unordered_map <int, response_t> modernizations;
     
-    friend struct add_event;
+    struct add_event;
     
-    friend void add_general_info
+    static void add_general_info
     (
         std::string & answer, 
         std::string & modernization_link, 
+        ship_requests::ship_info_t::list const & info
+    );
+
+    static void add_short_info
+    (
+        std::string & answer, 
         ship_requests::ship_info_t::list const & info
     );
     

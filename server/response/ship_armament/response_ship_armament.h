@@ -171,18 +171,7 @@ private:
     ships_responser <ship_catapult>      catapult;
     ships_responser <ship_aircrafts>     aircraft;
     
-    static const constexpr std::string_view style = 
-        "<style type = \"text/css\"> \n"
-            "TR.header    { background: #fff8dc; } \n"
-            "TR.general   { background: #f8ffdc; } \n"
-            "TR.guns      { background: #cdffcc; } \n"
-            "TR.torpedo   { background: #ffd2c7; } \n"
-            "TR.throwers  { background: #f8ffdc; } \n"
-            "TR.searchers { background: #f8ffff; } \n"
-            "TR.catapult  { background: #fff8dc; } \n"
-            "TR.aircraft  { background: #dbffff; } \n"
-            "TH {min-width: 180px } \n"
-        "</style> \n";
+    static const constexpr std::string_view style = "";
 };
 
 

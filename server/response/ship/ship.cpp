@@ -49,7 +49,7 @@ void add_modernizations
 }
 
 
-struct add_event
+struct ship::add_event
 {
     add_event 
     (
@@ -129,7 +129,7 @@ private:
 };
 
 
-void add_general_info
+void ship::add_general_info
 (
     std::string & answer, 
     std::string & modernization_link, 
@@ -137,7 +137,9 @@ void add_general_info
 )
 {
     if (info.ship_ru)
-        answer.append("<h2>")
+        answer.append("<h2 id = \"")
+              .append(std::to_string(info.ship_id))
+              .append("\">")
               .append(*info.ship_ru)
               .append("</h2> ");
     if (info.class_ru || info.type_ru)
@@ -177,6 +179,26 @@ void add_general_info
     else
         answer.append("</b>");
     answer.append(ship::new_line);
+}
+
+
+void ship::add_short_info
+(
+    std::string & answer, 
+    ship_requests::ship_info_t::list const & info
+)
+{
+    answer.append("<tr><th><a href=\"#")
+          .append(std::to_string(info.ship_id))
+          .append("\">")
+          .append(info.ship_ru.value_or(""))
+          .append("</a></th>")
+          .append("<th>")
+          .append(info.commissioned? to_string(*info.commissioned) : "")
+          .append("</th>")
+          .append("<th>")
+          .append(info.sunk_date? to_string(*info.sunk_date) : "")
+          .append("</th></tr>\n");
 }
 
 
@@ -223,6 +245,11 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
         response_t answer;
         answer.armament_link = std::string(query_template);
         answer.armament_link.append(std::to_string(ship_id));
+
+        // short info
+        {
+            add_short_info(answer.short_info, info.second);
+        }
         
         // general info
         {
@@ -265,6 +292,16 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
 void ship::response (simple_string & answer, std::string_view query)
 {
     std::vector <int> ids = parse_query__id(query);
+
+    answer.append("<table class = \"short_info\" border = \"0\" rules = \"rows\"><tbody>\n");
+    for (int id : ids)
+    {
+        std::unordered_map <int, response_t> :: iterator it = modernizations.find(id);
+        if (it == modernizations.end())
+            continue;
+        answer.append(it->second.short_info);
+    }
+    answer.append("</table></tbody><br><br>\n");
     
     for (int id : ids)
     {
