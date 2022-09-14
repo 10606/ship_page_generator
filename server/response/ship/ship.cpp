@@ -344,14 +344,17 @@ void ship::response (simple_string & answer, std::string_view query, piece_t tit
         static const constexpr std::string_view and_other = "..."; 
         size_t need_size = not_empty_title? delimeter.size() : 0;
 
-        auto add_delimeter = [&answer, &title, &not_empty_title] () -> void
+        auto add_to_title = [&answer, &title] (std::string_view value) -> void
+        {
+            answer.rewrite(title.position, value);
+            title.position += value.size();
+            title.size -= value.size();
+        };
+
+        auto add_delimeter = [&add_to_title, &not_empty_title] () -> void
         {
             if (not_empty_title)
-            {
-                answer.rewrite(title.position, delimeter);
-                title.position += delimeter.size();
-                title.size -= delimeter.size();
-            }
+                add_to_title(delimeter);
         };
 
         auto end_of_title = [&answer, &title] () -> void
@@ -367,27 +370,21 @@ void ship::response (simple_string & answer, std::string_view query, piece_t tit
             if (title.size >= need_size + prefix.size() + type_list[it->second.type].size())
             {
                 add_delimeter();
-                answer.rewrite(title.position, prefix);
-                title.position += prefix.size();
-                title.size -= prefix.size();
-                answer.rewrite(title.position, type_list[it->second.type]);
-                title.position += type_list[it->second.type].size();
-                title.size -= type_list[it->second.type].size();
+                add_to_title(prefix);
+                add_to_title(type_list[it->second.type]);
                 not_empty_title = 1;
             }
             else
                 end_of_title();
             type_count[it->second.type] = 0;
         }
-        if (type_count[it->second.type] >= 1)
+        if (type_count[it->second.type] == 1)
         {
             piece_t name = it->second.name;
             if (title.size >= need_size + name.size)
             {
                 add_delimeter();
-                answer.rewrite(title.position, it->second.short_info.substr(name.position, name.size));
-                title.position += name.size;
-                title.size -= name.size;
+                add_to_title(it->second.short_info.substr(name.position, name.size));
                 not_empty_title = 1;
             }
             else
