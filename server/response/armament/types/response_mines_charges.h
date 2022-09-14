@@ -4,6 +4,7 @@
 #include "armament_info.h"
 #include "response_partial.h"
 #include "simple_string.h"
+#include "parse_query.h"
 
 
 struct mines_charges
@@ -20,7 +21,7 @@ struct mines_charges
     typedef ship_requests::armament_info_t::mines_charges mines_charges_t;
  
     // https://127.0.0.1:8443/armament/mines_charges?sort=in_service,mass_ex&group=class
-    void response (simple_string & answer, std::string_view query);
+    void response (simple_string & answer, std::string_view query, piece_t title);
     
     struct mines_charges_text
     {

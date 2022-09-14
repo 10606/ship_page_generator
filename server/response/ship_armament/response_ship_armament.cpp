@@ -154,8 +154,11 @@ ships_responser <responser> ::response
 }
 
 
-void ship_armament::response (simple_string & answer, std::string_view query)
+void ship_armament::response (simple_string & answer, std::string_view query, piece_t title)
 {
+    static const constexpr std::string_view title_text = "сравнение японских корабликов";
+    answer.rewrite(title.position, title_text.substr(0, std::min(title_text.size(), title.size)));
+
     try
     {
         std::vector <std::pair <int, std::chrono::year_month_day> > ship_year =

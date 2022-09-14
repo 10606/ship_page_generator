@@ -9,13 +9,14 @@
 #include "ship_requests.h"
 #include "simple_string.h"
 #include "html_template.h"
+#include "parse_query.h"
 
-static const constexpr html_template style = 
+static const constexpr html_template_3 style = 
 {
 "<html>\n"
     "<head>\n"
-        "<title>\n"
-            "japan ships"
+        "<title>\n",
+
         "</title>\n"
     "</head>\n"
     "<body>\n"
@@ -47,6 +48,7 @@ static const constexpr html_template style =
                     "vertical-align: top; \n"
                 "} \n"
             "</style>\n",
+
         "</div>\n"
     "</body>\n"
 "</html>"
@@ -61,7 +63,7 @@ struct responser
     
     struct resp_base
     {
-        virtual void response (simple_string &, std::string_view) = 0;
+        virtual void response (simple_string &, std::string_view, piece_t) = 0;
         virtual ~resp_base () = default;
     };
     
@@ -76,9 +78,9 @@ struct responser
             value(std::forward <U> (args) ...)
         {}
         
-        virtual void response (simple_string & answer, std::string_view query)
+        virtual void response (simple_string & answer, std::string_view query, piece_t title) override
         {
-            value.response(answer, query);
+            value.response(answer, query, title);
         }
 
         virtual ~resp_impl () = default;
@@ -107,9 +109,14 @@ struct responser
         answer.reserve(100000);
 
         answer.append(style.begin);
+        size_t title_pos = answer.size();
+        static const std::string title_placeholder(100, ' ');
+        answer.append(title_placeholder);
+        
+        answer.append(style.middle);
         ship_list.response(answer, query);
         answer.append("<div class = \"main\">\n");
-        it->second->response(answer, query);
+        it->second->response(answer, query, {title_pos, title_placeholder.size()});
         answer.append("</div>\n");
         answer.append(style.end);
         

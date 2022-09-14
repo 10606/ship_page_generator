@@ -62,8 +62,11 @@ registrator_pred <searcher::searchers_partial> & searcher_cmp::filter ()
 }
 
 
-void searcher::response (simple_string & answer, std::string_view query)
+void searcher::response (simple_string & answer, std::string_view query, piece_t title)
 {
+    static const constexpr std::string_view title_text = "японские средства обнаружения";
+    answer.rewrite(title.position, title_text.substr(0, std::min(title_text.size(), title.size)));
+
     std::vector <std::vector <searchers_partial> > list_group = 
          parse_group_and_sort <searchers_partial, searcher_cmp> (searchers_cache, query);
 

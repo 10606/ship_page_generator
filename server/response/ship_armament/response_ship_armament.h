@@ -158,7 +158,7 @@ struct ship_armament
     }
 
     // http://127.0.0.1:8080/ship/armament?ship=40&date=9.7.44&ship=42&date=14.7.44&ship=43&date=8.7.44&ship=50&date=30.1.39&date=9.7.44&ship=52&date=9.7.44&ship=54&date=23.7.45
-    void response (simple_string & answer, std::string_view query);
+    void response (simple_string & answer, std::string_view query, piece_t title);
 
 private:
     table_template table;

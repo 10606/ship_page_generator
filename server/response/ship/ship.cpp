@@ -137,7 +137,7 @@ void ship::add_general_info
 )
 {
     if (info.ship_ru)
-        answer.append("<h2 id = \"")
+        answer.append("<h2 id = \"id_")
               .append(std::to_string(info.ship_id))
               .append("\">")
               .append(*info.ship_ru)
@@ -184,27 +184,31 @@ void ship::add_general_info
 
 void ship::add_short_info
 (
-    std::string & answer, 
+    response_t & answer, 
     ship_requests::ship_info_t::list const & info
 )
 {
-    answer.append("<tr><th><a href=\"#")
-          .append(std::to_string(info.ship_id))
-          .append("\">")
-          .append(info.ship_ru.value_or(""))
-          .append("</a></th>")
-          .append("<th>")
-          .append(info.commissioned? to_string(*info.commissioned) : "")
-          .append("</th>")
-          .append("<th>")
-          .append(info.sunk_date? to_string(*info.sunk_date) : "")
-          .append("</th></tr>\n");
+    answer.short_info.append("<tr><th><a href=\"#id_")
+                     .append(std::to_string(info.ship_id))
+                     .append("\">");
+    answer.name.position = answer.short_info.size();
+    answer.name.size = info.ship_ru? info.ship_ru->size() : 0;
+    answer.short_info.append(info.ship_ru.value_or(""))
+                     .append("</a></th>")
+                     .append("<th>")
+                     .append(info.commissioned? to_string(*info.commissioned) : "")
+                     .append("</th>")
+                     .append("<th>")
+                     .append(info.sunk_date? to_string(*info.sunk_date) : "")
+                     .append("</th></tr>\n");
 }
 
 
 
 ship::ship (ship_requests * database, ship_armament & _armament) :
-    armament(_armament)
+    armament(_armament),
+    modernizations(),
+    type_list()
 {
     std::vector <ship_requests::ship_event_t::event_lt_descr> events = 
         database->ship_event.get_event_lt_descr();
@@ -216,11 +220,24 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
     typedef ship_requests::pictures_t::picture picture_t;
     std::vector <picture_t> ship_pictures_list =
         database->pictures.get_ship();
+
+    typedef ship_requests::ship_info_t::types types_t;
+    std::vector <types_t> ship_types_list =
+        database->ship_info.get_types();
+
     
     std::unordered_map <int, std::vector <segment> > ship_to_segment;
     std::unordered_map <int, std::vector <size_t> > index_mapping; // 0..size -> event index
     std::unordered_map <int, list_t> ship_info;
     std::unordered_map <int, std::vector <picture_t> > ship_pictures;
+    std::unordered_map <int, size_t> ship_types;
+
+    type_list.push_back("");
+    for (size_t i = 0; i != ship_types_list.size(); ++i)
+    {
+        ship_types.insert({ship_types_list[i].type_id, type_list.size()});
+        type_list.push_back(ship_types_list[i].type_ru.value_or("---"));
+    }
     
     for (size_t i = 0; i != events.size(); ++i)
     {
@@ -246,9 +263,12 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
         answer.armament_link = std::string(query_template);
         answer.armament_link.append(std::to_string(ship_id));
 
+        std::unordered_map <int, size_t> ::iterator it = ship_types.find(info.second.type_id);
+        answer.type = (it == ship_types.end())? 0 : it->second;
+
         // short info
         {
-            add_short_info(answer.short_info, info.second);
+            add_short_info(answer, info.second);
         }
         
         // general info
@@ -289,9 +309,12 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
 }
 
 
-void ship::response (simple_string & answer, std::string_view query)
+void ship::response (simple_string & answer, std::string_view query, piece_t title)
 {
     std::vector <int> ids = parse_query__id(query);
+
+    std::vector <size_t> type_count(type_list.size(), 0);
+    bool not_empty_title = 0;
 
     answer.append("<table class = \"short_info\" border = \"0\" rules = \"rows\"><tbody>\n");
     for (int id : ids)
@@ -299,6 +322,7 @@ void ship::response (simple_string & answer, std::string_view query)
         std::unordered_map <int, response_t> :: iterator it = modernizations.find(id);
         if (it == modernizations.end())
             continue;
+        type_count[it->second.type]++;
         answer.append(it->second.short_info);
     }
     answer.append("</table></tbody><br><br>\n");
@@ -308,9 +332,67 @@ void ship::response (simple_string & answer, std::string_view query)
         std::unordered_map <int, response_t> :: iterator it = modernizations.find(id);
         if (it == modernizations.end())
             continue;
+
         answer.append(it->second.begin);
-        armament.response(answer, it->second.armament_link);
+        armament.response(answer, it->second.armament_link, {0, 0});
         answer.append(it->second.end);
+
+        
+        
+        
+        static const constexpr std::string_view delimeter = ", ";
+        static const constexpr std::string_view and_other = "..."; 
+        size_t need_size = not_empty_title? delimeter.size() : 0;
+
+        auto add_delimeter = [&answer, &title, &not_empty_title] () -> void
+        {
+            if (not_empty_title)
+            {
+                answer.rewrite(title.position, delimeter);
+                title.position += delimeter.size();
+                title.size -= delimeter.size();
+            }
+        };
+
+        auto end_of_title = [&answer, &title] () -> void
+        {
+            if (title.size >= and_other.size())
+                answer.rewrite(title.position, and_other);
+            title.size = 0;
+        };
+        
+        if (type_count[it->second.type] > 1)
+        {
+            static const constexpr std::string_view prefix = "тип ";
+            if (title.size >= need_size + prefix.size() + type_list[it->second.type].size())
+            {
+                add_delimeter();
+                answer.rewrite(title.position, prefix);
+                title.position += prefix.size();
+                title.size -= prefix.size();
+                answer.rewrite(title.position, type_list[it->second.type]);
+                title.position += type_list[it->second.type].size();
+                title.size -= type_list[it->second.type].size();
+                not_empty_title = 1;
+            }
+            else
+                end_of_title();
+            type_count[it->second.type] = 0;
+        }
+        if (type_count[it->second.type] >= 1)
+        {
+            piece_t name = it->second.name;
+            if (title.size >= need_size + name.size)
+            {
+                add_delimeter();
+                answer.rewrite(title.position, it->second.short_info.substr(name.position, name.size));
+                title.position += name.size;
+                title.size -= name.size;
+                not_empty_title = 1;
+            }
+            else
+                end_of_title();
+        }
     }
 }
 

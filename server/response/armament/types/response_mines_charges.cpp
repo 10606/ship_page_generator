@@ -46,8 +46,11 @@ registrator_pred <mines_charges::mines_charges_partial> & mines_charges_cmp::fil
 }
 
 
-void mines_charges::response (simple_string & answer, std::string_view query)
+void mines_charges::response (simple_string & answer, std::string_view query, piece_t title)
 {
+    static const constexpr std::string_view title_text = "японские мины и глубинные бомбы";
+    answer.rewrite(title.position, title_text.substr(0, std::min(title_text.size(), title.size)));
+
     std::vector <std::vector <mines_charges_partial> > list_group = 
          parse_group_and_sort <mines_charges_partial, mines_charges_cmp> (mines_charges_cache, query);
 

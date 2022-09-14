@@ -88,8 +88,11 @@ std::string search::percent_dec (std::string_view request_percent_enc, bool need
     return answer;
 }
 
-void search::response (simple_string & answer, std::string_view request_percent_enc)
+void search::response (simple_string & answer, std::string_view request_percent_enc, piece_t title)
 {
+    static const constexpr std::string_view title_text = "поиск японских корабликов";
+    answer.rewrite(title.position, title_text.substr(0, std::min(title_text.size(), title.size)));
+
     if (request_percent_enc.starts_with(search_keyword))
         request_percent_enc = request_percent_enc.substr(search_keyword.size());
     std::string request = percent_dec(request_percent_enc);

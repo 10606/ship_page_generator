@@ -48,8 +48,11 @@ registrator_pred <torpedo_tubes::torpedo_tubes_partial> & torpedo_tubes_cmp::fil
 }
 
 
-void torpedo_tubes::response (simple_string & answer, std::string_view query)
+void torpedo_tubes::response (simple_string & answer, std::string_view query, piece_t title)
 {
+    static const constexpr std::string_view title_text = "японские торпедные аппараты";
+    answer.rewrite(title.position, title_text.substr(0, std::min(title_text.size(), title.size)));
+
     std::vector <std::vector <torpedo_tubes_partial> > list_group = 
          parse_group_and_sort <torpedo_tubes_partial, torpedo_tubes_cmp> (torpedo_tubes_cache, query);
 

@@ -11,6 +11,7 @@
 #include "ship_info.h"
 #include "simple_string.h"
 #include "armament_links.h"
+#include "parse_query.h"
 
 
 struct search
@@ -32,7 +33,7 @@ struct search
         }
     }
     
-    void response (simple_string & answer, std::string_view request);
+    void response (simple_string & answer, std::string_view request, piece_t title);
 
     static std::string get_search_parameter (std::string_view request);
     

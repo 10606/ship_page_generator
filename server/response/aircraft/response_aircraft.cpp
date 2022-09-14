@@ -77,8 +77,11 @@ registrator_pred <aircraft::aircraft_partial> & aircraft_cmp::filter ()
 }
 
 
-void aircraft::response (simple_string & answer, std::string_view query)
+void aircraft::response (simple_string & answer, std::string_view query, piece_t title)
 {
+    static const constexpr std::string_view title_text = "японская авиация";
+    answer.rewrite(title.position, title_text.substr(0, std::min(title_text.size(), title.size)));
+
     std::vector <std::vector <aircraft_partial> > list_group = 
          parse_group_and_sort <aircraft_partial, aircraft_cmp> (aircraft_cache, query);
 

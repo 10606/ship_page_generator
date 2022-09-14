@@ -4,6 +4,7 @@
 #include "aircraft_info.h"
 #include "response_partial.h"
 #include "simple_string.h"
+#include "parse_query.h"
 
 
 struct aircraft
@@ -29,7 +30,7 @@ struct aircraft
     typedef ship_requests::aircraft_info_t::list aircraft_t;
  
     // https://127.0.0.1:8443/aircraft?sort=in_service&group=type&filter=in_service,3x,4x&filter=class,0
-    void response (simple_string & answer, std::string_view query);
+    void response (simple_string & answer, std::string_view query, piece_t title);
     
     struct aircraft_text
     {

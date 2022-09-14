@@ -36,7 +36,6 @@ include_directories(
 add_executable(ship_server
     server/https_server.cpp
     server/upgrade_to_https.cpp
-    server/parse_query.cpp
     server/date_to_str.cpp
     server/validate_path.cpp
     server/mongoose.c
@@ -48,7 +47,7 @@ add_executable(ship_server
     server/response/ship_armament/types/searchers.cpp
     server/response/ship_armament/types/catapult.cpp
     server/response/ship_armament/types/aircraft.cpp
-    server/response/armament/parse_query.cpp
+    server/response/parse_query.cpp
     server/response/armament/types/response_torpedo.cpp
     server/response/armament/types/response_guns.cpp
     server/response/armament/types/response_torpedo_tubes.cpp

@@ -62,8 +62,11 @@ registrator_pred <guns::guns_partial> & guns_cmp::filter ()
 }
 
 
-void guns::response (simple_string & answer, std::string_view query)
+void guns::response (simple_string & answer, std::string_view query, piece_t title)
 {
+    static const constexpr std::string_view title_text = "японские орудия";
+    answer.rewrite(title.position, title_text.substr(0, std::min(title_text.size(), title.size)));
+
     std::vector <std::vector <guns_partial> > list_group = 
          parse_group_and_sort <guns_partial, guns_cmp> (guns_cache, query);
 

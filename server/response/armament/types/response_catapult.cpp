@@ -48,8 +48,11 @@ registrator_pred <catapult::catapult_partial> & catapult_cmp::filter ()
 }
 
 
-void catapult::response (simple_string & answer, std::string_view query)
+void catapult::response (simple_string & answer, std::string_view query, piece_t title)
 {
+    static const constexpr std::string_view title_text = "японские катапульты";
+    answer.rewrite(title.position, title_text.substr(0, std::min(title_text.size(), title.size)));
+
     std::vector <std::vector <catapult_partial> > list_group = 
          parse_group_and_sort <catapult_partial, catapult_cmp> (catapult_cache, query);
 
