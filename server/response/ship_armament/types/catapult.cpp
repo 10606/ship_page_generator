@@ -22,13 +22,13 @@ ship_catapult::ship_catapult (ship_requests * database, std::string_view _new_li
         ship_catapults_t,
         catapult_t,
         &ship_catapult::catapults,
-        &ship_catapult::ship_catapults_list,
         &ship_catapults_t::catapult_id
     >
     (
         *this, 
         database->armament_info.get_catapult(),
         database->ship_armament_lt.get_catapult(""),
+        &ship_catapults_list,
         
         [] (std::vector <catapult_t> const & catapults_full, std::vector <size_t> const & old_index)
         {

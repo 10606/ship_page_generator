@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <map>
+#include <queue>
 
 #include "ship_info.h"
 #include "date_to_str.h"
@@ -151,6 +152,23 @@ menu::cache_t menu::response_impl (ship_requests * database)
             cur_class.types.push_back(std::move(cur_type));
             cur_type.reset();
         };
+
+        std::queue <size_t> cnt_ships_in_class;
+        std::queue <size_t> cnt_ships_in_type;
+        for (size_t i = 0; i != ships.size(); ++i)
+        {
+            if (cnt_ships_in_class.empty() ||
+                ships[i - 1].class_id != ships[i].class_id)
+                cnt_ships_in_class.push(1);
+            else
+                cnt_ships_in_class.back()++;
+
+            if (cnt_ships_in_type.empty() ||
+                ships[i - 1].type_id != ships[i].type_id)
+                cnt_ships_in_type.push(1);
+            else
+                cnt_ships_in_type.back()++;
+        }
         
         for (size_t i = 0; i != ships.size(); ++i)
         {
@@ -169,7 +187,10 @@ menu::cache_t menu::response_impl (ship_requests * database)
                 
                 cur_class.class_descr.append(menu_item.new_class.begin)
                                      .append(ship.class_ru.value_or(" -- "))
+                                     .append(menu_item.new_class.middle)
+                                     .append(std::to_string(cnt_ships_in_class.front()))
                                      .append(menu_item.new_class.end);
+                cnt_ships_in_class.pop();
             }
             
             if (!cur_type.id || *cur_type.id != ship.type_id)
@@ -187,12 +208,15 @@ menu::cache_t menu::response_impl (ship_requests * database)
                     cur_type.type_descr.append(*ship.ship_ru);
                 else
                     cur_type.type_descr.append(ship.type_ru.value_or(" -- "));
-                
+
                 if (ship.commissioned)
                     cur_type.type_descr.append(" ")
                                        .append(std::to_string(static_cast <int> (ship.commissioned->year())));
                 
-                cur_type.type_descr.append(menu_item.new_type.end);
+                cur_type.type_descr.append(menu_item.new_type.middle)
+                                   .append(std::to_string(cnt_ships_in_type.front()))
+                                   .append(menu_item.new_type.end);
+                cnt_ships_in_type.pop();
             }
             
             {

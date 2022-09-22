@@ -7,6 +7,7 @@
 #include <cmath>
 #include "armament_info.h"
 #include "ship_armament_lt.h"
+#include "get_segments.h"
 
 
 struct ship_guns
@@ -47,7 +48,6 @@ struct ship_guns
 
     p_response_t partial_response (mount_t const & mount);
 
-private:
     struct ship_items_lt
     {
         ship_items_lt (size_t _mount_id, ship_guns_t const & value) :
@@ -63,7 +63,23 @@ private:
         std::optional <std::chrono::year_month_day> date_to;
     };
     
-    std::unordered_map <int, std::vector <ship_items_lt> > ship_guns_list;
+private:
+    struct mount_info_t
+    {
+        size_t mount_id;
+        uint32_t mount_count;
+    };
+
+    typedef get_segments
+            <
+                std::optional <std::chrono::year_month_day>,
+                mount_info_t
+            > segments_t;
+
+    typedef segments_t::data_t segment_data;
+
+    std::unordered_map <int, segments_t> ship_guns_list_segmented;
+
     std::vector <p_response_t> mounts;
     std::unordered_map <int, std::string> cache_class_names;
 

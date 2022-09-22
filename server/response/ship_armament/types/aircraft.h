@@ -48,7 +48,6 @@ struct ship_aircrafts
     std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
     p_response_t partial_response (aircraft_t const & aircraft);
 
-private:
     struct ship_items_lt
     {
         ship_items_lt (size_t _aircraft_id, ship_aircrafts_t const & value) :
@@ -72,6 +71,7 @@ private:
         std::optional <std::chrono::year_month_day> date_to;
     };
     
+private:
     std::unordered_map <int, std::vector <ship_items_lt> > ship_aircrafts_list;
     std::vector <p_response_t> aircrafts;
     std::unordered_map <int, std::string> cache_class_names;

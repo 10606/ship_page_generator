@@ -24,13 +24,15 @@ private:
 public:
     html_template_3 all;
     
-    html_template new_class = {"<button type = \"button\" class = \"collapsible\">\n", 
-                      "</button><br><div class = \"content\">\n"};
+    html_template_3 new_class = {"<button type = \"button\" class = \"collapsible\">\n", 
+                                 "<span style=\"float:right;\">(",
+                                 ")</span> </button><br><div class = \"content\">\n"};
     
     html_template new_type_link = {"<button type = \"button\" class = \"collapsible\">\n&nbsp;&nbsp;&nbsp;<a href=\"/ship?id=", 
-                          "\">"};
-    html_template new_type = {"", 
-                     "</a></button><br><div class = \"content\">\n"};
+                                   "\">"};
+    html_template_3 new_type = {"", 
+                                "</a><span style=\"float:right;\">(",
+                                ")</span> </button><br><div class = \"content\">\n"};
     
     std::string_view close_type = "</div>";
     std::string_view close_class = "</div>";

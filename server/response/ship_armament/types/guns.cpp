@@ -14,7 +14,7 @@
 
 
 ship_guns::ship_guns (ship_requests * database, std::string_view _new_line) :
-    ship_guns_list(),
+    ship_guns_list_segmented(),
     new_line(_new_line)
 {
     typedef ship_requests::armament_info_t::classes classes;
@@ -28,6 +28,8 @@ ship_guns::ship_guns (ship_requests * database, std::string_view _new_line) :
                 armament_links::filtered("/armament/guns?sort=caliber,in_service&group=caliber", cur_class.class_ru.value_or(""), cur_class.class_id)
             }
         );
+
+    std::unordered_map <int, std::vector <ship_items_lt> > ship_guns_list;
                 
     fill_data_structures
     <
@@ -35,13 +37,13 @@ ship_guns::ship_guns (ship_requests * database, std::string_view _new_line) :
         ship_guns_t,
         mount_t,
         &ship_guns::mounts,
-        &ship_guns::ship_guns_list,
         &ship_guns_t::mount_id
     >
     (
         *this, 
         database->armament_info.get_mount(),
         database->ship_armament_lt.get_guns(""),
+        &ship_guns_list,
         
         [] (std::vector <mount_t> const & mounts_full, std::vector <size_t> const & old_index)
         {
@@ -75,6 +77,28 @@ ship_guns::ship_guns (ship_requests * database, std::string_view _new_line) :
             };
         }
     );
+
+    auto mount_info_transform = 
+        [] (ship_items_lt value) -> segment_data
+        {
+            return segment_data
+                   {
+                       value.date_from,
+                       value.date_to,
+                       mount_info_t
+                       {
+                           value.mount_id,
+                           value.mount_count
+                       }
+                   };
+        };
+
+    for (decltype(ship_guns_list)::value_type value : ship_guns_list)
+    {
+        std::vector <segment_data> cur;
+        std::transform(value.second.begin(), value.second.end(), std::back_inserter <decltype(cur)> (cur), mount_info_transform);
+        ship_guns_list_segmented.insert({value.first, std::move(cur)});
+    }
 }
 
 
@@ -82,17 +106,16 @@ std::vector <ship_guns::response_t> ship_guns::response (int id, std::chrono::ye
 {
     std::vector <response_t> answer;
 
-    std::unordered_map <int, std::vector <ship_items_lt> > :: const_iterator it = ship_guns_list.find(id);
-    if (it == ship_guns_list.end())
+    std::unordered_map <int, segments_t> :: const_iterator it = ship_guns_list_segmented.find(id);
+    if (it == ship_guns_list_segmented.end())
         return answer;
-    for (ship_items_lt const & value : it->second)
+    segments_t::value_list const & values = it->second.get(date);
+    answer.reserve(values.size());
+    for (mount_info_t const & i : values)
     {
-        if (between(value.date_from, date, value.date_to))
-        {
-            response_t item = mounts[value.mount_id];
-            add_value(item.data_begin, value.mount_count);
-            answer.push_back(item);
-        }
+        response_t item = mounts[i.mount_id];
+        add_value(item.data_begin, i.mount_count);
+        answer.push_back(item);
     }
     
     return answer;

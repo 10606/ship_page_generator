@@ -33,13 +33,13 @@ ship_aircrafts::ship_aircrafts (ship_requests * database, std::string_view _new_
         ship_aircrafts_t,
         aircraft_t,
         &ship_aircrafts::aircrafts,
-        &ship_aircrafts::ship_aircrafts_list,
         &ship_aircrafts_t::aircraft_id
     >
     (
         *this, 
         database->aircraft_info.get_list(""),
         database->ship_armament_lt.get_aircraft(""),
+        &ship_aircrafts_list,
         
         [] (std::vector <aircraft_t> const & aircrafts_full, std::vector <size_t> const & old_index)
         {

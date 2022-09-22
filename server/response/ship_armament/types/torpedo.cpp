@@ -20,13 +20,13 @@ ship_torpedo_tubes::ship_torpedo_tubes (ship_requests * database, std::string_vi
         ship_tubes_t,
         tube_t,
         &ship_torpedo_tubes::torpedo_tubes,
-        &ship_torpedo_tubes::ship_tubes_list,
         &ship_tubes_t::tube_id
     >
     (
         *this, 
         database->armament_info.get_torpedo_tubes(),
         database->ship_armament_lt.get_torpedo_tubes(""),
+        &ship_tubes_list,
         
         [] (std::vector <tube_t> const & torpedo_tubes_full, std::vector <size_t> const & old_index)
         {

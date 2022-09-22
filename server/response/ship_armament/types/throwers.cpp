@@ -22,13 +22,13 @@ ship_throwers::ship_throwers (ship_requests * database, std::string_view _new_li
         ship_throwers_t,
         throwers_t,
         &ship_throwers::throwers,
-        &ship_throwers::ship_throwers_list,
         &ship_throwers_t::throwers_id
     >
     (
         *this, 
         database->armament_info.get_throwers(),
         database->ship_armament_lt.get_throwers(""),
+        &ship_throwers_list,
         
         [] (std::vector <throwers_t> const & throwers_full, std::vector <size_t> const & old_index)
         {

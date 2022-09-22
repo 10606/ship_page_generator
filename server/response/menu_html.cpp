@@ -61,7 +61,7 @@ std::string_view menu_item_template::menu_begin =
         "tr.header    { background: #fff8dc; } \n"
         "tr.general   { background: #f8ffdc; } \n"
         "tr.guns      { background: #cdffcc; } \n"
-        "tr.torpedo   { background: #ffd2c7; } \n"
+        "tr.torpedo   { background: #ffdfdf; } \n"
         "tr.throwers  { background: #f8ffdc; } \n"
         "tr.searchers { background: #f8ffff; } \n"
         "tr.catapult  { background: #fff8dc; } \n"

@@ -33,13 +33,13 @@ ship_searchers::ship_searchers (ship_requests * database, std::string_view _new_
         ship_searchers_t,
         searcher_t,
         &ship_searchers::searchers,
-        &ship_searchers::ship_searchers_list,
         &ship_searchers_t::searcher_id
     >
     (
         *this, 
         database->armament_info.get_searchers(),
         database->ship_armament_lt.get_searchers(""),
+        &ship_searchers_list,
         
         [] (std::vector <searcher_t> const & searchers_full, std::vector <size_t> const & old_index)
         {
