@@ -22,6 +22,15 @@ static const constexpr html_template_3 style =
     "<body>\n"
         "<style> \n"
             ".wrapper { display: flex; } \n"
+            "footer {\n"
+                "display: table;\n"
+                "color: #111111;\n"
+                "font-size: medium;\n"
+                "text-align: center;\n"
+                "margin-left: auto;\n"
+                "margin-right: auto;\n"
+                "border-top: 2px solid black;"
+            "}\n"
         "</style>\n"
         "<div class = \"wrapper\"> \n"
             "<style> \n"
@@ -50,6 +59,11 @@ static const constexpr html_template_3 style =
             "</style>\n",
 
         "</div>\n"
+        "<footer>\n"
+            "disclaimer: \n"
+            "мир перестал существовать 02.09.1945<br>\n"
+            "и да, здесь не просто могут быть... а гарантирванно есть ошибки и неточности!<br>\n"
+        "</footer>\n"
     "</body>\n"
 "</html>"
 };
