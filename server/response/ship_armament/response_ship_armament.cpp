@@ -63,6 +63,7 @@ ships_responser <responser> ::response
     std::vector <uint8_t> const & modernization
 ) const
 {
+    answer.append(table.group_delimeter);
     std::vector <std::vector <response_t> > values;
     values.reserve(ship_year.size());
     std::optional <key_t> min;
@@ -139,7 +140,7 @@ ships_responser <responser> ::response
                       .append(std::move(values[i][j].data_end));
                 
                 // update position if we at end
-                if (++j == values[i].size())
+                if (++j == values[i].size()) 
                     positions[i] = values[i].size();
             }
         }
@@ -168,13 +169,13 @@ void ship_armament::response (simple_string & answer, std::string_view query, pi
         answer.append(table.begin);
         answer.append(std::move(header));
         
-        add_armament(answer, general,       ship_year, modernizations, table.new_row("class = \"general\""  ));
-        add_armament(answer, guns,          ship_year, modernizations, table.new_row("class = \"guns\""     ));
-        add_armament(answer, torpedo_tubes, ship_year, modernizations, table.new_row("class = \"torpedo\""  ));
-        add_armament(answer, throwers,      ship_year, modernizations, table.new_row("class = \"throwers\"" ));
-        add_armament(answer, searchers,     ship_year, modernizations, table.new_row("class = \"searchers\""));
-        add_armament(answer, catapult,      ship_year, modernizations, table.new_row("class = \"catapult\"" ));
-        add_armament(answer, aircraft,      ship_year, modernizations, table.new_row("class = \"aircraft\"" ));
+        add_armament(answer, general,       ship_year, modernizations);
+        add_armament(answer, guns,          ship_year, modernizations);
+        add_armament(answer, torpedo_tubes, ship_year, modernizations);
+        add_armament(answer, throwers,      ship_year, modernizations);
+        add_armament(answer, searchers,     ship_year, modernizations);
+        add_armament(answer, catapult,      ship_year, modernizations);
+        add_armament(answer, aircraft,      ship_year, modernizations);
         
         answer.append(table.end);
     }

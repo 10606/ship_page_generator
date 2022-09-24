@@ -36,7 +36,7 @@ struct ship_throwers
         int group;
         bool compare;
         std::string_view group_name;
-        std::string data_begin;
+        char data_begin[16];
         std::string_view data_end;
     };
 

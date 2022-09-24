@@ -124,11 +124,9 @@ void add_armament
     simple_string & answer,
     ships_responser <armament_type> const & armament, 
     std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year,
-    std::vector <uint8_t> const & modernizations,
-    std::string_view new_row
+    std::vector <uint8_t> const & modernizations
 )
 {
-    answer.append(new_row);
     try
     {
         armament.response(answer, ship_year, modernizations);

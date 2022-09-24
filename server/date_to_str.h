@@ -24,6 +24,12 @@ inline void add_value (simple_string & answer, uint32_t value)
     answer.append(std::string_view(value_char, res.ptr));
 }
 
+template <size_t n>
+inline void add_value (char (& answer) [n], uint32_t value)
+{
+    std::to_chars(std::begin(answer), std::end(answer), value);
+}
+
 std::string where
 (
     std::string const & table_name,
