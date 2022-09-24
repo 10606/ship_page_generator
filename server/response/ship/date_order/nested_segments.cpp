@@ -20,7 +20,7 @@ auto comparator_bEi = [] (segment const & a, segment const & b) -> bool
 };
 
 // for tree
-auto comparator_ei = [] (segment const & a, segment const & b) -> bool
+[[maybe_unused]] auto comparator_ei = [] (segment const & a, segment const & b) -> bool
 {
     std::strong_ordering end = compare_null_last(a.end, b.end);
     if (end != std::strong_ordering::equal)

@@ -11,14 +11,27 @@ set(compile_flags
      -g --pedantic -Wall -ftemplate-depth=10000 -std=c++20"
 )
 
-set(CMAKE_C_COMPILER clang)
-set(CMAKE_CXX_COMPILER clang++)
-
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${release_flags} -DMG_ENABLE_OPENSSL=1")
-set(CMAKE_C_FLAGS    "${CMAKE_C_FLAGS}  -O3 -flto -march=native \
-                                        -DNDEBUG -DMG_ENABLE_OPENSSL=1 -DMG_ENABLE_IPV6=1")
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${PGO_FLAGS} ${release_flags} -DMG_ENABLE_OPENSSL=1")
+set(CMAKE_C_FLAGS    "${CMAKE_C_FLAGS}   ${PGO_FLAGS} -O3 -flto -march=native \
+                                                      -DNDEBUG -DMG_ENABLE_OPENSSL=1 -DMG_ENABLE_IPV6=1")
 
 message("CMAKE_CXX_FLAGS" ${CMAKE_CXX_FLAGS})
+
+# clang only
+    message("use clang")
+
+    set(CMAKE_C_COMPILER clang)
+    set(CMAKE_CXX_COMPILER clang++)
+
+    add_custom_target(pgo_generate
+        COMMAND ${CMAKE_COMMAND} -DPGO_FLAGS:STRING="-fprofile-instr-generate=ship-%p.profraw" .
+        COMMAND make)
+
+    add_custom_target(pgo_use
+        llvm-profdata merge -output="ship.profdata" ship-*.profraw
+        COMMAND ${CMAKE_COMMAND} -DPGO_FLAGS:STRING="-fprofile-instr-use=ship.profdata" .
+        COMMAND make)
+
 
 include_directories(
     server/
