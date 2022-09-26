@@ -11,27 +11,15 @@ set(compile_flags
      -g --pedantic -Wall -ftemplate-depth=10000 -std=c++20"
 )
 
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${PGO_FLAGS} ${release_flags} -DMG_ENABLE_OPENSSL=1")
-set(CMAKE_C_FLAGS    "${CMAKE_C_FLAGS}   ${PGO_FLAGS} -O3 -flto -march=native \
-                                                      -DNDEBUG -DMG_ENABLE_OPENSSL=1 -DMG_ENABLE_IPV6=1")
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${release_flags} -DMG_ENABLE_OPENSSL=1")
+set(CMAKE_C_FLAGS    "${CMAKE_C_FLAGS}   -O3 -flto -march=native \
+                                         -DNDEBUG -DMG_ENABLE_OPENSSL=1 -DMG_ENABLE_IPV6=1")
 
 message("CMAKE_CXX_FLAGS" ${CMAKE_CXX_FLAGS})
 
-# clang only
-    message("use clang")
-
-    set(CMAKE_C_COMPILER clang)
-    set(CMAKE_CXX_COMPILER clang++)
-
-    add_custom_target(pgo_generate
-        COMMAND ${CMAKE_COMMAND} -DPGO_FLAGS:STRING="-fprofile-instr-generate=ship-%p.profraw" .
-        COMMAND make)
-
-    add_custom_target(pgo_use
-        llvm-profdata merge -output="ship.profdata" ship-*.profraw
-        COMMAND ${CMAKE_COMMAND} -DPGO_FLAGS:STRING="-fprofile-instr-use=ship.profdata" .
-        COMMAND make)
-
+message("use clang")
+set(CMAKE_C_COMPILER clang)
+set(CMAKE_CXX_COMPILER clang++)
 
 include_directories(
     server/
@@ -45,6 +33,19 @@ include_directories(
     server/response/ship
     get_from_postgres
 )
+
+message(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/libraries/libpqxx/include)
+link_directories(${CMAKE_SOURCE_DIR}/libraries/libpqxx/src)
+link_directories(${CMAKE_SOURCE_DIR}/libraries/openssl)
+link_directories(${CMAKE_SOURCE_DIR}/libraries/postgresql/src/interfaces/libpq)
+link_directories(${CMAKE_SOURCE_DIR}/libraries/postgresql/src/common)
+link_directories(${CMAKE_SOURCE_DIR}/libraries/postgresql/src/port)
+
+find_library(pqxx libpqxx.a)
+find_library(ssl libssl.a)
+find_library(crypto libcrypto.a)
+
 
 add_executable(ship_server
     server/https_server.cpp
@@ -95,9 +96,13 @@ target_link_libraries(tests
     gtest
 )
 
+
 target_link_libraries(ship_server
+    -static
     pqxx
-    pthread
+    pq
+    pgcommon
+    pgport
     ssl
     crypto
     -static-libstdc++

@@ -1,0 +1,3 @@
+git clone https://github.com/jtv/libpqxx
+git clone https://github.com/openssl/openssl
+git clone git://git.postgresql.org/git/postgresql.git
