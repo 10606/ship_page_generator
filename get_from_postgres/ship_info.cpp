@@ -111,3 +111,22 @@ std::vector <ship_requests::ship_info_t::classes> ship_requests::ship_info_t::ge
 };
 
 
+ship_requests::ship_info_t::sunk_dates::sunk_dates (pqxx::row const & value) :
+    ship_id (value[0].as <int> ()),
+    sunk_date()
+{
+    std::optional <std::string> str_sunk_date = value[1].as <std::optional <std::string> > ();
+    sunk_date = transform_optional(str_sunk_date, get_date);
+}
+    
+std::vector <ship_requests::ship_info_t::sunk_dates> ship_requests::ship_info_t::get_sunk_dates (std::string_view where)
+{
+    return request_to_db <sunk_dates>
+    (
+        db,
+        "select id, sunk_date from ship_info ",
+        where
+    );
+};
+
+

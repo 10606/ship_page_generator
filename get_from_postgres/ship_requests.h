@@ -81,6 +81,9 @@ struct ship_requests
  
         struct classes;
         std::vector <classes> get_classes (std::string_view where = std::string_view());
+ 
+        struct sunk_dates;
+        std::vector <sunk_dates> get_sunk_dates (std::string_view where = std::string_view());
         
  
         ship_info_t (ship_info_t &&) = delete;

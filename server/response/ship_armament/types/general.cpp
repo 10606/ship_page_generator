@@ -3,6 +3,7 @@
 #include <vector>
 #include <chrono>
 #include <cmath>
+#include "common.h"
 #include "ship_requests.h"
 #include "ship_info.h"
 #include "date_to_str.h"
@@ -12,11 +13,17 @@
 ship_general::ship_general (ship_requests * database, std::string_view _new_line) :
     new_line(_new_line)
 {
+    sunk_dates_t const & sunk_date = sunk_dates();
     std::vector <ship_requests::ship_info_t::general> general_list =
         database->ship_info.get_general("");
 
     for (general_t & general : general_list)
+    {
+        sunk_dates_t::const_iterator sunk = sunk_date.find(general.ship_id);
+        if (sunk != sunk_date.end() && general.date_to && sunk->second.sunk == general.date_to)
+            general.date_to = sunk->second.next;
         ship_general_list[general.ship_id].push_back(partial_response(std::move(general)));
+    }
 }
 
 

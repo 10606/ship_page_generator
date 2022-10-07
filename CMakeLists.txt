@@ -54,6 +54,7 @@ add_executable(ship_server
     server/validate_path.cpp
     server/mongoose.c
     server/response/ship_armament/response_ship_armament.cpp
+    server/response/ship_armament/types/common.cpp
     server/response/ship_armament/types/general.cpp
     server/response/ship_armament/types/guns.cpp
     server/response/ship_armament/types/torpedo.cpp

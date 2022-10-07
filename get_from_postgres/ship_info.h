@@ -64,5 +64,14 @@ struct ship_requests::ship_info_t::classes
 };
 
 
+struct ship_requests::ship_info_t::sunk_dates
+{
+    sunk_dates (pqxx::row const & value);
+
+    int ship_id;
+    std::optional <std::chrono::year_month_day> sunk_date;
+};
+
+
 #endif
 
