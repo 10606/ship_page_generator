@@ -20,8 +20,8 @@ ship_general::ship_general (ship_requests * database, std::string_view _new_line
     for (general_t & general : general_list)
     {
         sunk_dates_t::const_iterator sunk = sunk_date.find(general.ship_id);
-        if (sunk != sunk_date.end() && general.date_to && sunk->second.sunk == general.date_to)
-            general.date_to = sunk->second.next;
+        if (sunk != sunk_date.end() && sunk->second == general.date_to)
+            general.date_to = std::nullopt;
         ship_general_list[general.ship_id].push_back(partial_response(std::move(general)));
     }
 }

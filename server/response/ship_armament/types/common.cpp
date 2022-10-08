@@ -13,15 +13,7 @@ sunk_dates_t sunk_dates_impl ()
     
     sunk_dates_t answer;
     for (ship_requests::ship_info_t::sunk_dates const & item : sunk_dates)
-    {
-        std::optional <std::chrono::year_month_day> next;
-        if (item.sunk_date)
-        {
-            std::chrono::time_point <std::chrono::system_clock, std::chrono::days> sunk_tp{*item.sunk_date};
-            next = sunk_tp + std::chrono::days(1);
-        }
-        answer.insert({item.ship_id, {item.sunk_date, next}});
-    }
+        answer.insert({item.ship_id, {item.sunk_date}});
     return answer;
 }
 

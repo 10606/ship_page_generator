@@ -10,12 +10,7 @@
 #include <optional>
 
 
-struct sunk_and_next_day
-{
-    std::optional <std::chrono::year_month_day> sunk;
-    std::optional <std::chrono::year_month_day> next;
-};
-typedef std::unordered_map <int, sunk_and_next_day> sunk_dates_t;
+typedef std::unordered_map <int, std::optional <std::chrono::year_month_day> > sunk_dates_t;
 sunk_dates_t const & sunk_dates ();
 
 template 
@@ -64,8 +59,8 @@ void fill_data_structures
         sunk_dates_t::const_iterator sunk = sunk_date.find(item.ship_id);
         if (it != items_index.end())
         {
-            if (sunk != sunk_date.end() && item.date_to && sunk->second.sunk == item.date_to)
-                item.date_to = sunk->second.next;
+            if (sunk != sunk_date.end() && sunk->second == item.date_to)
+                item.date_to = std::nullopt;
             (*items_on_ship)[item.ship_id].emplace_back(it->second, item);
         }
     }
