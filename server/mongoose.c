@@ -4484,7 +4484,7 @@ static int mg_tls_err(struct mg_tls *tls, int res) {
   //    Thus a single errored connection can close all the rest, unrelated ones.
   // Clearing the error keeps the shared SSL_CTX in an OK state.
 
-  if (err != 0) ERR_print_errors_fp(stderr);
+  //if (err != 0) ERR_print_errors_fp(stderr);
   ERR_clear_error();
   if (err == SSL_ERROR_WANT_READ) return 0;
   if (err == SSL_ERROR_WANT_WRITE) return 0;

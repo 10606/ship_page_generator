@@ -135,7 +135,7 @@ struct https_server
                                                         "Content-Type: text/html; charset=utf-8\r\n"
                                                         "Content-Length: ";
             static const std::string code_padding(' ', get_resp_code_str.max_size());
-            static const std::string length_padding(' ', std::numeric_limits<size_t>::digits10 + 1);
+            static const std::string length_padding(' ', std::numeric_limits <size_t> ::digits10 + 1);
             
             simple_string response;
             response.append(http_begin)
@@ -168,6 +168,8 @@ struct https_server
                 }
                 else
                 {
+                    if (uri == "/favicon.ico")
+                        uri = "/pictures/Naganami_multi.ico";
                     std::string path = filesystem_check(uri);
                     if (!path.empty())
                     {

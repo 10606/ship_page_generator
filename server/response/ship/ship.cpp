@@ -260,6 +260,7 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
         int ship_id = info.first;
         
         response_t answer;
+        answer.begin = std::string("<div>");
         answer.armament_link = std::string(query_template);
         answer.armament_link.append(std::to_string(ship_id));
 
@@ -294,7 +295,8 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
         
         answer.begin.append(link.begin)
                     .append(answer.armament_link)
-                    .append(link.end);
+                    .append(link.end)
+                    .append("</div>");
         answer.end.append(new_line);
         {
             add_pictures_t add_pictures(answer.end, pictures);
@@ -325,7 +327,7 @@ void ship::response (simple_string & answer, std::string_view query, piece_t tit
         type_count[it->second.type]++;
         answer.append(it->second.short_info);
     }
-    answer.append("</table></tbody><br><br>\n");
+    answer.append("</tbody></table><br><br>\n");
     
     for (int id : ids)
     {
@@ -337,8 +339,6 @@ void ship::response (simple_string & answer, std::string_view query, piece_t tit
         armament.response(answer, it->second.armament_link, {0, 0});
         answer.append(it->second.end);
 
-        
-        
         
         static const constexpr std::string_view delimeter = ", ";
         static const constexpr std::string_view and_other = "..."; 

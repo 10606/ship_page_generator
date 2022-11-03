@@ -100,7 +100,7 @@ struct table_template
     )
     {
         if (!style.empty() || !tr_class.empty())
-            begin = std::string("<div class = \"main\">\n<table border=1>\n")
+            begin = std::string("<table border=1>\n")
                     .append(style)
                     .append("<tr ")
                     .append(tr_class)
