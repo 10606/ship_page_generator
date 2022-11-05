@@ -13,6 +13,7 @@
 
 static const constexpr html_template_3 style = 
 {
+"<!DOCTYPE html>\n"
 "<html>\n"
     "<head>\n"
         "<title>\n",

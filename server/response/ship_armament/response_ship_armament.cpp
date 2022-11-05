@@ -155,6 +155,154 @@ ships_responser <responser> ::response
 }
 
 
+struct status_sy_t
+{
+    enum 
+    {
+        none,
+        ship_id_str,
+        ship_id_value,
+        date_str,
+        date_value,
+        error
+    } status;
+    
+    size_t pos;
+};
+
+std::vector <std::pair <int, std::chrono::year_month_day> > ship_armament::parse_query__ship_year (std::string_view query)
+{
+    std::vector <std::pair <int, std::chrono::year_month_day> > answer;
+    
+    status_sy_t status = {status_sy_t::none, 0};
+    std::optional <uint32_t> ship_id;
+    std::optional <std::array <uint32_t, 3> > date;
+    
+    static std::string_view ship_id_str = "ship=";
+    static std::string_view date_str = "date=";
+ 
+    auto append_if_need = [this, &answer, &status, &ship_id, &date] () -> void
+    {
+        status.status = status_sy_t::none;
+
+        if (!ship_id)
+            return;
+        
+        if (!date)
+        {
+            std::unordered_map <int, std::chrono::year_month_day> ::iterator it =
+                default_date.find(*ship_id);
+            if (it != default_date.end())
+                answer.emplace_back(*ship_id, it->second);
+            return;
+        }
+
+        if ((*date)[2] < 100)
+            (*date)[2] += 1900;
+        
+        std::chrono::year_month_day query_date
+        {
+            std::chrono::year((*date)[2]),
+            std::chrono::month((*date)[1]),
+            std::chrono::day((*date)[0])
+        };
+        
+        if (!query_date.ok())
+        {
+            date.reset();
+            return;
+        }
+        
+        answer.emplace_back(*ship_id, query_date);
+        date.reset();
+    };
+    
+    for (char c : query)
+    {
+        if (c == '&')
+        {
+            append_if_need();
+            continue;
+        }
+        
+        switch (status.status)
+        {
+        case status_sy_t::none:
+            if (c == ship_id_str[0]) 
+            {
+                status.status = status_sy_t::ship_id_str;
+                status.pos = 1;
+            }
+            else if (c == date_str[0])
+            {
+                status.status = status_sy_t::date_str;
+                status.pos = 1;
+            }
+            else
+                status.status = status_sy_t::error;
+            break;
+        case status_sy_t::ship_id_str:
+            if (c == ship_id_str[status.pos])
+            {
+                if (++status.pos == ship_id_str.size())
+                {
+                    ship_id.reset();
+                    status.status = status_sy_t::ship_id_value;
+                    status.pos = 0;
+                }
+            }
+            else
+                status.status = status_sy_t::error;
+            break;
+        case status_sy_t::ship_id_value:
+            if (std::isdigit(c))
+            {
+                if (!ship_id)
+                    ship_id = 0;
+                *ship_id = *ship_id * 10 + c - '0';
+            }
+            else
+                status.status = status_sy_t::error;
+            break;
+        case status_sy_t::date_str:
+            if (c == date_str[status.pos])
+            {
+                if (++status.pos == date_str.size())
+                {
+                    date.reset();
+                    status.status = status_sy_t::date_value;
+                    status.pos = 0;
+                }
+            }
+            else
+                status.status = status_sy_t::error;
+            break;
+        case status_sy_t::date_value:
+            if (std::isdigit(c))
+            {
+                if (!date)
+                    date = {0, 0, 0};
+                (*date)[status.pos] = (*date)[status.pos] * 10 + c - '0';
+            }
+            else if (c == '.')
+            {
+                if (++status.pos == date->size())
+                    status.status = status_sy_t::error;
+            }
+            else
+                status.status = status_sy_t::error;
+            break;
+        case status_sy_t::error:
+            break;
+        }
+    }
+
+    append_if_need();
+
+    return answer;
+}
+
+
 void ship_armament::response (simple_string & answer, std::string_view query, piece_t title)
 {
     static const constexpr std::string_view title_text = "сравнение японских корабликов";

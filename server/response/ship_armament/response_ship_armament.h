@@ -147,8 +147,14 @@ struct ship_armament
         throwers     (rows_table_template("class = \"throwers\"" ), _database, table.new_line),
         searchers    (rows_table_template("class = \"searchers\""), _database, table.new_line),
         catapult     (rows_table_template("class = \"catapult\"" ), _database, table.new_line),
-        aircraft     (rows_table_template("class = \"aircraft\"" ), _database, table.new_line)
-    {}
+        aircraft     (rows_table_template("class = \"aircraft\"" ), _database, table.new_line),
+        default_date()
+    {
+        std::vector <ship_requests::ship_info_t::list> ships_info = _database->ship_info.get_list();
+        for (ship_requests::ship_info_t::list const & value : ships_info)
+            if (value.commissioned)
+                default_date.insert({value.ship_id, *value.commissioned});
+    }
 
     bool check (std::string_view uri)
     {
@@ -168,6 +174,9 @@ private:
     ships_responser <ship_searchers>     searchers;
     ships_responser <ship_catapult>      catapult;
     ships_responser <ship_aircrafts>     aircraft;
+
+    std::vector <std::pair <int, std::chrono::year_month_day> > parse_query__ship_year (std::string_view query);
+    std::unordered_map <int, std::chrono::year_month_day> default_date;
     
     static const constexpr std::string_view style = "";
 };
