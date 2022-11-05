@@ -181,10 +181,8 @@ std::vector <std::pair <int, std::chrono::year_month_day> > ship_armament::parse
     static std::string_view ship_id_str = "ship=";
     static std::string_view date_str = "date=";
  
-    auto append_if_need = [this, &answer, &status, &ship_id, &date] () -> void
+    auto append_if_need = [this, &answer, &ship_id, &date] () -> void
     {
-        status.status = status_sy_t::none;
-
         if (!ship_id)
             return;
         
@@ -221,7 +219,7 @@ std::vector <std::pair <int, std::chrono::year_month_day> > ship_armament::parse
     {
         if (c == '&')
         {
-            append_if_need();
+            status.status = status_sy_t::none;
             continue;
         }
         
@@ -230,11 +228,14 @@ std::vector <std::pair <int, std::chrono::year_month_day> > ship_armament::parse
         case status_sy_t::none:
             if (c == ship_id_str[0]) 
             {
+                append_if_need();
                 status.status = status_sy_t::ship_id_str;
                 status.pos = 1;
             }
             else if (c == date_str[0])
             {
+                if (date)
+                    append_if_need();
                 status.status = status_sy_t::date_str;
                 status.pos = 1;
             }

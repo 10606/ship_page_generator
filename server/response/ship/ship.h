@@ -56,7 +56,7 @@ private:
     {
         {
             "<li><a href=\"/pictures/ship/",
-            "\"><img src=\"/pictures/ship/",
+            "\"><img src=\"/pictures_small/ship/",
             "\"></a><br>",
             "</li>"
         },
