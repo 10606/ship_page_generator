@@ -5,12 +5,25 @@
 #include "dekart_tree.h"
 
 
+auto is_one_day_event = 
+[] (segment const & value) -> bool
+{
+    if (!value.begin || !value.end)
+        return 0;
+    return value.begin == value.end;
+};
+
 // for sort
 auto comparator_bEi = [] (segment const & a, segment const & b) -> bool 
 { 
     std::strong_ordering begin = compare_null_first(a.begin, b.begin);
     if (begin != std::strong_ordering::equal)
         return is_lt(begin);
+
+    if (is_one_day_event(a))
+        return 1;
+    if (is_one_day_event(b))
+        return 0;
     
     std::strong_ordering end = compare_null_last(a.end, b.end);
     if (end != std::strong_ordering::equal) // longest should be first

@@ -7,7 +7,7 @@ template <typename responser>
 std::vector <std::pair <uint32_t, std::string_view> >
 ships_responser <responser> ::gun_classes
 (
-    std::vector <std::vector <typename responser::response_t> > & values,
+    std::vector <std::vector <typename responser::response_t> > const & values,
     std::optional <key_t> min
 ) const
 {

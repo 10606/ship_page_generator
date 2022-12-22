@@ -101,11 +101,29 @@ struct ship::add_event
         for (size_t i = 0; i != graph.size(); ++i)
             order[i] = i;
         
+        auto is_one_day_event = 
+            [this] (size_t index) -> bool
+            {
+                ship_requests::ship_event_t::event_lt_descr const & value = events[index_mapping[index]];
+                if (!value.date_from || !value.date_to)
+                    return 0;
+                return value.date_from == value.date_to;
+            };
+        
         auto comparator = 
-            [this] (size_t a, size_t b) -> bool 
+            [this, is_one_day_event] (size_t a, size_t b) -> bool 
             { 
-                return std::is_lt(compare_null_last(events[index_mapping[a]].date_from, 
-                                                    events[index_mapping[b]].date_from)); 
+                std::strong_ordering begin = compare_null_last(events[index_mapping[a]].date_from, 
+                                                               events[index_mapping[b]].date_from);
+                if (!std::is_eq(begin))
+                    return std::is_lt(begin);
+                
+                if (is_one_day_event(a))
+                    return 1;
+                if (is_one_day_event(b))
+                    return 0;
+                return std::is_lt(compare_null_last(events[index_mapping[b]].date_to, 
+                                                    events[index_mapping[a]].date_to));
             };
         
         std::sort(order.begin(), order.end(), comparator);
