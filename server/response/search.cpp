@@ -131,18 +131,23 @@ void search::response (simple_string & answer, std::string_view request_percent_
         {
             for (position_t const & pos : it->second)
             {
-                if (names[pos.index].name_ru.size() < pos.offset + request.size() &&
-                    names[pos.index].name_en.size() < pos.offset + request.size())
-                    continue;
+                bool match = 0;
                 
-                std::string_view name_ru = 
-                    std::string_view(names[pos.index].name_ru.data() + pos.offset, request.size());
-                std::string_view name_en = 
-                    std::string_view(names[pos.index].name_en.data() + pos.offset, request.size());
+                if (names[pos.index].name_ru.size() >= pos.offset + request.size())
+                {
+                    std::string_view name_ru = 
+                        std::string_view(names[pos.index].name_ru.data() + pos.offset, request.size());
+                    match |= (name_ru == request);
+                }
+                if (names[pos.index].name_en.size() >= pos.offset + request.size())
+                {
+                    std::string_view name_en = 
+                        std::string_view(names[pos.index].name_en.data() + pos.offset, request.size());
+                    match |= (name_en == request);
+                }
 
-                if (name_ru != request && name_en != request)
-                    continue;
-                add_ship(pos.index);
+                if (match)
+                    add_ship(pos.index);
             }
         }
     }
