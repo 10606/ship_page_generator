@@ -132,7 +132,7 @@ private:
         return answer;
     }
     
-    static uint32_t calc_index_4 (std::string_view request);
+    static uint32_t calc_index_4 (std::string_view request, size_t use_symbols = 4);
     
     static bool is_ascii (char value)
     {

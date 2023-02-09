@@ -175,16 +175,20 @@ void search::add (std::string_view name, size_t name_index)
         }
         if (value.size() >= 4)
         {
-            uint32_t index = calc_index_4(value);
-            by_4_chars[index].emplace_back(pos);
+            // see 2, 3, 4 symbols
+            for (size_t i = 2; i != 5; ++i)
+            {
+                uint32_t index = calc_index_4(value, i);
+                by_4_chars[index].emplace_back(pos);
+            }
         }
     }
 }
 
-uint32_t search::calc_index_4 (std::string_view request)
+uint32_t search::calc_index_4 (std::string_view request, size_t use_symbols)
 {
     uint32_t index = 0;
-    for (size_t i = 0, pos = 0; i != 4 && pos < request.size(); ++i)
+    for (size_t i = 0, pos = 0; i != use_symbols && pos < request.size(); ++i)
     {
         index = index << 8;
         char cur = request[pos];
@@ -204,8 +208,6 @@ uint32_t search::calc_index_4 (std::string_view request)
             std::cerr << "wrong utf-8 sequence (not full): \"" << request << "\"  pos: " << i << std::endl;
             continue;
         }
-        if (pos + need_check >= 4)
-            break;
         for (size_t i = 0; i != need_check; ++i, pos++)
         {
             if (!is_mb(request[pos]))
