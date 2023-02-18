@@ -239,9 +239,12 @@ menu::cache_t menu::response_impl (ship_requests * database)
                 cur_type.link.append(std::to_string(ship.ship_id));
             }
         }
-        add_type();
-        cur_class.sort();
-        classes.insert({*cur_class.id, std::move(cur_class)});
+        if (cur_class.id)
+        {
+            add_type();
+            cur_class.sort();
+            classes.insert({*cur_class.id, std::move(cur_class)});
+        }
         
         cache_t answer{std::string(menu_item.all.begin), std::string(menu_item.all.middle)};
         inserter_t inserter(classes_graph, classes, answer.end);
