@@ -28,20 +28,29 @@ void convert_image (fs::path src_path, fs::path dst_path)
 }
 
 
+bool is_exist (fs::path dst_path, bool force)
+{
+    fs::directory_entry dst_entry(dst_path);
+    if (!force && dst_entry.exists())
+    {
+        std::cout << dst_path << " exist\n";
+        return 1;
+    }
+    return 0;
+}
+
+
 void convert_dir (fs::path src_root, fs::path dst_root, bool force)
 {
+    fs::recursive_directory_iterator source_dir(src_root);
     fs::create_directories(dst_root);
-    for (fs::directory_entry const & dir_entry : fs::recursive_directory_iterator(src_root))
+    for (fs::directory_entry const & dir_entry : source_dir)
     {
         fs::path src_path = dir_entry.path();
         fs::path relative = fs::relative(src_path, src_root);
         fs::path dst_path = dst_root / relative;
-        fs::directory_entry dst_entry(dst_path);
-        if (!force && dst_entry.exists())
-        {
-            std::cout << dst_path << " exist\n";
+        if (is_exist(dst_path, force))
             continue;
-        }
         if (dir_entry.is_regular_file())
         {
             std::cout << src_path << " -> " << dst_path << '\n';
@@ -75,12 +84,21 @@ int main (int argc, char * argv[])
             force |= std::string_view(argv[1]) == "-force";
         }
 
-        fs::path src_path(argv[1]);
-        fs::path dst_path(argv[2]);
+        fs::path src_path(argv[args_it]);
+        fs::path dst_path(argv[args_it + 1]);
 
         Magick::InitializeMagick(argv[0]);
 
-        convert_dir(src_path, dst_path, force);
+        try
+        {
+            convert_dir(src_path, dst_path, force);
+        }
+        catch (fs::filesystem_error & e)
+        {
+            std::cout << "just file\n";
+            if (!is_exist(dst_path, force))
+                convert_image(src_path, dst_path);
+        }
     }
     catch (std::exception & e)
     {
