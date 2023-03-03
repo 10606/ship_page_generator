@@ -66,6 +66,8 @@ std::string search::percent_dec (std::string_view request_percent_enc, bool need
         {
             if (need_escape && request_percent_enc[i] == '"')
                 answer.append(quot);
+            else if (request_percent_enc[i] == '+') // fucking web standarts
+                answer.push_back(' ');
             else
                 answer.push_back(request_percent_enc[i]);
             continue;
