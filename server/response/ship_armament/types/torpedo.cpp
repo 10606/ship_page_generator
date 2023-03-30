@@ -90,12 +90,16 @@ ship_torpedo_tubes::p_response_t ship_torpedo_tubes::partial_response (tube_t co
         add_value(item.data, *tube.tubes_count);
     item.data += " ";
     if (tube.caliber)
-        item.data.append("<b>")
-                 .append(to_string_10(*tube.caliber))
+        item.data.append(to_string_10(*tube.caliber))
                  .append("мм");
-    item.data.append("</b>");
-    item.data += ("  ");
-    item.data += tube.tube_ru.value_or("  ") + new_line;
+    item.data.append("  ")
+             .append(tube.tube_ru.value_or("  "));
+    item.data.append("</b>")
+             .append(new_line);
+    item.data.append("&emsp;(")
+             .append(tube.class_ru.value_or(""))
+             .append(")")
+             .append(new_line);
     return item;
 }
 

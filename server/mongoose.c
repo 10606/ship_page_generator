@@ -4587,6 +4587,11 @@ void mg_tls_init(struct mg_connection *c, const struct mg_tls_opts *opts) {
   return;
 fail:
   c->is_closing = 1;
+  if (tls)
+  {
+    SSL_free(tls->ssl);
+    SSL_CTX_free(tls->ctx);
+  }
   free(tls);
 }
 

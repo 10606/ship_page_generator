@@ -55,7 +55,7 @@ std::string_view menu_item_template::menu_begin =
             "background-color: #ffffff; \n"
         "} \n"
         ".content > a:hover { color: #ff2222; } \n"
-        "input { width: 100% }\n"
+        "input { width: 97%; margin: 10px 20px 20px 0; }\n"
         "h2 { display: inline }\n"
 
         "tr.header    { background: #fff8dc; } \n"

@@ -13,6 +13,9 @@ bool simple_check (std::string_view path)
     {
         if (std::isalpha(c) ||
             std::isdigit(c) ||
+            c == ' ' ||
+            c == '(' ||
+            c == ')' ||
             c == '_' ||
             c == '-')
         {

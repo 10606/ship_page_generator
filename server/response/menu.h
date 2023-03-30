@@ -28,7 +28,7 @@ public:
                                  "<span style=\"float:right;\">(",
                                  ")</span> </button><br><div class = \"content\">\n"};
     
-    html_template new_type_link = {"<button type = \"button\" class = \"collapsible\">\n&nbsp;&nbsp;&nbsp;<a href=\"/ship?id=", 
+    html_template new_type_link = {"<button type = \"button\" class = \"collapsible\">\n&emsp;<a href=\"/ship?id=", 
                                    "\">"};
     html_template_3 new_type = {"", 
                                 "</a><span style=\"float:right;\">(",
