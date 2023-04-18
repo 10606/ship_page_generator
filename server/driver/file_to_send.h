@@ -15,7 +15,8 @@ struct file_to_send_t
     file_to_send_t () noexcept :
         fd(-1),
         offset(0),
-        size(0)
+        size(0),
+        mtime(0)
     {}
     
     file_to_send_t (int _fd) :
@@ -29,6 +30,7 @@ struct file_to_send_t
         if (ret == -1)
             throw std::runtime_error("can't get file size");
         size = stat_value.st_size;
+        mtime = stat_value.st_mtim.tv_sec;
     }
 
     file_to_send_t (std::string_view path) :
@@ -38,11 +40,13 @@ struct file_to_send_t
     file_to_send_t (file_to_send_t && other) noexcept :
         fd(other.fd),
         offset(other.offset),
-        size(other.size)
+        size(other.size),
+        mtime(other.mtime)
     {
         other.fd = -1;
         other.offset = 0;
         other.size = 0;
+        other.mtime = 0;
     }
     
     file_to_send_t & operator = (file_to_send_t && other) noexcept
@@ -52,9 +56,11 @@ struct file_to_send_t
         fd = other.fd;
         offset = other.offset;
         size = other.size;
+        mtime = other.mtime;
         other.fd = -1;
         other.offset = 0;
         other.size = 0;
+        other.mtime = 0;
         return *this;
     }
 
@@ -75,6 +81,7 @@ struct file_to_send_t
     int fd;
     off_t offset;
     off_t size;
+    time_t mtime;
 };
 
 

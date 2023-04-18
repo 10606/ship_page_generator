@@ -72,6 +72,7 @@ struct server
 
         int reuse = 1;
         setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
+        setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &reuse, sizeof(reuse));
 
         int ret = bind(fd, reinterpret_cast <struct sockaddr *> (&addr), sizeof(addr));
         if (ret == -1)

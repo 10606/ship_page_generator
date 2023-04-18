@@ -173,11 +173,7 @@ struct connection
                         std::vector <std::pair <std::string_view, std::string_view> > headers_sv;
                         headers_sv.reserve(headers.size());
                         for (header_t & header : headers)
-                            headers_sv.emplace_back
-                            (
-                                std::string_view(header.key.first.unsafe(), header.key.second.unsafe()),
-                                std::string_view(header.value.first.unsafe(), header.value.second.unsafe())
-                            );
+                            headers_sv.emplace_back(header.to_string_view());
                         handler.handle_head(*this, method_sv, uri_sv, headers_sv);   
                     }
                     
@@ -251,16 +247,38 @@ struct connection
         simple_string response;
         try
         {
-            // TODO Etag, Vary, Range
+            // TODO Range
             file_to_send = file_to_send_t(file_name);
-            response.append("HTTP/1.1 200 OK\r\n")
-                    .append("Content-Length: ")
-                    .append(std::to_string(file_to_send.size))
-                    .append("\r\n\r\n");
+            std::string mtime_str = std::to_string(file_to_send.mtime);
+            std::string mtime_cmp = "\"" + mtime_str + "\"";
+            bool cached = 0;
+            for (header_t & header : headers)
+            {
+                std::pair <std::string_view, std::string_view> header_sv = header.to_string_view();
+                if (header_sv.first == "If-None-Match" &&
+                    header_sv.second == mtime_cmp)
+                    cached = 1;
+            }
+            
+            if (!cached)
+            {
+                response.append("HTTP/1.1 200 OK\r\n")
+                        .append("Content-Length: ")
+                        .append(std::to_string(file_to_send.size))
+                        .append("\r\nEtag: \"")
+                        .append(mtime_str)
+                        .append("\"\r\n\r\n");
+            }
+            else
+            {
+                response.append("HTTP/1.1 304 Not Modified\r\nContent-Length: 0\r\n\r\n");
+                file_to_send = file_to_send_t();
+            }
         }
         catch (...)
         {
             response.append("HTTP/1.1 403 Forbidden\r\n\r\n");
+            file_to_send = file_to_send_t();
         }
         size_t header_size = response.size();
         server_to_client = buffer_t(response.reset(), header_size);
@@ -308,6 +326,15 @@ struct connection
     
     struct header_t
     {
+        std::pair <std::string_view, std::string_view> to_string_view ()
+        {
+            return
+            {
+                std::string_view(  key.first.unsafe(),   key.second.unsafe()),
+                std::string_view(value.first.unsafe(), value.second.unsafe())
+            };
+        }
+
         safe_view key;
         safe_view value;
     };
