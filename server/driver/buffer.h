@@ -16,6 +16,17 @@ struct buffer_t
         total_offset(0)
     {}
 
+    constexpr buffer_t (std::string_view value) noexcept :
+        data(nullptr),
+        offset(0),
+        _size(value.size()),
+        capacity(_size),
+        total_offset(0)
+    {
+        data = new char [value.size()];
+        std::copy(value.begin(), value.end(), data);
+    }
+
     // owned !!
     constexpr buffer_t (char * _data, size_t __size) noexcept :
         data(_data),

@@ -48,11 +48,15 @@ find_library(crypto libcrypto.a)
 
 
 add_executable(ship_server
-    server/https_server.cpp
-    server/upgrade_to_https.cpp
+    server/https_server_custom_driver.cpp
+    server/driver/ssl_socket.cpp
+    
+    # server/https_server.cpp
+    # server/mongoose.c
+    # server/upgrade_to_https.cpp
+
     server/date_to_str.cpp
     server/validate_path.cpp
-    server/mongoose.c
     server/response/ship_armament/response_ship_armament.cpp
     server/response/ship_armament/types/common.cpp
     server/response/ship_armament/types/general.cpp

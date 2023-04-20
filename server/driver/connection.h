@@ -13,7 +13,7 @@
 
 #include "buffer.h"
 #include "file_to_send.h"
-#include "simple_string_char.h"
+#include "simple_string.h"
 
 
 namespace limits
@@ -39,6 +39,7 @@ struct connection
         method{client_to_server.safe_begin(), client_to_server.safe_begin()},
         uri(client_to_server.safe_begin(), client_to_server.safe_begin()),
         headers(),
+        content_length(std::numeric_limits <size_t> ::max()),
         
         server_to_client(),
         socket(std::forward <Args> (args) ...)
@@ -55,6 +56,7 @@ struct connection
         method(std::move(other.method)),
         uri(std::move(other.uri)),
         headers(std::move(other.headers)),
+        content_length(other.content_length),
 
         server_to_client(std::move(other.server_to_client)),
         socket(std::move(other.socket))
@@ -99,10 +101,13 @@ struct connection
         }
         else
         {
-            // FIXME not ignore, pass to handler
+            // TODO content length
             char buffer[4096];
-            socket.read(buffer);
-            return 1;
+            size_t rb = socket.read({buffer, std::min(content_length, std::extent_v <decltype(buffer)>)});
+            handler.read(*this, std::string_view(buffer, rb));
+            if (content_length == 0)
+                end_read();
+            return content_length != 0;
         }
         
         buffer_t::iterator readed = client_read.unsafe();
@@ -209,7 +214,16 @@ struct connection
             [[fallthrough]];
         }
         case read_body:
-            // FIXME not ignore, pass to handler
+            size_t length = std::min(content_length, static_cast <size_t> (client_to_server.end() - readed));
+            if (readed != client_to_server.end())
+                handler.read(*this, std::string_view(readed, length));
+            
+            client_to_server.readed(length);
+            client_read = client_to_server.safe_begin();
+            client_parsed = client_to_server.safe_begin();
+            method = {client_to_server.safe_begin(), client_to_server.safe_begin()};
+            uri = {client_to_server.safe_begin(), client_to_server.safe_begin()};
+            headers.clear();
             break;
         }
         
@@ -236,9 +250,16 @@ struct connection
         }
     }
     
-    void send (char * _data, size_t _size)
+    void end_read ()
     {
-        server_to_client = buffer_t(_data, _size);
+        handler.end_read(*this);
+        direction = send_response;
+    }
+    
+    template <typename ... Args>
+    void send (Args && ... args)
+    {
+        server_to_client = buffer_t(std::forward <Args> (args) ...);
         direction = send_response;
     }
     
@@ -326,6 +347,15 @@ struct connection
     
     struct header_t
     {
+        header_t
+        (
+            safe_view _key,
+            safe_view _value
+        ) :
+            key(_key),
+            value(_value)
+        {}
+    
         std::pair <std::string_view, std::string_view> to_string_view ()
         {
             return
@@ -339,6 +369,7 @@ struct connection
         safe_view value;
     };
     std::vector <header_t> headers;
+    size_t content_length;
     
     buffer_t server_to_client;
     file_to_send_t file_to_send;

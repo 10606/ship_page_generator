@@ -162,7 +162,9 @@ struct server
                 it_raw->second.read();
             if (event.events & EPOLLOUT)
                 it_raw->second.write();
-            if (event.events & epoll.event_mask_err)
+            if (event.events & EPOLLRDHUP)
+                it_raw->second.end_read();
+            if (event.events & (EPOLLERR | EPOLLHUP))
             {
                 epoll.del(it_raw->first);
                 connections.erase(it_raw);

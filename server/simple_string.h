@@ -1,5 +1,5 @@
-#ifndef SIMPLE_STRING_H
-#define SIMPLE_STRING_H
+#ifndef SIMPLE_STRING_CHAR_H
+#define SIMPLE_STRING_CHAR_H
 
 #include <stddef.h>
 #include <string_view>
@@ -23,7 +23,7 @@ struct simple_string
 
     ~simple_string () noexcept
     {
-        free(_data);
+        delete [] _data;
     }
     
     void reserve (size_t value)
@@ -32,16 +32,16 @@ struct simple_string
             realloc(value);
     }
 
-    unsigned char const * data () const noexcept
+    char const * data () const noexcept
     {
         return _data;
     }
     
-    unsigned char * reset () noexcept
+    char * reset () noexcept
     {
         _size = 0;
         capacity = 0;
-        unsigned char * answer = _data;
+        char * answer = _data;
         _data = nullptr;
         return answer;
     }
@@ -79,18 +79,16 @@ struct simple_string
     }
 
 private:
-    unsigned char * _data;
+    char * _data;
     size_t _size;
     size_t capacity;
     
     void realloc (size_t value)
     {
-        unsigned char * new_data = static_cast <unsigned char *> (malloc(value));
-        if (!new_data)
-            throw std::runtime_error("can't alloc");
+        char * new_data = new char [value];
         if (_size > 0)
             std::memcpy(new_data, _data, _size);
-        free(_data);
+        delete [] _data;
         _data = new_data;
         capacity = value;
     }
@@ -98,4 +96,5 @@ private:
 
 
 #endif
+
 

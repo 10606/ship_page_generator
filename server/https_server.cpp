@@ -242,6 +242,7 @@ int main ()
     {
         set_sig_handler(SIGTERM, handler_exit);
         set_sig_handler(SIGINT, handler_exit);
+        set_sig_handler(SIGPIPE, SIG_IGN);
         https_server server{{"http://[::]:8080", "https://[::]:8443"}};
 
         while (run)
