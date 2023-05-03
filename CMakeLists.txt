@@ -83,6 +83,7 @@ add_executable(ship_server
     get_from_postgres/armament_info.cpp
     get_from_postgres/aircraft_info.cpp
     get_from_postgres/pictures.cpp
+    get_from_postgres/propulsion.cpp
 )
 
 add_executable(tests

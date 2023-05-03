@@ -57,6 +57,7 @@ struct ship_requests
         ship_info(&db),
         ship_armament(&db),
         ship_armament_lt(&db),
+        ship_propulsion(&db),
         armament_info(&db),
         aircraft_info(&db),
         ship_event(&db),
@@ -163,6 +164,61 @@ struct ship_requests
 
     private:
         ship_database * db;
+    };
+
+    
+    struct propulsion_t
+    {
+        propulsion_t (ship_database * _db) :
+            db(_db)
+        {}
+    private:
+        struct context;
+
+    public:
+        struct cilinder;
+
+        struct propulsion;
+        std::vector <std::unique_ptr <propulsion> > get_propulsion (context const & storage, std::string_view where = std::string_view());
+
+        struct diesel;
+        std::vector <diesel> get_diesel (std::string_view where = std::string_view());
+
+        struct external_burn;
+        std::vector <external_burn> get_external_burn (context const & storage, std::string_view where = std::string_view());
+
+        // used for external burn
+            struct steam_turbine;
+            std::vector <steam_turbine> get_steam_turbine (std::string_view where = std::string_view());
+     
+            struct steam_turbine_reverse;
+            std::vector <steam_turbine_reverse> get_steam_turbine_reverse (std::string_view where = std::string_view());
+     
+            struct steam_turbine_cruise;
+            std::vector <steam_turbine_cruise> get_steam_turbine_cruise (std::string_view where = std::string_view());
+     
+            struct steam_machine;
+            std::vector <steam_machine> get_steam_machine (std::string_view where = std::string_view());
+            
+ 
+        propulsion_t (propulsion_t &&) = delete;
+        propulsion_t (propulsion_t const &) = delete;
+        propulsion_t & operator = (propulsion_t &&) = delete;
+        propulsion_t & operator = (propulsion_t const &) = delete;
+
+        ship_database * db;
+    private:
+
+        struct all_items;
+        struct items;
+        
+        template <typename Object, std::vector <items> (Object::* member), typename Items>
+        void add_items
+        (
+            std::vector <Object> & objects_list,
+            std::vector <Items> const & items_list,
+            std::string_view from
+        );
     };
 
     
@@ -304,6 +360,7 @@ struct ship_requests
     ship_info_t ship_info;
     ship_armament_t ship_armament;
     ship_armament_lt_t ship_armament_lt;
+    propulsion_t ship_propulsion;
     armament_info_t armament_info;
     aircraft_info_t aircraft_info;
     ship_event_t ship_event;
