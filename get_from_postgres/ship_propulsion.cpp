@@ -73,6 +73,12 @@ std::string ship_requests::propulsion_t::diesel::description (context const & st
         answer.append(" объемом ")
               .append(std::to_string(*volume_of_engine))
               .append("л");
+    if (cilinders.diameter && cilinders.stroke)
+        answer.append(" (\u2300")
+              .append(std::to_string(*cilinders.diameter))
+              .append("мм, \u2195")
+              .append(std::to_string(*cilinders.stroke))
+              .append("мм)");
     answer.append("\n")
           .append(propulsion::description(storage));
     return answer;
@@ -126,7 +132,7 @@ ship_requests::propulsion_t::context::context (propulsion_t & propulsion) :
 
 std::vector <ship_requests::propulsion_t::steam_turbine> ship_requests::propulsion_t::get_steam_turbine (std::string_view where)
 {
-    return request_to_db <steam_turbine> (db, "select id, name_en, in_service from steam_turbine ", where);
+    return request_to_db <steam_turbine> (db, "select id, name_en, in_service from only steam_turbine ", where);
 }
 
 std::vector <ship_requests::propulsion_t::steam_turbine_reverse> ship_requests::propulsion_t::get_steam_turbine_reverse (std::string_view where)
@@ -142,7 +148,7 @@ std::vector <ship_requests::propulsion_t::steam_turbine_cruise> ship_requests::p
 std::vector <ship_requests::propulsion_t::steam_machine> ship_requests::propulsion_t::get_steam_machine (std::string_view where)
 {
     std::vector <steam_machine> answer =
-        request_to_db <steam_machine> (db, "select id, name_en, in_service from steam_turbine_cruise ", where);
+        request_to_db <steam_machine> (db, "select id, name_en, in_service from steam_machine ", where);
     
     struct steam_machine_cilinders
     {
@@ -313,5 +319,32 @@ std::string ship_requests::propulsion_t::steam_machine::description () const
         }
     }
     return answer;
+}
+
+
+
+ship_requests::propulsion_t::ship_propulsion::ship_propulsion (pqxx::row const & value) :
+    ship_id         (value[0].as <int> ()),
+    propulsion_id   (value[1].as <int> ()),
+    count           (value[2].as <uint32_t> ()),
+    date_from(),
+    date_to()
+{
+    std::optional <std::string> str_date_from = value[3].as <std::optional <std::string> > ();
+    std::optional <std::string> str_date_to   = value[4].as <std::optional <std::string> > ();
+    date_from = transform_optional(str_date_from, get_date);
+    date_to   = transform_optional(str_date_to,   get_date);
+}
+
+std::vector <ship_requests::propulsion_t::ship_propulsion> ship_requests::propulsion_t::get_ship_propulsion (std::string_view where)
+{
+    return request_to_db <ship_propulsion>
+    (
+        db,
+        "select ship_id, propulsion_id, amount, \
+                date_from, date_to \
+         from ship_propulsion ",
+        where
+    );
 }
 

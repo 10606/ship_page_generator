@@ -172,10 +172,8 @@ struct ship_requests
         propulsion_t (ship_database * _db) :
             db(_db)
         {}
-    private:
+        
         struct context;
-
-    public:
         struct cilinder;
 
         struct propulsion;
@@ -200,6 +198,8 @@ struct ship_requests
             struct steam_machine;
             std::vector <steam_machine> get_steam_machine (std::string_view where = std::string_view());
             
+        struct ship_propulsion;
+        std::vector <ship_propulsion> get_ship_propulsion (std::string_view where = std::string_view());
  
         propulsion_t (propulsion_t &&) = delete;
         propulsion_t (propulsion_t const &) = delete;

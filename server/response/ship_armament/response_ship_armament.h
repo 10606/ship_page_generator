@@ -13,6 +13,9 @@
 #include "date_to_str.h"
 #include "ship_requests.h"
 #include "ship_armament.h"
+#include "ship_names.h"
+#include "simple_string.h"
+
 #include "general.h"
 #include "guns.h"
 #include "torpedo.h"
@@ -20,8 +23,7 @@
 #include "searchers.h"
 #include "catapult.h"
 #include "aircraft.h"
-#include "ship_names.h"
-#include "simple_string.h"
+#include "propulsion.h"
 
 
 struct rows_table_template
@@ -141,13 +143,14 @@ struct ship_armament
     ship_armament (ship_requests * _database, table_template _table = table_template(style, "class = \"header\"")) :
         table(_table),
         names(header_column(), _database),
-        general      (rows_table_template("class = \"general\""  ), _database, table.new_line),
-        guns         (rows_table_template("class = \"guns\""     ), _database, table.new_line),
-        torpedo_tubes(rows_table_template("class = \"torpedo\""  ), _database, table.new_line),
-        throwers     (rows_table_template("class = \"throwers\"" ), _database, table.new_line),
-        searchers    (rows_table_template("class = \"searchers\""), _database, table.new_line),
-        catapult     (rows_table_template("class = \"catapult\"" ), _database, table.new_line),
-        aircraft     (rows_table_template("class = \"aircraft\"" ), _database, table.new_line),
+        general      (rows_table_template("class = \"general\""     ), _database, table.new_line),
+        guns         (rows_table_template("class = \"guns\""        ), _database, table.new_line),
+        torpedo_tubes(rows_table_template("class = \"torpedo\""     ), _database, table.new_line),
+        throwers     (rows_table_template("class = \"throwers\""    ), _database, table.new_line),
+        searchers    (rows_table_template("class = \"searchers\""   ), _database, table.new_line),
+        catapult     (rows_table_template("class = \"catapult\""    ), _database, table.new_line),
+        aircraft     (rows_table_template("class = \"aircraft\""    ), _database, table.new_line),
+        propulsion   (rows_table_template("class = \"propulsion\""  ), _database, table.new_line),
         default_date()
     {
         std::vector <ship_requests::ship_info_t::list> ships_info = _database->ship_info.get_list();
@@ -174,6 +177,7 @@ private:
     ships_responser <ship_searchers>     searchers;
     ships_responser <ship_catapult>      catapult;
     ships_responser <ship_aircrafts>     aircraft;
+    ships_responser <ship_propulsion>    propulsion;
 
     std::vector <std::pair <int, std::chrono::year_month_day> > parse_query__ship_year (std::string_view query);
     std::unordered_map <int, std::chrono::year_month_day> default_date;

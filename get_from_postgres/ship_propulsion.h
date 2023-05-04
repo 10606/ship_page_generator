@@ -1,5 +1,5 @@
-#ifndef PROPULSION_H
-#define PROPULSION_H
+#ifndef SHIP_PROPULSION_H
+#define SHIP_PROPULSION_H
 
 #include "ship_requests.h"
 
@@ -79,7 +79,7 @@ void ship_requests::propulsion_t::add_items
     std::string_view from
 )
 {
-    std::vector <all_items> object_use_items = request_to_db <all_items> (db, "select objectid, item_id, count from  ", from);
+    std::vector <all_items> object_use_items = request_to_db <all_items> (db, "select object_id, item_id, count from  ", from);
     std::map <int, size_t> object_mapping = index_mapping(object_list);
     std::map <int, size_t> item_mapping = index_mapping(item_list);
     for (all_items item_ : object_use_items)
@@ -305,6 +305,19 @@ struct ship_requests::propulsion_t::steam_machine : context::machine_type_t
         std::optional <uint32_t> count;
     };
     std::vector <cilinders_descr> cilinders;
+};
+
+
+
+struct ship_requests::propulsion_t::ship_propulsion
+{
+    ship_propulsion (pqxx::row const & value);
+    
+    int ship_id;
+    int propulsion_id;
+    uint32_t count;
+    std::optional <std::chrono::year_month_day> date_from;
+    std::optional <std::chrono::year_month_day> date_to;
 };
 
 

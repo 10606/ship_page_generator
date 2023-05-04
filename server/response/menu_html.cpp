@@ -66,6 +66,7 @@ std::string_view menu_item_template::menu_begin =
         "tr.searchers { background: #f8ffff; } \n"
         "tr.catapult  { background: #fff8dc; } \n"
         "tr.aircraft  { background: #dbffff; } \n"
+        "tr.propulsion{ background: #dfdfdf; } \n"
         "th { min-width: 180px } \n"
         ".short_info th { min-width: 120px } \n"
         ".short_info a       { color: #222222 } \n"

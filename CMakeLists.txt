@@ -61,6 +61,7 @@ add_executable(ship_server
     server/response/ship_armament/types/searchers.cpp
     server/response/ship_armament/types/catapult.cpp
     server/response/ship_armament/types/aircraft.cpp
+    server/response/ship_armament/types/propulsion.cpp
     server/response/parse_query.cpp
     server/response/armament/types/response_torpedo.cpp
     server/response/armament/types/response_guns.cpp
@@ -83,7 +84,7 @@ add_executable(ship_server
     get_from_postgres/armament_info.cpp
     get_from_postgres/aircraft_info.cpp
     get_from_postgres/pictures.cpp
-    get_from_postgres/propulsion.cpp
+    get_from_postgres/ship_propulsion.cpp
 )
 
 add_executable(tests

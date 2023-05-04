@@ -325,6 +325,7 @@ void ship_armament::response (simple_string & answer, std::string_view query, pi
         add_armament(answer, searchers,     ship_year, modernizations);
         add_armament(answer, catapult,      ship_year, modernizations);
         add_armament(answer, aircraft,      ship_year, modernizations);
+        add_armament(answer, propulsion,    ship_year, modernizations);
         
         answer.append(table.end);
     }

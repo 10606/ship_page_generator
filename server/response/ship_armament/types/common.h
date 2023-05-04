@@ -13,6 +13,17 @@
 typedef std::unordered_map <int, std::optional <std::chrono::year_month_day> > sunk_dates_t;
 sunk_dates_t const & sunk_dates ();
 
+template <typename T>
+static const constexpr bool is_pointer_v = 
+    std::is_pointer_v <T> ||
+    requires (T a)
+    {
+        typename T::pointer;
+        typename T::element_type;
+        {a.operator -> ()} -> std::same_as <typename T::pointer>;
+        {a.operator *  ()} -> std::same_as <typename T::element_type &>;
+    };
+
 template 
 <
     typename T,
@@ -44,7 +55,11 @@ void fill_data_structures
     for (size_t i = 0; i != items_raw.size(); ++i)
     {
         item_raw_t const & item = items_raw[i];
-        int item_id = item.id;
+        int item_id;
+        if constexpr (!is_pointer_v <item_raw_t>)
+            item_id = item.id;
+        else
+            item_id = item->id;
         if (used.find(item_id) == used.end())
             continue;
         items_index.insert({item_id, (object.*items).size()});
