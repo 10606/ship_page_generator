@@ -99,21 +99,26 @@ std::vector <ship_requests::propulsion_t::diesel> ship_requests::propulsion_t::g
 
 
 ship_requests::propulsion_t::context::boiling_type_t::boiling_type_t (pqxx::row const & value) :
-    id          (value[0].as <int> ()),
-    name        (value[1].as <std::optional <std::string> > ()),
-    value       (value[2].as <uint32_t> ()),
-    temperature (value[3].as <std::optional <double> > ()),
-    pressure    (value[4].as <std::optional <double> > ())
+    id              (value[0].as <int> ()),
+    name            (value[1].as <std::optional <std::string> > ()),
+    value           (value[2].as <uint32_t> ()),
+    temperature     (value[3].as <std::optional <double> > ()),
+    pressure        (value[4].as <std::optional <double> > ()),
+    heating_surface (value[5].as <std::optional <double> > ())
 {}
     
 
 ship_requests::propulsion_t::context::machine_type_t::machine_type_t (pqxx::row const & value) :
     id  (value[0].as <int> ()),
-    name(value[1].as <std::optional <std::string> > ())
-{}
+    name(value[1].as <std::optional <std::string> > ()),
+    in_service()
+{
+    std::optional <std::string> str_in_service = value[2].as <std::optional <std::string> > ();
+    in_service = transform_optional(str_in_service, get_date);
+}
 
 ship_requests::propulsion_t::context::context (propulsion_t & propulsion) :
-    boiling_types(request_to_db <boiling_type_t> (propulsion.db, "select id, name_en, value, temperature, pressure from boiling_types", std::string_view()))
+    boiling_types(request_to_db <boiling_type_t> (propulsion.db, "select id, name_en, value, temperature, pressure, heating_surface from boiling_types", std::string_view()))
 {
     std::vector <steam_turbine>         steam_turbines          = propulsion.get_steam_turbine();
     std::vector <steam_turbine_reverse> steam_turbines_reverse  = propulsion.get_steam_turbine_reverse();
@@ -132,17 +137,17 @@ ship_requests::propulsion_t::context::context (propulsion_t & propulsion) :
 
 std::vector <ship_requests::propulsion_t::steam_turbine> ship_requests::propulsion_t::get_steam_turbine (std::string_view where)
 {
-    return request_to_db <steam_turbine> (db, "select id, name_en, in_service from only steam_turbine ", where);
+    return request_to_db <steam_turbine> (db, "select id, name_en, in_service, rpm, power, stages from only steam_turbine ", where);
 }
 
 std::vector <ship_requests::propulsion_t::steam_turbine_reverse> ship_requests::propulsion_t::get_steam_turbine_reverse (std::string_view where)
 {
-    return request_to_db <steam_turbine_reverse> (db, "select id, name_en, in_service from steam_turbine_reverse ", where);
+    return request_to_db <steam_turbine_reverse> (db, "select id, name_en, in_service, rpm, power, stages from steam_turbine_reverse ", where);
 }
 
 std::vector <ship_requests::propulsion_t::steam_turbine_cruise> ship_requests::propulsion_t::get_steam_turbine_cruise (std::string_view where)
 {
-    return request_to_db <steam_turbine_cruise> (db, "select id, name_en, in_service from steam_turbine_cruise ", where);
+    return request_to_db <steam_turbine_cruise> (db, "select id, name_en, in_service, rpm, power, stages from steam_turbine_cruise ", where);
 }
 
 std::vector <ship_requests::propulsion_t::steam_machine> ship_requests::propulsion_t::get_steam_machine (std::string_view where)
@@ -271,12 +276,19 @@ std::string ship_requests::propulsion_t::context::boiling_type_t::description ()
         answer.append(" ")
               .append(std::to_string(*pressure))
               .append("атм");
+    if (heating_surface)
+        answer.append(" ")
+              .append(std::to_string(*heating_surface))
+              .append("м^2");
     return answer;
 }
 
 
 ship_requests::propulsion_t::steam_turbine::steam_turbine (pqxx::row const & value) :
-    machine_type_t(value)
+    machine_type_t(value),
+    rpm     (value[3].as <std::optional <double> > ()),
+    power   (value[4].as <std::optional <double> > ()),
+    stages  (value[5].as <std::optional <uint32_t> > ())
 {}
 
 ship_requests::propulsion_t::steam_turbine_reverse::steam_turbine_reverse (pqxx::row const & value) :

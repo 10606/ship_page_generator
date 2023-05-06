@@ -85,7 +85,7 @@ void ship_requests::propulsion_t::add_items
     for (all_items item_ : object_use_items)
     {
         std::map <int, size_t> ::iterator object = object_mapping.find(item_.object_id);
-        std::map <int, size_t> ::iterator item = object_mapping.find(item_.item_id);
+        std::map <int, size_t> ::iterator item = item_mapping.find(item_.item_id);
         if (object != object_mapping.end() && item != item_mapping.end())
             (object_list[object->second].*member).emplace_back(item_, item->second);
     }
@@ -126,6 +126,7 @@ struct ship_requests::propulsion_t::context
         std::bitset <total> value;
         std::optional <double> temperature;
         std::optional <double> pressure;
+        std::optional <double> heating_surface;
     };
     
     struct machine_type_t
@@ -137,6 +138,7 @@ struct ship_requests::propulsion_t::context
 
         int id;
         std::optional <std::string> name;
+        std::optional <std::chrono::year_month_day> in_service;
     };
     
     std::vector <boiling_type_t> boiling_types;
@@ -253,8 +255,24 @@ struct ship_requests::propulsion_t::steam_turbine : context::machine_type_t
         if (name)
             answer.append(" ")
                   .append(*name);
+        if (power)
+            answer.append(" ")
+                  .append(std::to_string(*power))
+                  .append("л.с.");
+        if (rpm)
+            answer.append(" ")
+                  .append(std::to_string(*rpm))
+                  .append("об/мин");
+        if (stages)
+            answer.append(" ")
+                  .append(std::to_string(*stages))
+                  .append(" ступеней");
         return answer;
     };
+    
+    std::optional <double> rpm;
+    std::optional <double> power;
+    std::optional <uint32_t> stages;
 };
 
 struct ship_requests::propulsion_t::steam_turbine_reverse : steam_turbine

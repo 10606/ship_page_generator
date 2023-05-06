@@ -56,7 +56,10 @@ std::vector <ship_propulsion::response_t> ship_propulsion::response (int id, std
         if (between(propulsion.date_from, date, propulsion.date_to))
         {
             response_t item = propulsions[propulsion.propulsion_id];
-            add_value(item.data_begin, propulsion.count);
+            if (propulsion.count > 1)
+                add_value(item.data_begin, propulsion.count);
+            else
+                item.data_begin[0] = '\0';
             answer.push_back(item);
             answer.back().group_name = group_name;
         }
