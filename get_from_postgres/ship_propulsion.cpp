@@ -1,7 +1,6 @@
 #include "propulsion.h"
 
 
-
 ship_requests::propulsion_t::cilinder::cilinder (pqxx::row const & value, size_t start_index) :
     diameter(value[start_index + 0].as <std::optional <double> > ()),
     stroke  (value[start_index + 1].as <std::optional <double> > ())
@@ -56,31 +55,32 @@ ship_requests::propulsion_t::diesel::diesel (pqxx::row const & value) :
     }
 }
     
-std::string ship_requests::propulsion_t::diesel::description (context const & storage) const
+std::string ship_requests::propulsion_t::diesel::description (print_context print, context const & storage) const
 {
     std::string answer;
-    answer.append("x ");
     if (tact)
         answer.append(to_string(*tact));
     if (cilinder_count)
         answer.append(std::to_string(*cilinder_count))
               .append("-цилиндровый ");
-    answer.append("дизель");
+    answer.append(print.bold_begin)
+          .append("дизель");
     if (name)
         answer.append(" типа")
               .append(*name);
+    answer.append(print.bold_end);
     if (volume_of_engine)
         answer.append(" объемом ")
-              .append(std::to_string(*volume_of_engine))
+              .append(to_string_10(*volume_of_engine))
               .append("л");
     if (cilinders.diameter && cilinders.stroke)
         answer.append(" (\u2300")
-              .append(std::to_string(*cilinders.diameter))
+              .append(to_string_10(*cilinders.diameter))
               .append("мм, \u2195")
-              .append(std::to_string(*cilinders.stroke))
+              .append(to_string_10(*cilinders.stroke))
               .append("мм)");
-    answer.append("\n")
-          .append(propulsion::description(storage));
+    answer.append(print.new_line)
+          .append(propulsion::description(print, storage));
     return answer;
 }
 
@@ -211,46 +211,51 @@ std::vector <ship_requests::propulsion_t::external_burn> ship_requests::propulsi
     return answer;
 }
 
-std::string ship_requests::propulsion_t::external_burn::description (context const & storage) const
+std::string ship_requests::propulsion_t::external_burn::description (print_context print, context const & storage) const
 {
     std::string answer;
     for (items boiling_type : boiling_types)
     {
         if (boiling_type.count)
         {
-            answer.append(std::to_string(*boiling_type.count));
-            if ((*boiling_type.count % 10 == 1) && (*boiling_type.count != 11))
-                answer.append(" котел");
-            else if ((*boiling_type.count % 10 <= 4) && ((*boiling_type.count / 10) % 10 != 1))
-                answer.append(" котла"); // 12 "котлов" все-таки...
-            else
-                answer.append(" котлов");
+            answer.append(print.bold_begin)
+                  .append(std::to_string(*boiling_type.count))
+                  .append(print.bold_end);
+            declension(answer, *boiling_type.count, {" котел", " котла", " котлов"});
         }
         else
             answer.append("котлы");
-        answer.append(storage.boiling_types[boiling_type.index].description())
-              .append("\n");
+        answer.append(storage.boiling_types[boiling_type.index].description(print))
+              .append(print.new_line);
     }
+    answer.append(print.new_line);
     for (items machine_type : machine_types)
     {
         if (machine_type.count)
-            answer.append(std::to_string(*machine_type.count))
+            answer.append(print.bold_begin)
+                  .append(std::to_string(*machine_type.count))
+                  .append(print.bold_end)
                   .append("x ");
-        answer.append(storage.machine_types[machine_type.index]->description())
-              .append("\n");
+        answer.append(storage.machine_types[machine_type.index]->description(print))
+              .append(print.new_line);
     }
-    answer.append(propulsion::description(storage));
+    answer.append(print.new_line);
+    answer.append(propulsion::description(print, storage));
     return answer;
 }
 
 
-std::string ship_requests::propulsion_t::context::boiling_type_t::description () const
+std::string ship_requests::propulsion_t::context::boiling_type_t::description (print_context print) const
 {
     std::string answer;
     if (name)
         answer.append(" типа ")
-              .append(*name);
+              .append(print.bold_begin)
+              .append(*name)
+              .append(print.bold_end);
     std::bitset <total> cur_value = value;
+    answer.append(print.new_line)
+          .append(print.tab);
     if (cur_value.any())
     {
         answer += " с ";
@@ -270,15 +275,15 @@ std::string ship_requests::propulsion_t::context::boiling_type_t::description ()
     }
     if (temperature)
         answer.append(" ")
-              .append(std::to_string(*temperature))
+              .append(to_string_10(*temperature))
               .append("°C");
     if (pressure)
         answer.append(" ")
-              .append(std::to_string(*pressure))
+              .append(to_string_10(*pressure))
               .append("атм");
     if (heating_surface)
         answer.append(" ")
-              .append(std::to_string(*heating_surface))
+              .append(to_string_10(*heating_surface))
               .append("м^2");
     return answer;
 }
@@ -290,6 +295,35 @@ ship_requests::propulsion_t::steam_turbine::steam_turbine (pqxx::row const & val
     power   (value[4].as <std::optional <double> > ()),
     stages  (value[5].as <std::optional <uint32_t> > ())
 {}
+
+std::string ship_requests::propulsion_t::steam_turbine::description (print_context print, std::string_view type) const
+{
+    std::string answer;
+    answer.append(type)
+          .append(print.bold_begin);
+    if (name)
+        answer.append(" ")
+              .append(*name);
+    answer.append(print.bold_end)
+          .append(print.new_line)
+          .append(print.tab);
+    if (power)
+        answer.append(" ")
+              .append(to_string_10(*power))
+              .append("л.с.");
+    if (rpm)
+        answer.append(" ")
+              .append(to_string_10(*rpm))
+              .append("об/мин");
+    if (stages)
+    {
+        answer.append(" ")
+              .append(std::to_string(*stages));
+        declension(answer, *stages, {" ступень", " ступени", " ступеней"});
+    }
+    return answer;
+}
+
 
 ship_requests::propulsion_t::steam_turbine_reverse::steam_turbine_reverse (pqxx::row const & value) :
     steam_turbine(value)
@@ -305,11 +339,14 @@ ship_requests::propulsion_t::steam_machine::steam_machine (pqxx::row const & val
     machine_type_t(value)
 {}
     
-std::string ship_requests::propulsion_t::steam_machine::description () const
+std::string ship_requests::propulsion_t::steam_machine::description (print_context print) const
 {
-    std::string answer = "паровая машина";
+    std::string answer;
+    answer.append(print.bold_begin)
+          .append("паровая машина");
     if (name)
         answer.append(*name);
+    answer.append(print.bold_end);
     if (cilinders.empty()) {
         answer.append(" цилиндры: ");
         for (size_t i = 0; i != cilinders.size(); ++i)
@@ -320,11 +357,11 @@ std::string ship_requests::propulsion_t::steam_machine::description () const
                       .append("x ");
             if (cilinder.value.diameter)
                 answer.append("D = ")
-                      .append(std::to_string(*cilinder.value.diameter))
+                      .append(to_string_10(*cilinder.value.diameter))
                       .append("mm ");
             if (cilinder.value.stroke)
                 answer.append("h = ")
-                      .append(std::to_string(*cilinder.value.stroke))
+                      .append(to_string_10(*cilinder.value.stroke))
                       .append("mm ");
             if (i + 1 != cilinders.size())
                 answer.append(", ");

@@ -34,7 +34,7 @@ struct ship_propulsion
         bool group;
         bool compare;
         std::string_view group_name;
-        char data_begin[16];
+        std::string data_begin;
         std::string_view data_end;
     };
 

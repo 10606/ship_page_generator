@@ -13,6 +13,7 @@
 #include <memory>
 #include <vector>
 
+#include "date_to_str.h"
 #include "template_request.h"
 
 
@@ -119,7 +120,7 @@ struct ship_requests::propulsion_t::context
             {"нефтяным"}
         }};
 
-        std::string description () const;
+        std::string description (print_context print) const;
             
         int id;
         std::optional <std::string> name;
@@ -134,7 +135,7 @@ struct ship_requests::propulsion_t::context
         machine_type_t (pqxx::row const & value);
 
         virtual ~machine_type_t () = default;
-        virtual std::string description () const = 0;
+        virtual std::string description (print_context print) const = 0;
 
         int id;
         std::optional <std::string> name;
@@ -144,6 +145,16 @@ struct ship_requests::propulsion_t::context
     std::vector <boiling_type_t> boiling_types;
     std::vector <std::unique_ptr <machine_type_t> > machine_types;
 };
+
+
+struct ship_requests::propulsion_t::print_context
+{
+    std::string_view tab = "    ";
+    std::string_view new_line = "\n";
+    std::string_view bold_begin = "";
+    std::string_view bold_end = "";
+};
+
 
 struct ship_requests::propulsion_t::cilinder
 {
@@ -165,17 +176,21 @@ struct ship_requests::propulsion_t::propulsion
     propulsion & operator = (propulsion &&) = default;
     virtual ~propulsion () = default;
     
-    virtual std::string description (context const &) const
+    virtual std::string description (print_context print, context const &) const
     {
         std::string answer;
         if (max_power)
             answer.append("мощность: ")
-                  .append(std::to_string(*max_power))
-                  .append("л.с.\n");
+                  .append(print.bold_begin)
+                  .append(to_string_10(*max_power))
+                  .append("л.с.")
+                  .append(print.bold_end)
+                  .append(print.new_line);
         if (mass)
             answer.append("масса: ")
-                  .append(std::to_string(*mass))
-                  .append("кг\n");
+                  .append(to_string_10(*mass))
+                  .append("кг")
+                  .append(print.new_line);
         return answer;
     };
     
@@ -197,7 +212,7 @@ struct ship_requests::propulsion_t::diesel : propulsion
     diesel & operator = (diesel &&) = default;
     virtual ~diesel () = default;
 
-    virtual std::string description (context const &) const;
+    virtual std::string description (print_context print, context const &) const;
     
     enum tact_t
     {
@@ -235,7 +250,7 @@ struct ship_requests::propulsion_t::external_burn : propulsion
     external_burn & operator = (external_burn &&) = default;
     virtual ~external_burn () = default;
     
-    virtual std::string description (context const & storage) const;
+    virtual std::string description (print_context print, context const & storage) const;
     
     std::vector <items> boiling_types;
     std::vector <items> machine_types;
@@ -248,27 +263,12 @@ struct ship_requests::propulsion_t::steam_turbine : context::machine_type_t
 
     virtual ~steam_turbine () = default;
     
-    virtual std::string description () const
+    virtual std::string description (print_context print) const
     {
-        std::string answer;
-        answer.append("турбина");
-        if (name)
-            answer.append(" ")
-                  .append(*name);
-        if (power)
-            answer.append(" ")
-                  .append(std::to_string(*power))
-                  .append("л.с.");
-        if (rpm)
-            answer.append(" ")
-                  .append(std::to_string(*rpm))
-                  .append("об/мин");
-        if (stages)
-            answer.append(" ")
-                  .append(std::to_string(*stages))
-                  .append(" ступеней");
-        return answer;
+        return description(print, "турбина");
     };
+
+    std::string description (print_context print, std::string_view type) const;
     
     std::optional <double> rpm;
     std::optional <double> power;
@@ -281,9 +281,9 @@ struct ship_requests::propulsion_t::steam_turbine_reverse : steam_turbine
 
     virtual ~steam_turbine_reverse () = default;
     
-    virtual std::string description () const
+    virtual std::string description (print_context print) const
     {
-        return steam_turbine::description().append(" заднего хода");
+        return steam_turbine::description(print, "турбина заднего хода");
     }
 };
 
@@ -293,9 +293,9 @@ struct ship_requests::propulsion_t::steam_turbine_cruise : steam_turbine
 
     virtual ~steam_turbine_cruise () = default;
     
-    virtual std::string description () const
+    virtual std::string description (print_context print) const
     {
-        return steam_turbine::description().append(" крейсерского хода");
+        return steam_turbine::description(print, "турбина крейсерского хода");
     }
 };
 
@@ -306,7 +306,7 @@ struct ship_requests::propulsion_t::steam_machine : context::machine_type_t
 
     virtual ~steam_machine () = default;
     
-    virtual std::string description () const;
+    virtual std::string description (print_context print) const;
     
     struct cilinders_descr
     {

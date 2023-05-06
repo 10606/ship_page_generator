@@ -174,6 +174,7 @@ struct ship_requests
         {}
         
         struct context;
+        struct print_context;
         struct cilinder;
 
         struct propulsion;

@@ -57,7 +57,12 @@ std::vector <ship_propulsion::response_t> ship_propulsion::response (int id, std
         {
             response_t item = propulsions[propulsion.propulsion_id];
             if (propulsion.count > 1)
+            {
+                item.data_begin.append("<b>");
                 add_value(item.data_begin, propulsion.count);
+                declension(item.data_begin, propulsion.count, {" установка", " установки", " установок"});
+                item.data_begin.append("</b>:<br><br>");
+            }
             else
                 item.data_begin[0] = '\0';
             answer.push_back(item);
@@ -74,8 +79,15 @@ ship_propulsion::p_response_t ship_propulsion::partial_response (propulsion_t co
     item.group = 0;
     item.compare = 0;
     
-    item.data += " ";
-    item.data += propulsion->description(storage);
+    ship_requests::propulsion_t::print_context print
+    {
+        .tab = "&nbsp;&nbsp;&nbsp;&nbsp;", 
+        .new_line = "<br>", 
+        .bold_begin = "<b>", 
+        .bold_end = "</b>"
+    };
+    
+    item.data += propulsion->description(print, storage);
     return item;
 }
     
