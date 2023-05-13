@@ -254,11 +254,11 @@ std::string ship_requests::propulsion_t::context::boiling_type_t::description (p
               .append(*name)
               .append(print.bold_end);
     std::bitset <total> cur_value = value;
-    answer.append(print.new_line)
-          .append(print.tab);
     if (cur_value.any())
     {
-        answer += " с ";
+        answer.append(print.new_line)
+              .append(print.tab)
+              .append(" с ");
         for (size_t i = 0; i != boiling_type_t::total; ++i)
         {
             if (cur_value[0])
@@ -273,6 +273,9 @@ std::string ship_requests::propulsion_t::context::boiling_type_t::description (p
         }
         answer += " отоплением";
     }
+    if (temperature || pressure || heating_surface)
+        answer.append(print.new_line)
+              .append(print.tab);
     if (temperature)
         answer.append(" ")
               .append(to_string_10(*temperature))
@@ -304,9 +307,10 @@ std::string ship_requests::propulsion_t::steam_turbine::description (print_conte
     if (name)
         answer.append(" ")
               .append(*name);
-    answer.append(print.bold_end)
-          .append(print.new_line)
-          .append(print.tab);
+    answer.append(print.bold_end);
+    if (power || rpm || stages)
+        answer.append(print.new_line)
+              .append(print.tab);
     if (power)
         answer.append(" ")
               .append(to_string_10(*power))

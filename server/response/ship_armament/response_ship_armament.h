@@ -102,14 +102,14 @@ struct table_template
     )
     {
         if (!style.empty() || !tr_class.empty())
-            begin = std::string("<table border=1>\n")
+            begin = std::string("<table border=1 class=\"ship_armament\">\n")
                     .append(style)
                     .append("<tr ")
                     .append(tr_class)
                     .append(">\n");
     }
 
-    std::string begin = "<table border=1>\n<tr>\n";
+    std::string begin = "<table border=1 class=\"ship_armament\">\n<tr>\n";
     std::string new_line = "<br>\n";
     std::string end = "\n</tr>\n</table>\n";
 

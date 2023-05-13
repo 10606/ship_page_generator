@@ -6,15 +6,7 @@
 struct table
 {
     static constexpr std::string_view begin = 
-    "<style type = \"text/css\"> \n\
-        table { table-layout: fixed; } \n\
-        table TD \n\
-        { \n\
-            min-width: 150px; \n\
-            max-width: 150px; \n\
-        } \n\
-    </style>\n\
-    <table border=1><td>\n";
+    "<table border=1 class=\"armament\"><td>\n";
     static constexpr std::string_view end = "</td></table>\n";
     
     static constexpr std::string_view new_column = "</td>\n<td>\n";
