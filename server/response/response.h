@@ -101,13 +101,14 @@ static const constexpr html_template_3 style =
                 "max-width: 150px; \n"
             "} \n"
             
-            ".short_info th { min-width: 120px } \n"
-            ".short_info a       { color: #222222 } \n"
-            ".short_info a:hover { color: #ff2222 } \n"
+            ".short_info th      { min-width: 120px; } \n"
+            ".short_info a       { color: #222222; } \n"
+            ".short_info a:hover { color: #ff2222; } \n"
             
             "input { width: 97%; margin: 10px 20px 20px 0; }\n"
-            "h2 { display: inline } \n"
-            "span { float:left; } \n"
+            "h2 { display: inline; } \n"
+            ".events { font-size: 6px; } \n"
+            ".events * { font-size: 6px; } \n"
             ".counter { float:right; } \n"
         "</style> \n"
         "<div class = \"wrapper\"> \n",
