@@ -212,13 +212,13 @@ void ship::add_short_info
     answer.name.position = answer.short_info.size();
     answer.name.size = info.ship_ru? info.ship_ru->size() : 0;
     answer.short_info.append(info.ship_ru.value_or(""))
-                     .append("</a></th>")
-                     .append("<th>")
+                     .append("</a></th><th>")
                      .append(info.commissioned? to_string(*info.commissioned) : "")
-                     .append("</th>")
-                     .append("<th>")
+                     .append("</th><th>")
                      .append(info.sunk_date? to_string(*info.sunk_date) : "")
-                     .append("</th></tr>\n");
+                     .append("</th><td>")
+                     .append(info.sunk_reason? *info.sunk_reason : "")
+                     .append("</td></tr>\n");
 }
 
 
@@ -278,7 +278,7 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
         int ship_id = info.first;
         
         response_t answer;
-        answer.begin = std::string("<div>");
+        answer.begin = std::string("<span>");
         answer.armament_link = std::string(query_template);
         answer.armament_link.append(std::to_string(ship_id));
 
@@ -314,7 +314,7 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
         answer.begin.append(link.begin)
                     .append(answer.armament_link)
                     .append(link.end)
-                    .append("</div>");
+                    .append("</span>");
         answer.end.append(new_line);
         {
             add_pictures_t add_pictures(answer.end, pictures);

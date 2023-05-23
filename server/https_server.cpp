@@ -124,7 +124,7 @@ struct connection_handler
                 try
                 {
                     std::string url_str("HTTP/1.1 307 Temporary Redirect\r\n");
-                    url_str.append("Location: %s\r\n")
+                    url_str.append("Location: ")
                            .append(url(uri_full, headers, port))
                            .append("\r\n\r\n");
                     conn.send(url_str);
