@@ -137,23 +137,23 @@ ship_requests::propulsion_t::context::context (propulsion_t & propulsion) :
 
 std::vector <ship_requests::propulsion_t::steam_turbine> ship_requests::propulsion_t::get_steam_turbine (std::string_view where)
 {
-    return request_to_db <steam_turbine> (db, "select id, name_en, in_service, rpm, power, stages from only steam_turbine ", where);
+    return request_to_db <steam_turbine> (db, "select id, name_ru, in_service, rpm, power, stages from only steam_turbine ", where);
 }
 
 std::vector <ship_requests::propulsion_t::steam_turbine_reverse> ship_requests::propulsion_t::get_steam_turbine_reverse (std::string_view where)
 {
-    return request_to_db <steam_turbine_reverse> (db, "select id, name_en, in_service, rpm, power, stages from steam_turbine_reverse ", where);
+    return request_to_db <steam_turbine_reverse> (db, "select id, name_ru, in_service, rpm, power, stages from steam_turbine_reverse ", where);
 }
 
 std::vector <ship_requests::propulsion_t::steam_turbine_cruise> ship_requests::propulsion_t::get_steam_turbine_cruise (std::string_view where)
 {
-    return request_to_db <steam_turbine_cruise> (db, "select id, name_en, in_service, rpm, power, stages from steam_turbine_cruise ", where);
+    return request_to_db <steam_turbine_cruise> (db, "select id, name_ru, in_service, rpm, power, stages from steam_turbine_cruise ", where);
 }
 
 std::vector <ship_requests::propulsion_t::steam_machine> ship_requests::propulsion_t::get_steam_machine (std::string_view where)
 {
     std::vector <steam_machine> answer =
-        request_to_db <steam_machine> (db, "select id, name_en, in_service from steam_machine ", where);
+        request_to_db <steam_machine> (db, "select id, name_ru, in_service from steam_machine ", where);
     
     struct steam_machine_cilinders
     {

@@ -314,7 +314,7 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
         answer.begin.append(link.begin)
                     .append(answer.armament_link)
                     .append(link.end)
-                    .append("</span></div>");
+                    .append("</span></div><div>");
         answer.end.append(new_line);
         {
             add_pictures_t add_pictures(answer.end, pictures);
@@ -322,7 +322,8 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
                 add_pictures(info);
             add_pictures.close();
         }
-        answer.end.append(new_line)
+        answer.end.append("</div>")
+                  .append(new_line)
                   .append(new_line);
         modernizations.insert({ship_id, std::move(answer)});
     }

@@ -61,7 +61,7 @@ struct server
     
     void open_socket (port_descr port)
     {
-        int fd = socket(AF_INET6, SOCK_STREAM, 0);
+        int fd = socket(AF_INET6, SOCK_STREAM | SOCK_NONBLOCK, 0);
         // int fd = socket(AF_INET, SOCK_STREAM, 0);
         if (fd == -1)
             throw std::runtime_error("can't create server socket");
