@@ -7,8 +7,23 @@
 #include "registrators.h"
 #include "base_compare_predict.h"
 #include "base_comparators.h"
+#include "html_template.h"
 #include "append_row.h"
 
+
+static const constexpr pictures_template pictures =
+{
+    {
+        "<li><a href=\"/pictures/catapult/",
+        "\"><img src=\"/pictures_small/catapult/",
+        "\"></a><br>",
+        "</li>"
+    },
+    {
+        "<ul>",
+        "</ul><br>"
+    }
+};
 
 struct catapult_cmp
 {
@@ -82,7 +97,12 @@ void catapult::response (simple_string & answer, std::string_view query, piece_t
             answer.append(text_cache[item.index].in_service);
         
         answer.append(table::end);
-        answer.append("<br>");
+
+        add_pictures_t add_pictures(answer, pictures);
+        for (catapult_partial const & item : list)
+            for (picture_t const & picture : pictures_cache[item.index])
+                add_pictures(picture);
+        add_pictures.close();
     }
 }
 

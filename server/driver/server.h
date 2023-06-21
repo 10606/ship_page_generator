@@ -51,6 +51,8 @@ struct server
             epoll.del(conn.first);
         for (auto const & conn : ssl_connections)
             epoll.del(conn.first);
+        raw_connections.clear();
+        ssl_connections.clear();
     }
 
     using socket_handler_t = decltype(std::declval <handler_t> ().accept());
@@ -62,13 +64,11 @@ struct server
     void open_socket (port_descr port)
     {
         int fd = socket(AF_INET6, SOCK_STREAM | SOCK_NONBLOCK, 0);
-        // int fd = socket(AF_INET, SOCK_STREAM, 0);
         if (fd == -1)
             throw std::runtime_error("can't create server socket");
         in6_addr addr_raw;
         memset(addr_raw.s6_addr, 0, 16);
         sockaddr_in6 addr{AF_INET6, htons(port.port), 0, addr_raw, 0};
-        // sockaddr_in addr{AF_INET, htons(port.port), {0}, {}};
 
         int reuse = 1;
         setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
@@ -80,7 +80,7 @@ struct server
             close(fd);
             throw std::runtime_error("can't bind server socket");
         }
-        ret = listen(fd, 1000);
+        ret = listen(fd, 100000);
         if (ret == -1)
         {
             close(fd);

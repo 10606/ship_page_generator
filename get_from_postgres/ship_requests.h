@@ -345,6 +345,7 @@ struct ship_requests
         std::vector <picture> get_aircraft (std::string_view where = "");
         std::vector <picture> get_gun (std::string_view where = "");
         std::vector <picture> get_searcher (std::string_view where = "");
+        std::vector <picture> get_catapult (std::string_view where = "");
         
         
         pictures_t (pictures_t &&) = delete;

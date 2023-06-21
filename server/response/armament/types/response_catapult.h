@@ -16,8 +16,12 @@ struct catapult
         std::vector <catapult_t> tmp = database->armament_info.get_catapult();
         catapult_cache = partial::partial_response <catapult_t, catapult_partial> (tmp);
         text_cache = partial::text_response <catapult_t, catapult_text> (tmp);
+
+        std::vector <picture_t> pictures_list = database->pictures.get_catapult();
+        pictures_cache = partial::pictures_response <catapult_t> (pictures_list, tmp);
     }
     
+    typedef ship_requests::pictures_t::picture picture_t;
     typedef ship_requests::armament_info_t::catapult catapult_t;
  
     // https://127.0.0.1:8443/armament/catapult?sort=in_service,launch_mass&group=class
@@ -56,6 +60,7 @@ struct catapult
 private:
     std::vector <catapult_partial> catapult_cache;
     std::vector <catapult_text> text_cache;
+    std::vector <std::vector <picture_t> > pictures_cache;
 };
 
 

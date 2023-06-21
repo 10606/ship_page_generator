@@ -50,4 +50,14 @@ std::vector <ship_requests::pictures_t::picture> ship_requests::pictures_t::get_
     );
 };
 
+std::vector <ship_requests::pictures_t::picture> ship_requests::pictures_t::get_catapult (std::string_view where)
+{
+    return request_to_db <picture> 
+    (
+        db, 
+        "select catapult_id, path_small, path_full, description from pictures_catapult ", 
+        where
+    );
+};
+
 
