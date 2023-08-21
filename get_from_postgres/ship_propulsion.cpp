@@ -64,21 +64,34 @@ std::string ship_requests::propulsion_t::diesel::description (print_context prin
         answer.append(std::to_string(*cilinder_count))
               .append("-цилиндровый ");
     answer.append(print.bold_begin)
-          .append("дизель");
+          .append("дизель ");
     if (name)
-        answer.append(" типа")
+        answer.append(" типа ")
               .append(*name);
     answer.append(print.bold_end);
     if (volume_of_engine)
-        answer.append(" объемом ")
+        answer.append(print.new_line)
+              .append(print.tab)
+              .append(" объемом ")
               .append(to_string_10(*volume_of_engine))
               .append("л");
-    if (cilinders.diameter && cilinders.stroke)
-        answer.append(" (\u2300")
-              .append(to_string_10(*cilinders.diameter))
-              .append("мм, \u2195")
-              .append(to_string_10(*cilinders.stroke))
-              .append("мм)");
+    if (cilinders.diameter || cilinders.stroke)
+    {
+        answer.append(print.new_line)
+              .append(print.tab)
+              .append(" (");
+        if (cilinders.diameter)
+            answer.append("\u2300")
+                  .append(to_string_10(*cilinders.diameter))
+                  .append("мм");
+        if (cilinders.diameter && cilinders.stroke)
+            answer.append(", ");
+        if (cilinders.stroke)
+            answer.append("\u2195")
+                  .append(to_string_10(*cilinders.stroke))
+                  .append("мм");
+        answer.append(")");
+    }
     answer.append(print.new_line)
           .append(propulsion::description(print, storage));
     return answer;

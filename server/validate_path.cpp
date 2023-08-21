@@ -17,7 +17,9 @@ bool simple_check (std::string_view path)
             c == '(' ||
             c == ')' ||
             c == '_' ||
-            c == '-')
+            c == '-' ||
+            c == '<' ||
+            c == '>')
         {
             prev_symbol = c;
             continue;
