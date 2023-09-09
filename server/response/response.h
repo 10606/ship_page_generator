@@ -72,6 +72,8 @@ static const constexpr html_template_3 style =
             "} \n"
             ".active { background-color: #555555; } \n"
             ".collapsible:hover { background-color: #ff5555; } \n"
+            ".collapsible:focus { background-color: #6666ff; } \n"
+            ".collapsible > a:focus { color: #aaeeff; } \n"
             ".content { \n"
                 "padding: 0px 0px 0px 20px; \n"
                 "display: none; \n"
@@ -82,6 +84,7 @@ static const constexpr html_template_3 style =
                 "background-color: #ffffff; \n"
             "} \n"
             ".content > a:hover { color: #ff2222; } \n"
+            ".content > a:focus { color: #2222ff; } \n"
 
             ".ship_armament tr { white-space: nowrap; } \n"
             ".ship_armament tr.header    { background: #fff8dc; } \n"
@@ -104,8 +107,10 @@ static const constexpr html_template_3 style =
             ".short_info th      { min-width: 120px; } \n"
             ".short_info a       { color: #222222; } \n"
             ".short_info a:hover { color: #ff2222; } \n"
+            ".short_info a:focus { color: #2222ff; } \n"
             
             "input { width: 97%; margin: 10px 20px 20px 0; }\n"
+            "input:focus { outline-color: #2222ff; } \n"
             "h2 { display: inline; } \n"
             ".events { font-size: 6px; } \n"
             ".events * { font-size: 6px; } \n"

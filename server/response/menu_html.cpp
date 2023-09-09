@@ -42,13 +42,13 @@ html_template menu_item_template::around =
             "артиллерия\n"
         "</button><br>\n"
         "<div class = \"content\">\n"
-            "<a href=\"/armament/guns?sort=caliber,in_service&group=caliber&filter=class,0\">\n"
+            "<a tabindex=\"0\" href=\"/armament/guns?sort=caliber,in_service&group=caliber&filter=class,0\">\n"
                 "орудия\n"
             "</a><br>\n"
-            "<a href=\"/armament/guns?sort=caliber,in_service&group=caliber&filter=class,1\">\n"
+            "<a tabindex=\"0\" href=\"/armament/guns?sort=caliber,in_service&group=caliber&filter=class,1\">\n"
                 "зенитные орудия\n"
             "</a><br>\n"
-            "<a href=\"/armament/guns?sort=caliber,in_service&group=caliber&filter=class,2\">\n"
+            "<a tabindex=\"0\" href=\"/armament/guns?sort=caliber,in_service&group=caliber&filter=class,2\">\n"
                 "пулеметы\n"
             "</a><br>\n"
         "</div>\n"
@@ -57,10 +57,10 @@ html_template menu_item_template::around =
             "торпедное вооружение\n"
         "</button><br>\n"
         "<div class = \"content\">\n"
-            "<a href=\"/armament/torpedo?group=caliber,in_service&sort=in_service\">\n"
+            "<a tabindex=\"0\" href=\"/armament/torpedo?group=caliber,in_service&sort=in_service\">\n"
                 "торпеды\n"
             "</a><br>\n"
-            "<a href=\"/armament/torpedo_tubes?group=caliber&sort=in_service\">\n"
+            "<a tabindex=\"0\" href=\"/armament/torpedo_tubes?group=caliber&sort=in_service\">\n"
                 "торпедные аппараты\n"
             "</a><br>\n"
         "</div>\n"
@@ -70,7 +70,7 @@ html_template menu_item_template::around =
         "</button><br>\n"
         "<div class = \"content\">\n",
 
-            "<a href=\"/armament/catapult?group=class&sort=in_service\">\n"
+            "<a tabindex=\"0\" href=\"/armament/catapult?group=class&sort=in_service\">\n"
                 "катапульты\n"
             "</a><br>\n"
         "</div>\n"
@@ -79,10 +79,10 @@ html_template menu_item_template::around =
             "средства обнаружения\n"
         "</button><br>\n"
         "<div class = \"content\">\n"
-            "<a href=\"/armament/searcher?group=power&sort=in_service&filter=class,8\">\n"
+            "<a tabindex=\"0\" href=\"/armament/searcher?group=power&sort=in_service&filter=class,8\">\n"
                 "РЛС\n"
             "</a><br>\n"
-            "<a href=\"/armament/searcher?group=power&sort=in_service&filter=class,13\">\n"
+            "<a tabindex=\"0\" href=\"/armament/searcher?group=power&sort=in_service&filter=class,13\">\n"
                 "прожектора\n"
             "</a><br>\n"
         "</div>\n"
@@ -91,10 +91,10 @@ html_template menu_item_template::around =
             "мины и глубинные бомбы\n"
         "</button><br>\n"
         "<div class = \"content\">\n"
-            "<a href=\"/armament/mines_charges?filter=class,4&sort=mass_ex\">\n"
+            "<a tabindex=\"0\" href=\"/armament/mines_charges?filter=class,4&sort=mass_ex\">\n"
                 "глубинные бомбы\n"
             "</a><br>\n"
-            "<a href=\"/armament/mines_charges?filter=class,6&sort=mass_ex\">\n"
+            "<a tabindex=\"0\" href=\"/armament/mines_charges?filter=class,6&sort=mass_ex\">\n"
                 "мины\n"
             "</a><br>\n"
         "</div>\n"
@@ -104,7 +104,7 @@ html_template menu_item_template::around =
 
 html_template_3 menu_item_template::link_template =
 {
-    "<a href=\"/aircraft?group=in_service&sort=type,in_service&filter=class,",
+    "<a tabindex=\"0\" href=\"/aircraft?group=in_service&sort=type,in_service&filter=class,",
     "\">\n",
     "\n</a><br>\n"
 };
