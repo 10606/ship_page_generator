@@ -156,19 +156,25 @@ struct server
         typename connections_storage <socket_t> ::iterator it_raw
     )
     {
+        auto remove = [this, &connections, it_raw] () -> void
+        {
+            epoll.del(it_raw->first);
+            connections.erase(it_raw);
+        };
+        
         try
         {
             if (event.events & EPOLLIN)
-                it_raw->second.read();
+                do
+                {
+                    it_raw->second.read();
+                } while (it_raw->second.can_read());
             if (event.events & EPOLLOUT)
                 it_raw->second.write();
             if (event.events & EPOLLRDHUP)
                 it_raw->second.end_read();
             if (event.events & (EPOLLERR | EPOLLHUP))
-            {
-                epoll.del(it_raw->first);
-                connections.erase(it_raw);
-            }
+                remove();
             else
             {
                 uint32_t mask = 0;
@@ -177,10 +183,7 @@ struct server
                 if (it_raw->second.want_write())
                     mask |= EPOLLOUT;
                 if (mask == 0)
-                {
-                    epoll.del(it_raw->first);
-                    connections.erase(it_raw);
-                }
+                    remove();
                 else
                     epoll.mod(it_raw->first, mask);
             }
@@ -188,8 +191,7 @@ struct server
         catch (std::exception & e)
         {
             // std::cerr << e.what() << std::endl;
-            epoll.del(it_raw->first);
-            connections.erase(it_raw);
+            remove();
         }
     }
     

@@ -1,6 +1,7 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
+#include <algorithm>
 #include <span>
 #include <cstring>
 #include <iostream>
@@ -95,7 +96,7 @@ struct buffer_t
     
     constexpr void readed (size_t count) noexcept
     {
-        if (offset + count < capacity)
+        if (offset + count < capacity) [[likely]]
             offset += count;
         else
             offset = offset + count - capacity;
@@ -118,7 +119,6 @@ struct buffer_t
         }
         capacity = new_capacity;
         data = new_data;
-        total_offset += offset;
         offset = 0;
     }
 
@@ -173,6 +173,143 @@ struct buffer_t
     }
     
     
+    struct overflow_iterator
+    {
+        constexpr overflow_iterator (char * _data, size_t _pos, size_t _capacity) :
+            data(_data),
+            pos(_pos),
+            capacity(_capacity)
+        {}
+
+        constexpr overflow_iterator (buffer_t * _buf, size_t _pos) :
+            data(_buf->data),
+            pos(_pos),
+            capacity(_buf->capacity)
+        {}
+
+        constexpr overflow_iterator (buffer_t & _buf, iterator it) :
+            data(_buf.data),
+            pos(it - _buf.data),
+            capacity(_buf.capacity)
+        {}
+        
+        constexpr iterator unsafe () noexcept
+        {
+            if (!data) [[unlikely]]
+                return nullptr;
+            return &operator * ();
+        }
+
+        using difference_type = size_t;
+        using value_type = char;
+        using pointer = char *;
+        using reference = char &;
+        using iterator_category = std::random_access_iterator_tag;
+        
+        constexpr char & operator * () noexcept
+        {
+            return data[pos];
+        }
+        
+        constexpr overflow_iterator & operator ++ () noexcept
+        {
+            pos++;
+            if (pos >= capacity) [[unlikely]]
+                pos -= capacity;
+            return *this;
+        }
+    
+        constexpr overflow_iterator & operator -- () noexcept
+        {
+            pos += capacity - 1;
+            if (pos >= capacity) [[likely]]
+                pos -= capacity;
+            return *this;
+        }
+    
+        constexpr overflow_iterator operator ++ (int) noexcept
+        {
+            overflow_iterator answer = *this;
+            operator ++ ();
+            return answer;
+        }
+    
+        constexpr overflow_iterator operator -- (int) noexcept
+        {
+            overflow_iterator answer = *this;
+            operator -- ();
+            return answer;
+        }
+
+        constexpr overflow_iterator & operator += (size_t diff /* < capacity */) noexcept
+        {
+            pos += diff;
+            if (pos >= capacity) [[unlikely]]
+                pos -= capacity;
+            return *this;
+        }
+    
+        constexpr overflow_iterator & operator -= (size_t diff /* < capacity */) noexcept
+        {
+            pos += capacity - diff;
+            if (pos >= capacity) [[likely]]
+                pos -= capacity;
+            return *this;
+        }
+    
+        constexpr overflow_iterator operator + (size_t diff /* < capacity */) const noexcept
+        {
+            overflow_iterator answer = *this;
+            answer += diff;
+            return answer;
+        }
+    
+        constexpr overflow_iterator operator - (size_t diff /* < capacity */) const noexcept
+        {
+            overflow_iterator answer = *this;
+            answer -= diff;
+            return answer;
+        }
+        
+        constexpr char & operator [] (size_t diff) noexcept
+        {
+            diff += pos;
+            if (diff >= capacity) [[unlikely]]
+                diff -= capacity;
+            return data[diff];
+        }
+    
+        constexpr size_t operator - (overflow_iterator const & other) noexcept
+        {
+            if (pos >= other.pos) [[likely]]
+                return pos - other.pos;
+            return pos + capacity - other.pos;
+        }
+    
+        
+        constexpr std::strong_ordering operator <=> (overflow_iterator const &) const noexcept = default;
+
+        constexpr bool safe_range_with (overflow_iterator const & other) const noexcept
+        {
+            return pos <= other.pos;
+        }
+    
+        char * data;
+        size_t pos;
+        size_t capacity;
+    };
+
+    constexpr overflow_iterator overflow_begin () noexcept
+    {
+        return {this, offset};
+    }
+
+    constexpr overflow_iterator overflow_end () noexcept
+    {
+        return {this, (offset + _size) % capacity};
+    }
+    
+
     struct safe_iterator
     {
         constexpr safe_iterator (buffer_t * _buf, size_t _pos) :
@@ -189,12 +326,21 @@ struct buffer_t
                 pos += buf->capacity;
             pos += buf->total_offset;
         }
+
+        constexpr safe_iterator (buffer_t & _buf, overflow_iterator it) :
+            safe_iterator(_buf, it.unsafe())
+        {}
         
         constexpr iterator unsafe () noexcept
         {
-            if (!buf->data)
+            if (!buf->data) [[unlikely]]
                 return nullptr;
             return &operator * ();
+        }
+
+        constexpr overflow_iterator overflow () noexcept
+        {
+            return overflow_iterator(*buf, unsafe());
         }
 
         using difference_type = size_t;
@@ -249,17 +395,17 @@ struct buffer_t
             return *this;
         }
     
-        constexpr safe_iterator operator + (size_t diff) noexcept
+        constexpr safe_iterator operator + (size_t diff) const noexcept
         {
             safe_iterator answer = *this;
-            pos += diff;
+            answer.pos += diff;
             return answer;
         }
     
-        constexpr safe_iterator operator - (size_t diff) noexcept
+        constexpr safe_iterator operator - (size_t diff) const noexcept
         {
             safe_iterator answer = *this;
-            pos -= diff;
+            answer.pos -= diff;
             return answer;
         }
         
@@ -282,17 +428,18 @@ struct buffer_t
         buffer_t * buf;
         size_t pos;
     };
-
+    
     constexpr safe_iterator safe_begin () noexcept
     {
-        return {this, total_offset + offset};
+        return {this, total_offset};
     }
 
     constexpr safe_iterator safe_end () noexcept
     {
-        return {this, total_offset + offset + _size};
+        return {this, total_offset + _size};
     }
     
+
     constexpr void clear_deleted ()
     {
         data = nullptr;
@@ -308,6 +455,32 @@ struct buffer_t
     size_t capacity;
     size_t total_offset; // for non invalid iterators
 };
+
+inline std::pair <buffer_t::iterator, buffer_t::iterator> first_part (buffer_t::overflow_iterator begin, buffer_t::overflow_iterator end) noexcept
+{
+    if (begin.safe_range_with(end))
+        return {begin.unsafe(), end.unsafe()};
+    return {begin.unsafe(), begin.data + begin.capacity};
+}
+
+inline std::pair <buffer_t::iterator, buffer_t::iterator> second_part (buffer_t::overflow_iterator begin, buffer_t::overflow_iterator end) noexcept
+{
+    if (begin.safe_range_with(end))
+        return {end.unsafe(), end.unsafe()};
+    return {end.data, end.unsafe()};
+}
+
+inline buffer_t::overflow_iterator find (buffer_t::overflow_iterator begin, buffer_t::overflow_iterator end, char value) noexcept
+{
+    std::pair <buffer_t::iterator, buffer_t::iterator> first = first_part(begin, end);
+    buffer_t::iterator it_in_first = std::find(first.first, first.second, value);
+    if (it_in_first != first.second)
+        return buffer_t::overflow_iterator(begin.data, it_in_first - begin.data, begin.capacity);
+
+    std::pair <buffer_t::iterator, buffer_t::iterator> second = second_part(begin, end);
+    buffer_t::iterator it_in_second = std::find(second.first, second.second, value);
+    return buffer_t::overflow_iterator(begin.data, it_in_second - begin.data, begin.capacity);
+}
 
 #endif
 

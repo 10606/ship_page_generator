@@ -236,6 +236,11 @@ struct ssl_socket
         return need_write;
     }
     
+    bool can_read () const noexcept
+    {
+        return SSL_pending(ssl);
+    }
+    
     void do_accept ()
     {
         check_error();

@@ -1,0 +1,42 @@
+method GET url /vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php
+User-Agent Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36
+Content-Length 19
+Accept-Encoding gzip
+Connection close
+
+method GET url /?XDEBUG_SESSION_START=phpstorm
+User-Agent Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36
+Accept-Encoding gzip
+Connection close
+
+method GET url /console/
+User-Agent Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36
+Accept-Encoding gzip
+Connection close
+
+method GET url /_ignition/execute-solution
+User-Agent Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36
+Content-Type application/json
+Accept-Encoding gzip
+Connection close
+
+method GET url /
+User-Agent Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36
+Content-Type application/json
+Accept-Encoding gzip
+Connection close
+
+method GET url /actuator/gateway/routes
+User-Agent Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36
+Accept-Encoding gzip
+Connection close
+
+method GET url /geoserver
+User-Agent Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36
+Accept-Encoding gzip
+Connection close
+
+method CONNECT url google.com:443
+Host google.com:443
+User-Agent Go-http-client/1.1
+

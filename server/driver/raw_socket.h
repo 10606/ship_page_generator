@@ -99,6 +99,11 @@ struct raw_socket
         return 1;
     }
     
+    bool can_read () const noexcept
+    {
+        return 0;
+    }
+    
     void do_accept ()
     {}
     
