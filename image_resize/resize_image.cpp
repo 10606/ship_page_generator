@@ -33,7 +33,7 @@ bool is_exist (fs::path dst_path, bool force)
     fs::directory_entry dst_entry(dst_path);
     if (!force && dst_entry.exists())
     {
-        std::cout << dst_path << " exist\n";
+        std::cout << dst_path << "\033[01;36m exist\033[0m\n";
         return 1;
     }
     return 0;
@@ -53,7 +53,7 @@ void convert_dir (fs::path src_root, fs::path dst_root, bool force)
             continue;
         if (dir_entry.is_regular_file())
         {
-            std::cout << src_path << " -> " << dst_path << '\n';
+            std::cout << "\033[01;32m" <<  src_path << " -> " << dst_path << "\033[0m\n";
             convert_image(src_path, dst_path);
         }
         if (dir_entry.is_directory())

@@ -162,7 +162,10 @@ aircraft::aircraft_text::aircraft_text (aircraft_t const & value) :
 {
     name.append(value.class_ru.value_or(" "))
         .append(table::new_line)
-        .append(value.aircraft_en.value_or(" "));
+        .append(value.aircraft_en.value_or(" "))
+        .append(table::new_line)
+        .append(table::new_line)
+        .append(value.aircraft_ru.value_or(" "));
     crew.append(value.crew? std::to_string(*value.crew) + "чел" : " ");
     mass.append(value.mass?   to_string_10(*value.mass) + "кг"  : " ");
     max_mass    .append(value.max_mass?     to_string_10(*value.max_mass)       + "кг"   : " ");

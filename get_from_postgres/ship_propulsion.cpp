@@ -45,7 +45,7 @@ ship_requests::propulsion_t::diesel::diesel (pqxx::row const & value) :
     volume_of_engine(value[8].as <std::optional <double> > ()),
     tact(std::nullopt)
 {
-    std::optional <uint32_t> tact_value = value[8].as <uint32_t> ();
+    std::optional <uint32_t> tact_value = value[9].as <std::optional <uint32_t> > ();
     if (tact_value)
     {
         if (*tact_value == 2)
@@ -63,7 +63,8 @@ std::string ship_requests::propulsion_t::diesel::description (print_context prin
     if (cilinder_count)
         answer.append(std::to_string(*cilinder_count))
               .append("-цилиндровый ");
-    answer.append(print.bold_begin)
+    answer.append(print.new_line)
+          .append(print.bold_begin)
           .append("дизель ");
     if (name)
         answer.append(" типа ")

@@ -51,11 +51,14 @@ std::vector <ship_propulsion::response_t> ship_propulsion::response (int id, std
     std::unordered_map <int, std::vector <ship_items_lt> > :: const_iterator it = ship_propulsions_list.find(id);
     if (it == ship_propulsions_list.end())
         return answer;
+    size_t i = 0;
     for (ship_items_lt const & propulsion : it->second)
     {
         if (between(propulsion.date_from, date, propulsion.date_to))
         {
             response_t item = propulsions[propulsion.propulsion_id];
+            if (i != 0)
+                item.data_begin.append("<br>");
             if (propulsion.count > 1)
             {
                 item.data_begin.append("<b>");
@@ -63,10 +66,9 @@ std::vector <ship_propulsion::response_t> ship_propulsion::response (int id, std
                 declension(item.data_begin, propulsion.count, {" установка", " установки", " установок"});
                 item.data_begin.append("</b>:<br><br>");
             }
-            else
-                item.data_begin[0] = '\0';
+            item.group_name = group_name;
             answer.push_back(item);
-            answer.back().group_name = group_name;
+            i++;
         }
     }
     
