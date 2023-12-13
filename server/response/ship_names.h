@@ -2,6 +2,7 @@
 #define SHIP_NAMES_H
 
 #include <string_view>
+#include <unordered_map>
 #include <vector>
 #include "ship_info.h"
 #include "ship_event.h"

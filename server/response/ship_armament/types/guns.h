@@ -2,6 +2,7 @@
 #define SHIP_ARMAMENT_GUNS_H
 
 #include <vector>
+#include <unordered_map>
 #include <map>
 #include <chrono>
 #include <cmath>

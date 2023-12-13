@@ -2,6 +2,7 @@
 #define TORPEDO_H
 
 #include <vector>
+#include <unordered_map>
 #include <chrono>
 #include <cmath>
 #include "ship_requests.h"

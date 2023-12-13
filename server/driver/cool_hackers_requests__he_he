@@ -40,3 +40,24 @@ method CONNECT url google.com:443
 Host google.com:443
 User-Agent Go-http-client/1.1
 
+
+
+method HEAD url /
+method GET url /
+method PRI url *
+method GET url /HNAP1/
+method GET url /console/
+method GET url /geoserver
+method GET url /manager/html
+method GET url /actuator/gateway/routes
+method GET url /_ignition/execute-solution
+method POST url /goform/set_LimitClient_cfg
+method POST url /Autodiscover/Autodiscover.xml
+method GET url /?XDEBUG_SESSION_START=phpstorm
+method GET url /securityRealm/user/admin/search/index?q=a
+method GET url /vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php
+method POST url /vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php
+method HEAD url http://112.124.42.80:63435/
+method CONNECT url www.google.com:443
+method CONNECT url google.com:443
+

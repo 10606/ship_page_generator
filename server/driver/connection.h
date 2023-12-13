@@ -1,6 +1,7 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
+#include <array>
 #include <charconv>
 #include <stddef.h>
 #include <utility>
@@ -172,8 +173,12 @@ struct connection
                         std::string_view method_sv = method.to_string_view(overflow_case);
                         std::string_view uri_sv = uri.to_string_view(overflow_case);
 
-                        // std::cerr << "\033[01;36mmethod\033[0m " << method_sv << " url " << uri_sv << std::endl;
-                        if (method_sv == "GET")
+                        std::cerr << "\033[01;36mmethod\033[0m " << method_sv << " \033[01;36murl\033[0m " << uri_sv << std::endl;
+                        if (method_sv != "POST" &&
+                            method_sv != "PUT" &&
+                            method_sv != "PATCH" &&
+                            method_sv != "DELETE" &&
+                            method_sv != "CONNECT")
                             content_length = 0;
                         keep_alive = 0;
                         
@@ -460,10 +465,17 @@ struct connection
     socket_t socket;
     
     static const constexpr 
-    std::array <std::string_view, 2> methods = 
+    std::array <std::string_view, 9> methods =
     {{
         "GET",
-        "POST"
+        "HEAD",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE",
+        "CONNECT",
+        "OPTIONS",
+        "TRACE"
     }};
     
     static const constexpr size_t max_method_len = 
