@@ -25,7 +25,10 @@ add_executable(resize_image
 )
 
 include(FindPkgConfig)
-pkg_check_modules(IMG_MAGIC "Magick++" REQUIRED)
+pkg_check_modules(IMG_MAGIC "Magick++")
+if(NOT IMG_MAGIC_FOUND)
+    pkg_check_modules(IMG_MAGIC "ImageMagick++" REQUIRED)
+endif()
 
 target_link_libraries(resize_image PRIVATE ${IMG_MAGIC_LINK_LIBRARIES})
 target_include_directories(resize_image PRIVATE ${IMG_MAGIC_INCLUDE_DIRS})
