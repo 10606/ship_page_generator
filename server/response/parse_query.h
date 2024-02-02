@@ -30,5 +30,7 @@ struct piece_t
     size_t size;
 };
 
+std::string percent_dec (std::string_view request, bool need_escape = 0);
+
 #endif
 

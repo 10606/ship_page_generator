@@ -14,8 +14,8 @@
 static const constexpr pictures_template pictures =
 {
     {
-        "<li><a href=\"/pictures/catapult/",
-        "\"><img src=\"/pictures_small/catapult/",
+        "<li><a href = \"/pictures/catapult/",
+        "\"><img src = \"/pictures_small/catapult/",
         "\"></a><br>",
         "</li>"
     },

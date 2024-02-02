@@ -169,3 +169,50 @@ std::vector <group> parse_query (std::string_view query)
     return answer;
 }
 
+static uint8_t from_hex (char c)
+{
+    if (std::isdigit(c))
+        return c - '0';
+    if (std::islower(c))
+        return c - 'a' + 10;
+    return c - 'A' + 10;
+}
+
+std::string percent_dec (std::string_view request_percent_enc, bool need_escape)
+{
+    static const constexpr std::string_view quot = "&quot;";
+
+    std::string answer;
+    answer.reserve(request_percent_enc.size());
+    
+    for (size_t i = 0; i != request_percent_enc.size(); ++i)
+    {
+        if (request_percent_enc[i] != '%' ||
+            i + 2 >= request_percent_enc.size())
+        {
+            if (need_escape && request_percent_enc[i] == '"')
+                answer.append(quot);
+            else if (request_percent_enc[i] == '+') // fucking web standarts
+                answer.push_back(' ');
+            else
+                answer.push_back(request_percent_enc[i]);
+            continue;
+        }
+        if (!std::isxdigit(request_percent_enc[i + 1]) ||
+            !std::isxdigit(request_percent_enc[i + 2]))
+        {
+            answer.push_back(request_percent_enc[i]);
+            continue;
+        }
+        uint8_t cur = 0;
+        cur = (cur << 4) + from_hex(request_percent_enc[i + 1]);
+        cur = (cur << 4) + from_hex(request_percent_enc[i + 2]);
+        if (need_escape && cur == '"')
+            answer.append(quot);
+        else
+            answer.push_back(cur);
+        i += 2;
+    }
+    return answer;
+}
+

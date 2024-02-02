@@ -85,17 +85,7 @@ private:
     std::unordered_map <uint32_t, std::vector <position_t> > by_4_chars; // last chars for multi byte
     
     void add (std::string_view value, size_t name_index);
-    static std::string percent_dec (std::string_view request, bool need_escape = 0);
     
-    static uint8_t from_hex (char c)
-    {
-        if (std::isdigit(c))
-            return c - '0';
-        if (std::islower(c))
-            return c - 'a' + 10;
-        return c - 'A' + 10;
-    }
-
     std::pair <std::vector <position_t> *, size_t> calc_index_3 (std::string_view request)
     {
         std::pair <std::vector <position_t> *, size_t> answer = {nullptr, 0};

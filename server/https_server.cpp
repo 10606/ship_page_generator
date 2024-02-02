@@ -13,6 +13,7 @@
 #include "response.h"
 #include "simple_string.h"
 #include "search.h"
+#include "documents.h"
 
 
 struct get_resp_code_str_t
@@ -158,6 +159,7 @@ struct server_handler
         resp.reg <aircraft>         ("/aircraft",               &(*database));
         resp.reg <ship>             ("/ship",                   &(*database), resp.get <ship_armament> ("/ship/armament"));
         resp.reg <search>           ("/search",                 &(*database));
+        resp.reg <document>         ("/documents",              &(*database));
 
         database.reset();
     }

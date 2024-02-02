@@ -85,6 +85,12 @@ static const constexpr html_template_3 style =
             "} \n"
             ".content > a:hover { color: #ff2222; } \n"
             ".content > a:focus { color: #2222ff; } \n"
+            ".menu_link > a { \n"
+                "color: #000000; \n"
+                "background-color: #ffffff; \n"
+            "} \n"
+            ".menu_link > a:hover { color: #ff2222; } \n"
+            ".menu_link > a:focus { color: #2222ff; } \n"
 
             ".ship_armament tr { white-space: nowrap; } \n"
             ".ship_armament tr.header    { background: #fff8dc; } \n"
@@ -112,9 +118,11 @@ static const constexpr html_template_3 style =
             "input { width: 97%; margin: 10px 20px 20px 0; }\n"
             "input:focus { outline-color: #2222ff; } \n"
             "h2 { display: inline; } \n"
-            ".events { font-size: 6px; } \n"
-            ".events * { font-size: 6px; } \n"
+            ".events { font-size: 16px; } \n"
+            ".events * { font-size: 16px; } \n"
             ".counter { float:right; } \n"
+            ".document       { min-width: 1200px; } \n"
+            ".document_group { min-width: 1200px; } \n"
         "</style> \n"
         "<div class = \"wrapper\"> \n",
 

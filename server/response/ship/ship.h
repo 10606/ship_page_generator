@@ -48,15 +48,15 @@ private:
     );
     
     static const constexpr std::string_view query_template = "ship=";
-    static const constexpr html_template link = {"<a href=\"/ship/armament?", "\">вооружение</a>"};
+    static const constexpr html_template link = {"<a href = \"/ship/armament?", "\">вооружение</a>"};
     static const constexpr std::string_view new_line = "<br>\n";
     static const constexpr std::string_view shift = "&emsp;";
     
     static const constexpr pictures_template pictures =
     {
         {
-            "<li><a href=\"/pictures/ship/",
-            "\"><img src=\"/pictures_small/ship/",
+            "<li><a href = \"/pictures/ship/",
+            "\"><img src = \"/pictures_small/ship/",
             "\"></a><br>",
             "</li>"
         },

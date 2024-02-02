@@ -61,7 +61,8 @@ struct ship_requests
         armament_info(&db),
         aircraft_info(&db),
         ship_event(&db),
-        pictures(&db)
+        pictures(&db),
+        documents(&db)
     {}
 
     
@@ -356,6 +357,30 @@ struct ship_requests
     private:
         ship_database * db;
     };
+
+    
+    struct documents_t
+    {
+        documents_t (ship_database * _db) :
+            db(_db)
+        {}
+        
+
+        struct group;
+        std::vector <group> get_groups (std::string_view where = "");
+
+        struct document;
+        std::vector <document> get_documents (std::string_view where = "");
+        
+        
+        documents_t (documents_t &&) = delete;
+        documents_t (documents_t const &) = delete;
+        documents_t & operator = (documents_t &&) = delete;
+        documents_t & operator = (documents_t const &) = delete;
+        
+    private:
+        ship_database * db;
+    };
     
 
     ship_database db;
@@ -367,6 +392,7 @@ struct ship_requests
     aircraft_info_t aircraft_info;
     ship_event_t ship_event;
     pictures_t pictures;
+    documents_t documents;
 };
 
 

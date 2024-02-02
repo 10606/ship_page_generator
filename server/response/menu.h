@@ -28,7 +28,7 @@ public:
                                  "<span class = \"counter\">(",
                                  ")</span> </button><br><div class = \"content\">\n"};
     
-    html_template new_type_link = {"<button type = \"button\" class = \"collapsible\">\n&emsp;<a tabindex=\"0\" href=\"/ship?id=", 
+    html_template new_type_link = {"<button type = \"button\" class = \"collapsible\">\n&emsp;<a tabindex = \"0\" href = \"/ship?id=", 
                                    "\">"};
     html_template_3 new_type = {"", 
                                 "</a><span class = \"counter\">(",
@@ -38,7 +38,7 @@ public:
     std::string_view close_class = "</div>";
 
     html_template new_ship = {"&nbsp;&nbsp;", "</a><br>"};
-    html_template new_ship_link = {"<a tabindex=\"0\" href=\"/ship?id=", "\">"};
+    html_template new_ship_link = {"<a tabindex = \"0\" href = \"/ship?id=", "\">"};
 };
 
 struct menu

@@ -70,6 +70,7 @@ add_executable(ship_server
     server/response/armament/types/response_catapult.cpp
     server/response/armament/types/response_searchers.cpp
     server/response/aircraft/response_aircraft.cpp
+    server/response/documents.cpp
     server/response/ship_names.cpp
     server/response/menu.cpp
     server/response/menu_html.cpp
@@ -85,6 +86,7 @@ add_executable(ship_server
     get_from_postgres/aircraft_info.cpp
     get_from_postgres/pictures.cpp
     get_from_postgres/ship_propulsion.cpp
+    get_from_postgres/documents_info.cpp
 )
 
 add_executable(tests

@@ -206,7 +206,7 @@ void ship::add_short_info
     ship_requests::ship_info_t::list const & info
 )
 {
-    answer.short_info.append("<tr><th><a href=\"#id_")
+    answer.short_info.append("<tr><th><a href = \"#id_")
                      .append(std::to_string(info.ship_id))
                      .append("\">");
     answer.name.position = answer.short_info.size();
