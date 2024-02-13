@@ -81,25 +81,16 @@ struct connection_handler
     )
     {}
 
-    std::string_view get_host_port (headers_t const & headers)
+    std::string_view get_host (std::string_view host_port)
     {
-        for (auto header : headers)
-            if (header.first == "Host")
-                return header.second;
-        throw std::runtime_error("can't find host");
-    }
-
-    std::string_view get_host (headers_t const & headers)
-    {
-        std::string_view host_port = get_host_port(headers);
         size_t pos = host_port.rfind(':');
         return host_port.substr(0, pos);
     }
 
-    std::string url (std::string_view uri_full, headers_t const & headers, std::string_view port)
+    std::string url (std::string_view uri_full, std::string_view host_port, std::string_view port)
     {
         std::string answer("https://");
-        answer.append(get_host(headers))
+        answer.append(get_host(host_port))
               .append(":")
               .append(port)
               .append(uri_full);
@@ -117,23 +108,24 @@ struct connection_handler
     {
         if constexpr (std::is_same_v <socket_t, ssl_socket>)
             return 0;
+        bool need_upgrade = 0;
+        std::optional <std::string_view> host_port;
         for (auto header : headers)
         {
             if (header.first == "Upgrade-Insecure-Requests" &&
                 header.second == "1")
-            {
-                try
-                {
-                    std::string url_str("HTTP/1.1 307 Temporary Redirect\r\n");
-                    url_str.append("Location: ")
-                           .append(url(uri_full, headers, port))
-                           .append("\r\n\r\n");
-                    conn.send(url_str);
-                    return 1;
-                }
-                catch (...)
-                {}
-            }
+                need_upgrade = 1;
+            if (header.first == "Host")
+                host_port = header.second;
+        }
+        if (need_upgrade && host_port)
+        {
+            std::string url_str("HTTP/1.1 307 Temporary Redirect\r\n");
+            url_str.append("Location: ")
+                   .append(url(uri_full, *host_port, port))
+                   .append("\r\n\r\n");
+            conn.send(url_str);
+            return 1;
         }
         return 0;
     }
@@ -157,7 +149,7 @@ struct server_handler
         resp.reg <catapult>         ("/armament/catapult",      &(*database));
         resp.reg <searcher>         ("/armament/searcher",      &(*database));
         resp.reg <aircraft>         ("/aircraft",               &(*database));
-        resp.reg <ship>             ("/ship",                   &(*database), resp.get <ship_armament> ("/ship/armament"));
+        resp.reg <ship>             ("/ship",                   &(*database), resp.get_unsafe <ship_armament> ("/ship/armament"));
         resp.reg <search>           ("/search",                 &(*database));
         resp.reg <document>         ("/documents",              &(*database));
 

@@ -152,6 +152,9 @@ struct responser
     
     template <typename T>
     T & get (std::string_view uri);
+    
+    template <typename T>
+    T & get_unsafe (std::string_view uri);
 
     template <typename T>
     struct resp_impl : resp_base
@@ -170,6 +173,9 @@ struct responser
     
         template <typename U>
         friend U & responser::get (std::string_view uri);
+        
+        template <typename U>
+        friend U & responser::get_unsafe (std::string_view uri);
         
     private:
         T value;
@@ -219,6 +225,13 @@ T & responser::get (std::string_view uri)
     if (it == resp.end())
         throw std::runtime_error("can't find responser");
     resp_impl <T> & value_impl = dynamic_cast <resp_impl <T> &> (*it->second);
+    return value_impl.value;
+}
+
+template <typename T>
+T & responser::get_unsafe (std::string_view uri)
+{
+    resp_impl <T> & value_impl = static_cast <resp_impl <T> &> (*resp.find(std::string(uri))->second);
     return value_impl.value;
 }
 

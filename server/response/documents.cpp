@@ -47,7 +47,7 @@ document::document (ship_requests * database)
     
     static const constexpr group_template_t group_template = 
     {
-        .self = {"<ul class = \"document_group\">", "</ul>"},
+        .self = {"<ul class = \"document_group\">", "</ul><br>"},
         .preview = {"<img src = \"/pictures_small/docs/", "\">"},
         .without_preview = "",
         .description = {"", ""},
@@ -56,7 +56,7 @@ document::document (ship_requests * database)
     
     static const constexpr document_template_t document_template = 
     {
-        .self = {"<ul class = \"document\">", "</a></ul>"},
+        .self = {"<ul class = \"document\">", "</a></ul><br>"},
         .preview = {"<img src = \"/pictures_small/docs/", "\">"},
         .without_preview = "",
         .description = {"<br>", ""},
