@@ -280,6 +280,7 @@ method CONNECT url 45.61.137.126:7227
 method CONNECT url 45.61.136.175:7227
 method CONNECT url 185.65.245.140:7227
 method CONNECT url 193.149.189.126:7227
+method CONNECT url github.com:443
 method CONNECT url google.com:443
 method CONNECT url www.google.com:80
 method CONNECT url www.google.com:443

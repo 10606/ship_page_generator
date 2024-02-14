@@ -2,6 +2,7 @@
 #define CONNECTION_H
 
 #include <array>
+#include <cctype>
 #include <charconv>
 #include <stddef.h>
 #include <utility>
@@ -14,6 +15,7 @@
 #include <unistd.h>
 
 #include "buffer.h"
+#include "connection_helper.h"
 #include "file_to_send.h"
 #include "simple_string.h"
 
@@ -323,8 +325,9 @@ struct connection
         simple_string response;
         try
         {
-            // TODO Range
-            file_to_send = file_to_send_t(file_name);
+            // Range
+            content_range_t content_range(headers);
+            file_to_send = file_to_send_t(file_name, content_range.start, content_range.size);
             std::string mtime_str = std::to_string(file_to_send.mtime);
             std::string mtime_cmp = "\"" + mtime_str + "\"";
             bool cached = 0;
@@ -339,12 +342,30 @@ struct connection
             
             if (!cached)
             {
-                response.append("HTTP/1.1 200 OK\r\n")
-                        .append("Content-Length: ")
-                        .append(std::to_string(file_to_send.size))
-                        .append("\r\nEtag: \"")
-                        .append(mtime_str)
-                        .append("\"\r\n\r\n");
+                if (file_to_send.size != file_to_send.total_size || file_to_send.offset != 0)
+                {
+                    response.append("HTTP/1.1 206 Partial Content\r\n")
+                            .append("Content-Range: bytes ")
+                            .append(std::to_string(file_to_send.offset))
+                            .append("-")
+                            .append(std::to_string(file_to_send.size - 1))
+                            .append("/")
+                            .append(std::to_string(file_to_send.total_size))
+                            .append("\r\nContent-Length: ")
+                            .append(std::to_string(file_to_send.size - file_to_send.offset))
+                            .append("\r\nEtag: \"")
+                            .append(mtime_str)
+                            .append("\"\r\n\r\n");
+                }
+                else
+                {
+                    response.append("HTTP/1.1 200 OK\r\n")
+                            .append("Content-Length: ")
+                            .append(std::to_string(file_to_send.size - file_to_send.offset))
+                            .append("\r\nEtag: \"")
+                            .append(mtime_str)
+                            .append("\"\r\n\r\n");
+                }
             }
             else
             {
@@ -401,60 +422,9 @@ struct connection
     buffer_t::safe_iterator client_read;
     buffer_t::safe_iterator client_parsed;
     
-    struct safe_view
-    {
-        constexpr safe_view
-        (
-            buffer_t::safe_iterator _begin,
-            buffer_t::safe_iterator _end
-        ) :
-            begin(_begin),
-            end(_end)
-        {}
-
-        constexpr void set_buffer (buffer_t & buf) noexcept
-        {
-            begin.buf = &buf;
-            end.buf = &buf;
-        }
-
-        std::string_view to_string_view (std::string & overflow_case)
-        {
-            if (begin.unsafe() <= end.unsafe())
-                return std::string_view(begin.unsafe(), end.unsafe());
-            
-            std::pair <buffer_t::iterator, buffer_t::iterator> first = first_part(begin.overflow(), end.overflow());
-            std::pair <buffer_t::iterator, buffer_t::iterator> second = second_part(begin.overflow(), end.overflow());
-            overflow_case = std::string(first.first, first.second)
-                                .append(second.first, second.second);
-            return overflow_case;
-        }
-        
-        buffer_t::safe_iterator begin;
-        buffer_t::safe_iterator end;
-    };
     safe_view method;
     safe_view uri;
     
-    struct header_t
-    {
-        header_t
-        (
-            safe_view _key,
-            safe_view _value
-        ) :
-            key(_key),
-            value(_value)
-        {}
-    
-        std::pair <std::string_view, std::string_view> to_string_view (std::string & overflow_case)
-        {
-            return {key.to_string_view(overflow_case), value.to_string_view(overflow_case)};
-        }
-
-        safe_view key;
-        safe_view value;
-    };
     std::vector <header_t> headers;
     size_t content_length;
     bool keep_alive;
