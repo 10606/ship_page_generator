@@ -234,7 +234,7 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
     
     typedef ship_requests::ship_info_t::list list_t;
     std::vector <list_t> list =
-        database->ship_info.get_list();
+        database->ship_info.get_list("order by ship_list.commissioned");
 
     typedef ship_requests::pictures_t::picture picture_t;
     std::vector <picture_t> ship_pictures_list =
