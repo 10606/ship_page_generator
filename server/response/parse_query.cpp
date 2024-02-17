@@ -22,13 +22,13 @@ std::pair <bool, std::string_view::const_iterator> parse_string
 }
 
 
-std::pair <std::optional <uint32_t>, std::string_view::const_iterator> parse_number
+std::pair <std::optional <int>, std::string_view::const_iterator> parse_number
 (
     std::string_view::const_iterator begin, 
     std::string_view::const_iterator end
 )
 {
-    std::optional <uint32_t> answer;
+    std::optional <int> answer;
     
     if (begin == end)
         return {std::nullopt, end};
@@ -36,7 +36,7 @@ std::pair <std::optional <uint32_t>, std::string_view::const_iterator> parse_num
     for (; begin != end; begin++)
     {
         char c = *begin;
-        if (std::isdigit(c))
+        if (std::isdigit(c) && answer < std::numeric_limits <int> ::max() / 10)
         {
             if (!answer)
                 answer = 0;
@@ -49,11 +49,13 @@ std::pair <std::optional <uint32_t>, std::string_view::const_iterator> parse_num
     return {answer, end};
 }
 
-std::vector <int> parse_query__id (std::string_view query)
+
+std::vector <id_or_group_t> parse_query__id (std::string_view query)
 {
-    std::vector <int> answer;
+    std::vector <id_or_group_t> answer;
 
     static std::string_view id_str = "id=";
+    static std::string_view type_str = "type_id=";
     
     for (std::string_view::const_iterator it = query.begin(); it != query.end(); )
     {
@@ -70,15 +72,19 @@ std::vector <int> parse_query__id (std::string_view query)
                 ++it;
         };
     
-        std::pair <bool, std::string_view::const_iterator> skipped = parse_string(it, query.end(), id_str);
-        it = skipped.second;
-        if (!skipped.first)
+        std::pair <bool, std::string_view::const_iterator> skipped_id = parse_string(it, query.end(), id_str);
+        std::pair <bool, std::string_view::const_iterator> skipped_type = parse_string(it, query.end(), type_str);
+        if (skipped_id.first)
+            it = skipped_id.second;
+        else if (skipped_type.first)
+            it = skipped_type.second;
+        else
         {
             skip();
             continue;
         }
         
-        std::pair <std::optional <uint32_t>, std::string_view::const_iterator> parsed_id = parse_number(it, query.end());
+        std::pair <std::optional <int>, std::string_view::const_iterator> parsed_id = parse_number(it, query.end());
         it = parsed_id.second;
         if (!parsed_id.first || !cur_end())
         {
@@ -87,7 +93,7 @@ std::vector <int> parse_query__id (std::string_view query)
         }
         else
         {
-            answer.emplace_back(*parsed_id.first);
+            answer.emplace_back(skipped_id.first? id_or_group_t::id : id_or_group_t::group, *parsed_id.first);
             if (it != query.end())
                 ++it;
         }

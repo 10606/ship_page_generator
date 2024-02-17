@@ -55,11 +55,14 @@ method GET url /kkDB
 method GET url /KbZV
 method GET url /OoSL
 method GET url /qARY
+method GET url /QyME
+method GET url /tL2k
 method GET url /xz19
 method GET url /login
 method GET url /admin/
 method GET url /HNAP1/
 method GET url /hudson
+method GET url /script
 method GET url /version
 method GET url /console/
 method GET url /info.php
@@ -85,6 +88,13 @@ method GET url /tool/view/phpinfo.view.php
 method GET url /app_dev.php/_profiler/phpinfo
 method GET url /symfony/public/_profiler/phpinfo
 method GET url /owncloud/apps/graphapi/vendor/microsoft/microsoft-graph/tests/GetPhpInfo.php
+method GET url /index.php
+method GET url /public/index.php
+method GET url /html/public/index.php
+method GET url /TP/index.php
+method GET url /TP/public/index.php
+method GET url /TP/html/public/index.php
+method GET url /thinkphp/html/public/index.php
 method GET url stager
 method GET url stager64
 method GET url /?pp=env
@@ -124,6 +134,7 @@ method GET url /development/.env%20
 method GET url /geoserver
 method GET url /.git/HEAD
 method GET url /.git/config
+method GET url /elrekt.php
 method GET url /PSIA/index
 method GET url /config.json
 method GET url /.aws/config
@@ -142,6 +153,7 @@ method GET url /Portal0000.htm
 method GET url /Portal/Portal.mwsl
 method GET url /actuator/health
 method GET url /CSS/Miniweb.css
+method GET url /invoker/readonly
 method GET url /telescope/requests
 method GET url /docker-compose.yml
 method GET url /zabbix/favicon.ico
@@ -234,6 +246,7 @@ method POST url /development/.env%20
 method POST url /rpcform/login
 method POST url /mgmt/tm/util/bash
 method POST url /scripts/WPnBr.dll
+method POST url /users?page=&size=5
 method POST url /onvif/device_service
 method POST url /boaform/admin/formLogin
 method POST url /users/user-dark-features
@@ -295,5 +308,6 @@ method CONNECT url www.shadowserver.org:443
 method OPTIONS url /
 method OPTIONS url sip:nm
 method SSTP_DUPLEX_POST url /sra_{BA195980-CD49-458b-9E23-C84EE0ADCD75}/
+
 
 

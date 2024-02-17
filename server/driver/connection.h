@@ -350,22 +350,17 @@ struct connection
                             .append("-")
                             .append(std::to_string(file_to_send.size - 1))
                             .append("/")
-                            .append(std::to_string(file_to_send.total_size))
-                            .append("\r\nContent-Length: ")
-                            .append(std::to_string(file_to_send.size - file_to_send.offset))
-                            .append("\r\nEtag: \"")
-                            .append(mtime_str)
-                            .append("\"\r\n\r\n");
+                            .append(std::to_string(file_to_send.total_size));
                 }
                 else
                 {
-                    response.append("HTTP/1.1 200 OK\r\n")
-                            .append("Content-Length: ")
-                            .append(std::to_string(file_to_send.size - file_to_send.offset))
-                            .append("\r\nEtag: \"")
-                            .append(mtime_str)
-                            .append("\"\r\n\r\n");
+                    response.append("HTTP/1.1 200 OK");
                 }
+                response.append("\r\nContent-Length: ")
+                        .append(std::to_string(file_to_send.size - file_to_send.offset))
+                        .append("\r\nEtag: \"")
+                        .append(mtime_str)
+                        .append("\"\r\n\r\n");
             }
             else
             {

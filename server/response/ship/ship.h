@@ -31,6 +31,7 @@ private:
     
     std::unordered_map <int, response_t> modernizations;
     std::vector <std::string> type_list;
+    std::unordered_map <int, std::vector <int> > ship_list_in_type;
     
     struct add_event;
     

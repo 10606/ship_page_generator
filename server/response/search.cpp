@@ -169,7 +169,7 @@ uint32_t search::calc_index_4 (std::string_view request, size_t use_symbols)
         if (pos + need_check > request.size())
         {
             i--;
-            std::cerr << "wrong utf-8 sequence (not full): \"" << request << "\"  pos: " << i << std::endl;
+            // std::cerr << "wrong utf-8 sequence (not full): \"" << request << "\"  pos: " << i << std::endl;
             continue;
         }
         for (size_t i = 0; i != need_check; ++i, pos++)
@@ -177,7 +177,7 @@ uint32_t search::calc_index_4 (std::string_view request, size_t use_symbols)
             if (!is_mb(request[pos]))
             {
                 i--;
-                std::cerr << "wrong utf-8 sequence (expected 0b01xxxxxx): \"" << request << "\"  pos: " << i << std::endl;
+                // std::cerr << "wrong utf-8 sequence (expected 0b01xxxxxx): \"" << request << "\"  pos: " << i << std::endl;
                 continue;
             }
         }

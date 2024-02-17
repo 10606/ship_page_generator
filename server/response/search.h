@@ -65,8 +65,12 @@ private:
                 answer.append("</td><td>(")
                       .append(value.class_ru.value_or(""));
                 if (value.type_ru)
-                    answer.append(" типа ")
-                          .append(*value.type_ru);
+                    answer.append(" <a href=\"/ship?type_id=")
+                          .append(std::to_string(value.type_id))
+                          .append("\">")
+                          .append("типа ")
+                          .append(*value.type_ru)
+                          .append("<a>");
                 answer.append(")");
             }
             answer.append("</td></tr>");

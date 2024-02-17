@@ -226,7 +226,8 @@ void ship::add_short_info
 ship::ship (ship_requests * database, ship_armament & _armament) :
     armament(_armament),
     modernizations(),
-    type_list()
+    type_list(),
+    ship_list_in_type()
 {
     std::vector <ship_requests::ship_event_t::event_lt_descr> events = 
         database->ship_event.get_event_lt_descr();
@@ -267,6 +268,7 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
     for (size_t i = 0; i != list.size(); ++i)
     {
         int ship_id = list[i].ship_id;
+        ship_list_in_type[list[i].type_id].push_back(ship_id);
         ship_info.insert({ship_id, std::move(list[i])});
     }
 
@@ -332,27 +334,40 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
 
 void ship::response (simple_string & answer, std::string_view query, piece_t title)
 {
-    std::vector <int> ids = parse_query__id(query);
+    std::vector <id_or_group_t> ids = parse_query__id(query);
 
     std::vector <size_t> type_count(type_list.size(), 0);
     bool not_empty_title = 0;
 
     answer.append("<table class = \"short_info\" border = \"0\" rules = \"rows\"><tbody>\n");
-    for (int id : ids)
+    auto short_ship_info = [this, &answer, &type_count] (int id) -> void
     {
         std::unordered_map <int, response_t> :: iterator it = modernizations.find(id);
         if (it == modernizations.end())
-            continue;
+            return;
         type_count[it->second.type]++;
         answer.append(it->second.short_info);
+    };
+    for (id_or_group_t id_or_group : ids)
+    {
+        if (id_or_group.type == id_or_group_t::id)
+            short_ship_info(id_or_group.value);
+        else
+        {
+            std::unordered_map <int, std::vector <int> > ::iterator it = ship_list_in_type.find(id_or_group.value);
+            if (it == ship_list_in_type.end())
+                continue;
+            for (int id : it->second)
+                short_ship_info(id);
+        }
     }
     answer.append("</tbody></table><br><br>\n");
     
-    for (int id : ids)
+    auto long_ship_info = [this, &answer, &type_count, &not_empty_title, &title] (int id) -> void
     {
         std::unordered_map <int, response_t> :: iterator it = modernizations.find(id);
         if (it == modernizations.end())
-            continue;
+            return;
 
         answer.append(it->second.begin);
         armament.response(answer, it->second.armament_link, {0, 0});
@@ -408,6 +423,19 @@ void ship::response (simple_string & answer, std::string_view query, piece_t tit
             }
             else
                 end_of_title();
+        }
+    };
+    for (id_or_group_t id_or_group : ids)
+    {
+        if (id_or_group.type == id_or_group_t::id)
+            long_ship_info(id_or_group.value);
+        else
+        {
+            std::unordered_map <int, std::vector <int> > ::iterator it = ship_list_in_type.find(id_or_group.value);
+            if (it == ship_list_in_type.end())
+                continue;
+            for (int id : it->second)
+                long_ship_info(id);
         }
     }
 }
