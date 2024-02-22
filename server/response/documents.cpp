@@ -41,22 +41,22 @@ document::document (ship_requests * database)
     
     static const constexpr doc_page_template_t doc_page_template = 
     {
-        "<div><li>",
-        "</li></div>",
+        "<div><ul>",
+        "</ul></div>",
     };
     
     static const constexpr group_template_t group_template = 
     {
-        .self = {"<ul class = \"document_group\">", "</ul><br>"},
+        .self = {"<li class = \"document_group\">", "</li><br>"},
         .preview = {"<img src = \"/pictures_small/docs/", "\">"},
         .without_preview = "",
-        .description = {"", ""},
-        .document_list = {"<li>", "</li>"}
+        .description = {"<h2>", "</h2>"},
+        .document_list = {"<ul>", "</ul>"}
     };
     
     static const constexpr document_template_t document_template = 
     {
-        .self = {"<ul class = \"document\">", "</a></ul><br>"},
+        .self = {"<li class = \"document\">", "</a></li>"},
         .preview = {"<img src = \"/pictures_small/docs/", "\">"},
         .without_preview = "",
         .description = {"<br>", ""},

@@ -56,6 +56,9 @@ static const constexpr html_template_3 style =
                 "max-width: 180px; \n"
                 "vertical-align: top; \n"
             "} \n"
+            ".main ul { \n"
+                "list-style-type: disc; \n"
+            "} \n"
 
             ".collapsible { \n"
                 "background-color: #777777; \n"
@@ -121,7 +124,7 @@ static const constexpr html_template_3 style =
             ".events { font-size: 16px; } \n"
             ".events * { font-size: 16px; } \n"
             ".counter { float:right; } \n"
-            ".document       { min-width: 1200px; } \n"
+            ".document       { min-width: 0px; } \n"
             ".document_group { min-width: 1200px; } \n"
         "</style> \n"
         "<div class = \"wrapper\"> \n",

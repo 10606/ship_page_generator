@@ -65,7 +65,6 @@ method GET url /hudson
 method GET url /script
 method GET url /version
 method GET url /console/
-method GET url /info.php
 method GET url /home.asp
 method GET url /info.php
 method GET url /5info.php
