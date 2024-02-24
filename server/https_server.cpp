@@ -194,10 +194,21 @@ void connection_handler::handle_head
         response.append("\r\nConnection: close\r\n\r\n");
     size_t http_header_size = response.size();
     
+    auto print_request = [method, uri_full] () -> void
+    {
+        try
+        {
+            std::cerr << "\033[01;36mmethod\033[0m " << method << " \033[01;36murl\033[0m " << uri_full << std::endl;
+        }
+        catch (...)
+        {}
+    };
+    
     if (method != "GET")
     {
         response.append("??");
         code = 405;
+        print_request();
     }
     else if (upgrade_if_need <socket_t> (conn, uri_full, headers, "8443"))
         return;
@@ -228,7 +239,10 @@ void connection_handler::handle_head
                 return;
             }
             else
+            {
                 code = 403;
+                print_request();
+            }
         }
     }
     
@@ -248,6 +262,8 @@ void connection_handler::handle_head
                      unused_header);
     size_t answer_size = response.size();
     conn.send(response.reset(), answer_size);
+    if (code == 405)
+        conn.end_read(0);
 }
 
 volatile bool run = 1;
@@ -273,8 +289,11 @@ int main ()
     try
     {
         set_sig_handler(SIGTERM, handler_exit);
-        set_sig_handler(SIGINT, handler_exit);
+        set_sig_handler(SIGINT,  handler_exit);
+        set_sig_handler(SIGQUIT, handler_exit);
         set_sig_handler(SIGPIPE, SIG_IGN);
+        set_sig_handler(SIGUSR1, SIG_IGN);
+        set_sig_handler(SIGUSR2, SIG_IGN);
 
         std::string_view ssl_cert = "server/keys/server.pem";
         std::string_view ssl_key = "server/keys/server.key";

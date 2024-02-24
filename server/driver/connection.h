@@ -175,7 +175,6 @@ struct connection
                         std::string_view method_sv = method.to_string_view(overflow_case);
                         std::string_view uri_sv = uri.to_string_view(overflow_case);
 
-                        std::cerr << "\033[01;36mmethod\033[0m " << method_sv << " \033[01;36murl\033[0m " << uri_sv << std::endl;
                         if (method_sv != "POST" &&
                             method_sv != "PUT" &&
                             method_sv != "PATCH" &&
