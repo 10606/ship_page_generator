@@ -217,6 +217,9 @@ menu::cache_t menu::response_impl (ship_requests * database)
                                    .append(std::to_string(cnt_ships_in_type.front()))
                                    .append(menu_item.new_type.end);
                 cnt_ships_in_type.pop();
+
+                cur_type.link.append(menu_item.new_type_link.begin)
+                             .append(std::to_string(*cur_type.id));
             }
             
             {
@@ -228,15 +231,11 @@ menu::cache_t menu::response_impl (ship_requests * database)
                 cur_type.ships_in_type.append(menu_item.new_ship.begin)
                                       .append(menu_item.new_ship_link.begin)
                                       .append(std::to_string(ship.ship_id))
+                                      .append(menu_item.new_ship_link.middle)
+                                      .append(std::to_string(ship.ship_id))
                                       .append(menu_item.new_ship_link.end)
                                       .append(ship.ship_ru.value_or(" --- "))
                                       .append(menu_item.new_ship.end);
-                
-                if (cur_type.link.empty())
-                    cur_type.link.append(menu_item.new_type_link.begin);
-                else
-                    cur_type.link.append("&id=");
-                cur_type.link.append(std::to_string(ship.ship_id));
             }
         }
         if (cur_class.id)

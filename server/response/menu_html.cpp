@@ -26,7 +26,7 @@ std::string menu_item_template::generate_aircraft_links (ship_requests * databas
 std::string_view menu_item_template::menu_begin =
 "<div class = \"menu\"> \n"
     "<form action = \"/search\" method = \"get\">\n"
-        "<input name = \"search\" type = \"text\" placeholder = \"Поиск корабликов...\" value = \"";
+        "<input class = \"search\" name = \"search\" type = \"text\" placeholder = \"Поиск корабликов...\" value = \"";
 
 html_template menu_item_template::around =
 {
@@ -117,9 +117,7 @@ html_template_3 menu_item_template::link_template =
 std::string_view menu_item_template::menu_end =
     "<script>\n"
         "var coll = document.getElementsByClassName(\"collapsible\");\n"
-        "var i;\n"
-        "\n"
-        "for (i = 0; i < coll.length; i++) {\n"
+        "for (var i = 0; i < coll.length; i++) {\n"
             "coll[i].addEventListener(\"click\", function() {\n"
                 "this.classList.toggle(\"active\");\n"
                 "var content = this.nextElementSibling.nextElementSibling;\n"
@@ -130,7 +128,29 @@ std::string_view menu_item_template::menu_end =
                 "}\n"
             "});\n"
         "}\n"
+        
+        "function compare_ships () {\n"
+            "var link = \"/ship?\";\n"
+            "var first = true;\n"
+            "var menu = document.getElementsByClassName(\"menu\");\n"
+            "for (var i = 0; i < menu.length; i++) {\n"
+                "var checks = menu[i].getElementsByClassName(\"checkbox\");\n"
+                "for (j = 0; j < checks.length; j++) {\n"
+                    "if (checks[j].checked) {\n"
+                        "if (!first) {\n"
+                            "link += \"&\";\n"
+                        "}\n"
+                        "link += \"id=\" + checks[j].getAttribute(\"id\");\n"
+                        "first = false;\n"
+                    "}\n"
+                "}\n"
+            "}\n"
+            "window.location.href = link;\n"
+            "return link;\n"
+        "}\n"
     "</script>\n"
+    "<br>\n"
+    "<div class = \"menu_link\"><a href = \"#\" onclick = \"compare_ships()\">сравнение корабликов</a></div>\n"
 "</div>\n";
 
 menu_item_template::menu_item_template (ship_requests * database) :

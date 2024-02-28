@@ -118,8 +118,9 @@ static const constexpr html_template_3 style =
             ".short_info a:hover { color: #ff2222; } \n"
             ".short_info a:focus { color: #2222ff; } \n"
             
-            "input { width: 97%; margin: 10px 20px 20px 0; }\n"
-            "input:focus { outline-color: #2222ff; } \n"
+            ".search { width: 97%; margin: 10px 20px 20px 0; }\n"
+            ".search:focus { outline-color: #2222ff; } \n"
+            "input { margin: 0 0 0 0; }\n"
             "h2 { display: inline; } \n"
             ".events { font-size: 16px; } \n"
             ".events * { font-size: 16px; } \n"

@@ -304,7 +304,7 @@ std::vector <std::pair <int, std::chrono::year_month_day> > ship_armament::parse
 }
 
 
-void ship_armament::response (simple_string & answer, std::string_view query, piece_t title)
+void ship_armament::response (simple_string & answer, std::string_view query, piece_t title, bool add_checkbox)
 {
     static const constexpr std::string_view title_text = "сравнение японских корабликов";
     answer.rewrite(title.position, title_text.substr(0, std::min(title_text.size(), title.size)));
@@ -314,9 +314,8 @@ void ship_armament::response (simple_string & answer, std::string_view query, pi
         std::vector <std::pair <int, std::chrono::year_month_day> > ship_year =
             parse_query__ship_year(query);
     
-        auto [header, modernizations] = names.response(ship_year);
         answer.append(table.begin);
-        answer.append(std::move(header));
+        std::vector <uint8_t> modernizations = names.response(answer, ship_year, add_checkbox);
         
         add_armament(answer, general,       ship_year, modernizations);
         add_armament(answer, guns,          ship_year, modernizations);

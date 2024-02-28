@@ -4,9 +4,11 @@
 #include <string_view>
 #include <unordered_map>
 #include <vector>
+#include "html_template.h"
 #include "ship_info.h"
 #include "ship_event.h"
 #include "ship_requests.h"
+#include "simple_string.h"
 
 
 struct header_column
@@ -21,13 +23,13 @@ struct ship_names
 {
     ship_names (header_column _table, ship_requests * database);
 
-    struct response_t
-    {
-        std::string row;
-        std::vector <uint8_t> modernization;
-    };
-    
-    response_t response (std::vector <std::pair <int, std::chrono::year_month_day> > ship_year);
+    std::vector <uint8_t> /* on modernization? */
+    response
+    (
+        simple_string & answer, 
+        std::vector <std::pair <int, std::chrono::year_month_day> > ship_year, 
+        bool add_checkbox = 0
+    );
 
 private:
     typedef ship_requests::ship_info_t::list ship_t;
@@ -47,6 +49,12 @@ private:
     std::string ship_info (ship_t const & ship);
 
     header_column table;
+    static const constexpr html_template_3 checkbox =
+    {
+        "<input type = \"checkbox\" class = \"checkbox\" ship_id = \"", 
+        "\" date = \"",
+        "\"></input>"
+    };
 };
 
 #endif

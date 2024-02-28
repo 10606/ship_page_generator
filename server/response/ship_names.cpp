@@ -1,5 +1,6 @@
 #include "ship_names.h"
 
+#include <iostream>
 #include "ship_info.h"
 #include "ship_event.h"
 #include "date_to_str.h"
@@ -57,39 +58,47 @@ std::string ship_names::ship_info (ship_t const & ship)
     return answer;
 }
 
-ship_names::response_t ship_names::response (std::vector <std::pair <int, std::chrono::year_month_day> > ship_year)
+std::vector <uint8_t> /* on modernization? */
+ship_names::response (simple_string & answer, std::vector <std::pair <int, std::chrono::year_month_day> > ship_year, bool add_checkbox)
 {
-    response_t answer = 
-    {
-        std::string(table.begin),
-        std::vector <uint8_t> (ship_year.size())
-    };
+    std::vector <uint8_t> is_on_modernization (ship_year.size());
+    answer.append(table.begin);
 
     for (size_t i = 0; i != ship_year.size(); ++i)
     {
         if (i != 0)
-            answer.row += table.new_column;
+            answer.append(table.new_column);
         
         std::unordered_map <int, cache_info> :: iterator ship = ship_list_cache.find(ship_year[i].first);
         if (ship == ship_list_cache.end())
             continue;
         
-        answer.row += ship->second.answer;
-        
-        answer.row.append(table.new_line).append(to_string(ship_year[i].second));
-
         bool modernizations = on_modernization(ship_year[i].first, ship_year[i].second);
+        bool not_commissioned = ship->second.commissioned && ship_year[i].second < *ship->second.commissioned;
+        bool sunk = ship->second.sunk_date && ship_year[i].second > *ship->second.sunk_date;
+        
+        answer.append(ship->second.answer)
+              .append(table.new_line);
+        if (add_checkbox && !modernizations && !not_commissioned && !sunk)
+        {
+            answer.append(checkbox.begin)
+                  .append(std::to_string(ship_year[i].first))
+                  .append(checkbox.middle)
+                  .append(to_string(ship_year[i].second))
+                  .append(checkbox.end);
+        }
+        answer.append(to_string(ship_year[i].second));
 
-        answer.modernization[i] = modernizations;
+        is_on_modernization[i] = modernizations;
         if (modernizations)
-            answer.row.append(table.new_line).append("на модернизации");
-        if (ship->second.commissioned && ship_year[i].second < *ship->second.commissioned)
-            answer.row.append(table.new_line).append("еще не введен в строй");
-        if (ship->second.sunk_date && ship_year[i].second > *ship->second.sunk_date)
-            answer.row.append(table.new_line).append("потоплен");
+            answer.append(table.new_line).append("на модернизации");
+        if (not_commissioned)
+            answer.append(table.new_line).append("еще не введен в строй");
+        if (sunk)
+            answer.append(table.new_line).append("потоплен");
     }
 
-    answer.row += table.end;
-    return answer;
+    answer.append(table.end);
+    return is_on_modernization;
 }
 

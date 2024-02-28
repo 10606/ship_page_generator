@@ -361,7 +361,9 @@ void ship::response (simple_string & answer, std::string_view query, piece_t tit
                 short_ship_info(id);
         }
     }
-    answer.append("</tbody></table><br><br>\n");
+    answer.append("</tbody></table><br>\n")
+          .append(detail_compare_ships)
+          .append("<br><br>");
     
     auto long_ship_info = [this, &answer, &type_count, &not_empty_title, &title] (int id) -> void
     {
@@ -370,7 +372,7 @@ void ship::response (simple_string & answer, std::string_view query, piece_t tit
             return;
 
         answer.append(it->second.begin);
-        armament.response(answer, it->second.armament_link, {0, 0});
+        armament.response(answer, it->second.armament_link, {0, 0}, 1);
         answer.append(it->second.end);
 
         

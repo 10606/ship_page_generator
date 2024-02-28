@@ -50,7 +50,9 @@ method GET url /9drM
 method GET url /aaa9
 method GET url /aab8
 method GET url /aab9
+method GET url /aHkI
 method GET url /GWqN
+method GET url /InLY
 method GET url /kkDB
 method GET url /KbZV
 method GET url /OoSL
@@ -153,6 +155,8 @@ method GET url /Portal/Portal.mwsl
 method GET url /actuator/health
 method GET url /CSS/Miniweb.css
 method GET url /invoker/readonly
+method GET url /manager/text/list
+method GET url //libs/js/iframe.js
 method GET url /telescope/requests
 method GET url /docker-compose.yml
 method GET url /zabbix/favicon.ico
@@ -172,6 +176,7 @@ method GET url /../../mnt/mtd/Config/Account1
 method GET url /../../mnt/mtd/Config/Account2
 method GET url /?XDEBUG_SESSION_START=phpstorm
 method GET url /nice%20ports%2C/Tri%6Eity.txt%2ebak
+method GET url /sitecore/shell/sitecore.version.xml
 method GET url /Telerik.Web.UI.WebResource.axd?type=rau
 method GET url /securityRealm/user/admin/search/index?q=a
 method GET url /?=PHPB8B5F2A0-3C92-11d3-A3A9-4C7B08C10000
