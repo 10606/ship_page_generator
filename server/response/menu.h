@@ -10,7 +10,10 @@
 
 struct menu_item_template
 {
-    menu_item_template (ship_requests * database);
+    menu_item_template (ship_requests * database) :
+        something_needed(generate_aircraft_links(database, around, link_template)),
+        all{menu_begin, something_needed, menu_end}
+    {}
 
 private:
     std::string something_needed;
@@ -24,11 +27,11 @@ private:
 public:
     html_template_3 all;
     
-    html_template_3 new_class = {"<button type = \"button\" class = \"collapsible\">\n", 
+    html_template_3 new_class = {"<button type = \"button\" class = \"collapsible\" onclick = \"collapse_menu(event)\">\n", 
                                  "<span class = \"counter\">(",
                                  ")</span> </button><br><div class = \"content\">\n"};
     
-    html_template new_type_link = {"<button type = \"button\" class = \"collapsible\">\n&emsp;<a tabindex = \"0\" href = \"/ship?type_id=", 
+    html_template new_type_link = {"<button type = \"button\" class = \"collapsible\" onclick = \"collapse_menu(event)\">\n&emsp;<a tabindex = \"0\" href = \"/ship?type_id=", 
                                    "\">"};
     html_template_3 new_type = {"", 
                                 "</a><span class = \"counter\">(",
@@ -38,7 +41,8 @@ public:
     std::string_view close_class = "</div>";
 
     html_template new_ship = {"&nbsp;&nbsp;", "</a><br>"};
-    html_template_3 new_ship_link = {"<input type = \"checkbox\" class = \"checkbox\" id = \"", "\"></input> <a tabindex = \"0\" href = \"/ship?id=", "\">"};
+    html_template new_ship_link = {"<a tabindex = \"0\" href = \"/ship?id=", "\">"};
+    html_template_3 checkbox = {"<input type = \"checkbox\" class = \"checkbox\" id = \"", "\" ship_id = \"", "\" onchange = \"toggle_to_compare(event)\"></input>"};
 };
 
 struct menu
