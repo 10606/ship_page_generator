@@ -47,8 +47,8 @@ document::document (ship_requests * database)
     
     static const constexpr group_template_t group_template = 
     {
-        .self = {"<li class = \"document_group\">", "</li><br>"},
-        .preview = {"<img src = \"/pictures_small/docs/", "\">"},
+        .self = {"<li class=\"document_group\">", "</li><br>"},
+        .preview = {"<img src=\"/pictures_small/docs/", "\">"},
         .without_preview = "",
         .description = {"<h2>", "</h2>"},
         .document_list = {"<ul>", "</ul>"}
@@ -56,11 +56,11 @@ document::document (ship_requests * database)
     
     static const constexpr document_template_t document_template = 
     {
-        .self = {"<li class = \"document\">", "</a></li>"},
-        .preview = {"<img src = \"/pictures_small/docs/", "\">"},
+        .self = {"<li class=\"document\">", "</a></li>"},
+        .preview = {"<img src=\"/pictures_small/docs/", "\">"},
         .without_preview = "",
         .description = {"<br>", ""},
-        .link = {"<a href = \"/documents/", "\">"}
+        .link = {"<a href=\"/documents/", "\">"}
     };
     
     value.append(doc_page_template.begin);

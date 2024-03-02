@@ -48,7 +48,7 @@ struct rows_table_template
     struct rowspan_t
     {
         // <begin> number <middle> text <end>
-        std::string begin = "<th rowspan = ";
+        std::string begin = "<th rowspan=";
         std::string middle = ">"; 
         std::string end = "</th>";
     } rowspan = rowspan_t();
@@ -102,14 +102,14 @@ struct table_template
     )
     {
         if (!style.empty() || !tr_class.empty())
-            begin = std::string("<table border = 1 class = \"ship_armament\">\n")
+            begin = std::string("<table border=1 class=\"ship_armament\">\n")
                     .append(style)
                     .append("<tr ")
                     .append(tr_class)
                     .append(">\n");
     }
 
-    std::string begin = "<table border = 1 class = \"ship_armament\">\n<tr>\n";
+    std::string begin = "<table border=1 class=\"ship_armament\">\n<tr>\n";
     std::string new_line = "<br>\n";
     std::string end = "\n</tr>\n</table>\n";
 
@@ -140,17 +140,17 @@ void add_armament
 
 struct ship_armament
 {
-    ship_armament (ship_requests * _database, table_template _table = table_template(style, "class = \"header\"")) :
+    ship_armament (ship_requests * _database, table_template _table = table_template(style, "class=\"header\"")) :
         table(_table),
         names(header_column(), _database),
-        general      (rows_table_template("class = \"general\""     ), _database, table.new_line),
-        guns         (rows_table_template("class = \"guns\""        ), _database, table.new_line),
-        torpedo_tubes(rows_table_template("class = \"torpedo\""     ), _database, table.new_line),
-        throwers     (rows_table_template("class = \"throwers\""    ), _database, table.new_line),
-        searchers    (rows_table_template("class = \"searchers\""   ), _database, table.new_line),
-        catapult     (rows_table_template("class = \"catapult\""    ), _database, table.new_line),
-        aircraft     (rows_table_template("class = \"aircraft\""    ), _database, table.new_line),
-        propulsion   (rows_table_template("class = \"propulsion\""  ), _database, table.new_line),
+        general      (rows_table_template("class=\"general\""     ), _database, table.new_line),
+        guns         (rows_table_template("class=\"guns\""        ), _database, table.new_line),
+        torpedo_tubes(rows_table_template("class=\"torpedo\""     ), _database, table.new_line),
+        throwers     (rows_table_template("class=\"throwers\""    ), _database, table.new_line),
+        searchers    (rows_table_template("class=\"searchers\""   ), _database, table.new_line),
+        catapult     (rows_table_template("class=\"catapult\""    ), _database, table.new_line),
+        aircraft     (rows_table_template("class=\"aircraft\""    ), _database, table.new_line),
+        propulsion   (rows_table_template("class=\"propulsion\""  ), _database, table.new_line),
         default_date()
     {
         std::vector <ship_requests::ship_info_t::list> ships_info = _database->ship_info.get_list();

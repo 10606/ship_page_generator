@@ -228,16 +228,16 @@ menu::cache_t menu::response_impl (ship_requests * database)
                     if (!cur_type.min_date || *ship.commissioned < *cur_type.min_date)
                         cur_type.min_date = ship.commissioned;
                 
+                std::string ship_id_str = std::to_string(ship.ship_id);
                 cur_type.ships_in_type.append(menu_item.new_ship.begin)
-                                      .append(menu_item.new_ship_link.begin)
-                                      .append(std::to_string(ship.ship_id))
-                                      .append(menu_item.new_ship_link.end)
                                       .append(menu_item.checkbox.begin)
-                                      .append(std::to_string(i))
-                                      .append(menu_item.checkbox.middle)
-                                      .append(std::to_string(ship.ship_id))
+                                      .append(ship_id_str)
                                       .append(menu_item.checkbox.end)
+                                      .append(menu_item.new_ship_link.begin)
+                                      .append(ship_id_str)
+                                      .append(menu_item.new_ship_link.middle)
                                       .append(ship.ship_ru.value_or(" --- "))
+                                      .append(menu_item.new_ship_link.end)
                                       .append(menu_item.new_ship.end);
             }
         }

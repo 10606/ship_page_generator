@@ -78,7 +78,7 @@ static const constexpr html_template_3 style =
             ".collapsible:focus { background-color: #6666ff; } \n"
             ".collapsible > a:focus { color: #aaeeff; } \n"
             ".content { \n"
-                "padding: 0px 0px 0px 20px; \n"
+                "padding: 0px 0px 0px 30px; \n"
                 "display: none; \n"
                 "overflow: hidden; \n"
             "} \n"
@@ -124,11 +124,11 @@ static const constexpr html_template_3 style =
             "h2 { display: inline; } \n"
             ".events { font-size: 16px; } \n"
             ".events * { font-size: 16px; } \n"
-            ".counter { float:right; } \n"
+            "ship-cnt { float:right; } \n"
             ".document       { min-width: 0px; } \n"
             ".document_group { min-width: 1200px; } \n"
         "</style> \n"
-        "<div class = \"wrapper\"> \n",
+        "<div class=\"wrapper\"> \n",
 
         "</div> \n"
         "<footer> \n"
@@ -208,7 +208,7 @@ struct responser
         
         answer.append(style.middle);
         ship_list.response(answer, query);
-        answer.append("<div class = \"main\">\n");
+        answer.append("<div class=\"main\">\n");
         it->second->response(answer, query, {title_pos, title_placeholder.size()});
         answer.append("</div>\n");
         answer.append(style.end);

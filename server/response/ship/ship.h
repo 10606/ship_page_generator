@@ -49,15 +49,15 @@ private:
     );
     
     static const constexpr std::string_view query_template = "ship=";
-    static const constexpr html_template link = {"<a href = \"/ship/armament?", "\">вооружение</a>"};
+    static const constexpr html_template link = {"<a href=\"/ship/armament?", "\">вооружение</a>"};
     static const constexpr std::string_view new_line = "<br>\n";
     static const constexpr std::string_view shift = "&emsp;";
     
     static const constexpr pictures_template pictures =
     {
         {
-            "<li><a href = \"/pictures/ship/",
-            "\"><img src = \"/pictures_small/ship/",
+            "<li><a href=\"/pictures/ship/",
+            "\"><img src=\"/pictures_small/ship/",
             "\"></a><br>",
             "</li>"
         },
@@ -116,7 +116,7 @@ private:
                 "compare_ships_buttons[i].setAttribute('href', link);\n"
         "}\n"
     "</script>\n"
-    "<div class = \"menu_link\"><a name = \"detail_compare_ships_button\" href = \"/ship/armament?\">сравнение корабликов</a></div>\n";
+    "<div class=\"menu_link\"><a name=\"detail_compare_ships_button\" href=\"/ship/armament?\">сравнение корабликов</a></div>\n";
 };
 
 

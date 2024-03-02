@@ -155,7 +155,7 @@ void ship::add_general_info
 )
 {
     if (info.ship_ru)
-        answer.append("<h2 id = \"id_")
+        answer.append("<h2 id=\"id_")
               .append(std::to_string(info.ship_id))
               .append("\">")
               .append(*info.ship_ru)
@@ -206,7 +206,7 @@ void ship::add_short_info
     ship_requests::ship_info_t::list const & info
 )
 {
-    answer.short_info.append("<tr><th><a href = \"#id_")
+    answer.short_info.append("<tr><th><a href=\"#id_")
                      .append(std::to_string(info.ship_id))
                      .append("\">");
     answer.name.position = answer.short_info.size();
@@ -280,7 +280,7 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
         int ship_id = info.first;
         
         response_t answer;
-        answer.begin = std::string("<div class = \"events\"><span>");
+        answer.begin = std::string("<div class=\"events\"><span>");
         answer.armament_link = std::string(query_template);
         answer.armament_link.append(std::to_string(ship_id));
 
@@ -339,7 +339,7 @@ void ship::response (simple_string & answer, std::string_view query, piece_t tit
     std::vector <size_t> type_count(type_list.size(), 0);
     bool not_empty_title = 0;
 
-    answer.append("<table class = \"short_info\" border = \"0\" rules = \"rows\"><tbody>\n");
+    answer.append("<table class=\"short_info\" border=0 rules=\"rows\"><tbody>\n");
     auto short_ship_info = [this, &answer, &type_count] (int id) -> void
     {
         std::unordered_map <int, response_t> :: iterator it = modernizations.find(id);

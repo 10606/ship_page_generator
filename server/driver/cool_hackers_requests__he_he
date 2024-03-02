@@ -154,6 +154,7 @@ method GET url /Portal0000.htm
 method GET url /Portal/Portal.mwsl
 method GET url /actuator/health
 method GET url /CSS/Miniweb.css
+method GET url http://azenv.net/
 method GET url /invoker/readonly
 method GET url /manager/text/list
 method GET url //libs/js/iframe.js
@@ -345,6 +346,5 @@ method CONNECT url srv57c0d2365c3c.korsan.me:443
 method OPTIONS url /
 method OPTIONS url sip:nm
 method SSTP_DUPLEX_POST url /sra_{BA195980-CD49-458b-9E23-C84EE0ADCD75}/
-
 
 

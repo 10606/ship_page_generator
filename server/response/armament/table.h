@@ -5,7 +5,7 @@
 
 struct table
 {
-    static constexpr std::string_view begin = "<table border = 1 class = \"armament\"><td>\n";
+    static constexpr std::string_view begin = "<table border=1 class=\"armament\"><td>\n";
     static constexpr std::string_view end = "</td></table>\n";
     
     static constexpr std::string_view new_column = "</td>\n<td>\n";

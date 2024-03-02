@@ -13,8 +13,8 @@
 static const constexpr pictures_template pictures =
 {
     {
-        "<li><a href = \"/pictures/searcher/",
-        "\"><img src = \"/pictures_small/searcher/",
+        "<li><a href=\"/pictures/searcher/",
+        "\"><img src=\"/pictures_small/searcher/",
         "\"></a><br>",
         "</li>"
     },
