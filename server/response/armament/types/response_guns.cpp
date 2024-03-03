@@ -107,8 +107,8 @@ guns::guns_partial::guns_partial (guns_t const & value, size_t _index) :
     index(_index),
     id          (value.id),
     class_id    (value.class_id),
-    name_ru     (value.gun_ru),
-    name_en     (value.gun_en),
+    name_ru     (), // filled later as pointer to guns_cache
+    name_en     (), // filled later as pointer to guns_cache
     caliber     (value.caliber.value_or(std::numeric_limits <double> ::infinity())),
     caliber_group(value.caliber?
         std::floor((std::log(*value.caliber + 1.) + 0.5) / 0.3) :
@@ -118,6 +118,8 @@ guns::guns_partial::guns_partial (guns_t const & value, size_t _index) :
 
 guns::guns_text::guns_text (guns_t const & item) :
     name        (table::new_column),
+    name_ru     (item.gun_ru),
+    name_en     (item.gun_en),
     caliber     (table::new_column),
     length      (table::new_column),
     rate_of_fire(table::new_column),

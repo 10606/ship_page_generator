@@ -101,8 +101,8 @@ searcher::searchers_partial::searchers_partial (searcher_t const & value, size_t
     index(_index),
     id          (value.id),
     class_id    (value.class_id),
-    name_ru     (value.searcher_ru),
-    name_en     (value.searcher_en),
+    name_ru     (), // filled later as pointer to searchers_cache
+    name_en     (), // filled later as pointer to searchers_cache
     mass        (value.mass .value_or(std::numeric_limits <double> ::infinity())),
     power       (value.power.value_or(std::numeric_limits <double> ::infinity())),
     power_group (value.power? 
@@ -126,6 +126,8 @@ std::string searcher::searchers_text::freq_convert (double frequency)
 
 searcher::searchers_text::searchers_text (searcher_t const & item) :
     name        (table::new_column),
+    name_ru     (item.searcher_ru),
+    name_en     (item.searcher_en),
     mass        (table::new_column),
     frequency   (table::new_column),
     power       (table::new_column),

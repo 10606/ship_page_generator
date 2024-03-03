@@ -83,14 +83,16 @@ mines_charges::mines_charges_partial::mines_charges_partial (mines_charges_t con
     index(_index),
     id          (value.id),
     class_id    (value.class_id),
-    name_ru     (value.mine_ru),
-    name_en     (value.mine_en),
+    name_ru     (), // filled later as pointer to mines_charges_cache
+    name_en     (), // filled later as pointer to mines_charges_cache
     mass_ex     (value.mass_ex.value_or(std::numeric_limits <double> ::infinity())),
     in_service  (value.in_service)
 {}
 
 mines_charges::mines_charges_text::mines_charges_text (mines_charges_t const & item) :
     name    (table::new_column),
+    name_ru (item.mine_ru),
+    name_en (item.mine_en),
     mass    (table::new_column),
     mass_ex (table::new_column),
     size    (table::new_column),

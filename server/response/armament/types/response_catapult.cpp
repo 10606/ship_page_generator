@@ -105,8 +105,8 @@ catapult::catapult_partial::catapult_partial (catapult_t const & value, size_t _
     index(_index),
     id          (value.id),
     class_id    (value.class_id),
-    name_ru     (value.catapult_ru),
-    name_en     (value.catapult_en),
+    name_ru     (), // filled later as pointer to catapult_cache
+    name_en     (), // filled later as pointer to catapult_cache
     acceleration(value.alleceration .value_or(std::numeric_limits <double> ::infinity())),
     speed       (value.speed        .value_or(std::numeric_limits <double> ::infinity())),
     launch_mass (value.launch_mass  .value_or(std::numeric_limits <double> ::infinity())),
@@ -115,6 +115,8 @@ catapult::catapult_partial::catapult_partial (catapult_t const & value, size_t _
 
 catapult::catapult_text::catapult_text (catapult_t const & item) :
     name        (table::new_column),
+    name_ru     (item.catapult_ru),
+    name_en     (item.catapult_en),
     length      (table::new_column),
     width       (table::new_column),
     speed       (table::new_column),

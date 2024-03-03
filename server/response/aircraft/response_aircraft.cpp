@@ -148,6 +148,8 @@ void aircraft::response (simple_string & answer, std::string_view query, piece_t
 
 aircraft::aircraft_text::aircraft_text (aircraft_t const & value) :
     name        (table::new_column),
+    aircraft_ru (value.aircraft_ru),
+    aircraft_en (value.aircraft_en),
     crew        (table::new_column),
     mass        (table::new_column),
     max_mass    (table::new_column),
@@ -185,8 +187,8 @@ aircraft::aircraft_partial::aircraft_partial (aircraft_t const & value, size_t _
     id          (value.id),
     type_id     (value.type_id),
     class_id    (value.class_id),
-    aircraft_ru (value.aircraft_ru),
-    aircraft_en (value.aircraft_en),
+    aircraft_ru (), // filled later as pointer to aircraft_cache
+    aircraft_en (), // filled later as pointer to aircraft_cache
     mass        (value.mass         .value_or(std::numeric_limits <double> ::infinity())),
     engine_power(value.engine_power .value_or(std::numeric_limits <double> ::infinity())),
     max_speed   (value.max_speed    .value_or(std::numeric_limits <double> ::infinity())),

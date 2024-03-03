@@ -17,6 +17,11 @@ struct guns
         std::vector <guns_t> tmp = database->armament_info.get_list();
         guns_cache = partial::partial_response <guns_t, guns_partial> (tmp);
         text_cache = partial::text_response <guns_t, guns_text> (tmp);
+        for (size_t i = 0; i != guns_cache.size(); ++i)
+        {
+            guns_cache[i].name_ru = text_cache[i].name_ru;
+            guns_cache[i].name_en = text_cache[i].name_en;
+        }
 
         std::vector <picture_t> pictures_list = database->pictures.get_gun();
         pictures_cache = partial::pictures_response <guns_t> (pictures_list, tmp);
@@ -33,6 +38,8 @@ struct guns
         guns_text (guns_t const & value);
             
         std::string name;
+        std::optional <std::string> name_ru;
+        std::optional <std::string> name_en;
         std::string caliber;
         std::string length;
         std::string rate_of_fire;
@@ -50,8 +57,8 @@ struct guns
         
         int id;
         int class_id;
-        std::optional <std::string> name_ru;
-        std::optional <std::string> name_en;
+        std::optional <std::string_view> name_ru;
+        std::optional <std::string_view> name_en;
     
         double caliber;
         int caliber_group;

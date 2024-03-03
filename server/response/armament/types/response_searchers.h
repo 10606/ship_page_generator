@@ -16,6 +16,11 @@ struct searcher
         std::vector <searcher_t> tmp = database->armament_info.get_searchers();
         searchers_cache = partial::partial_response <searcher_t, searchers_partial> (tmp);
         text_cache = partial::text_response <searcher_t, searchers_text> (tmp);
+        for (size_t i = 0; i != searchers_cache.size(); ++i)
+        {
+            searchers_cache[i].name_ru = text_cache[i].name_ru;
+            searchers_cache[i].name_en = text_cache[i].name_en;
+        }
 
         std::vector <picture_t> pictures_list = database->pictures.get_searcher();
         pictures_cache = partial::pictures_response <searcher_t> (pictures_list, tmp);
@@ -33,6 +38,8 @@ struct searcher
         std::string freq_convert (double frequency);
             
         std::string name;
+        std::optional <std::string> name_ru;
+        std::optional <std::string> name_en;
         std::string mass;
         std::string frequency;
         std::string power;
@@ -48,8 +55,8 @@ struct searcher
         
         int id;
         int class_id;
-        std::optional <std::string> name_ru;
-        std::optional <std::string> name_en;
+        std::optional <std::string_view> name_ru;
+        std::optional <std::string_view> name_en;
     
         double mass;
         double power;

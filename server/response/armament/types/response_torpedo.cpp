@@ -91,8 +91,8 @@ void torpedo::response (simple_string & answer, std::string_view query, piece_t 
 torpedo::torpedo_partial::torpedo_partial (torpedo_t const & value, size_t _index) :
     index(_index),
     id          (value.id),
-    name_ru     (value.torpedo_ru),
-    name_en     (value.torpedo_en),
+    name_ru     (), // filled later as pointer to torpedo_cache
+    name_en     (), // filled later as pointer to torpedo_cache
     caliber     (value.caliber.value_or(std::numeric_limits <double> ::infinity())),
     mass_ex     (value.mass_ex.value_or(std::numeric_limits <double> ::infinity())),
     in_service  (value.in_service)
@@ -100,6 +100,8 @@ torpedo::torpedo_partial::torpedo_partial (torpedo_t const & value, size_t _inde
 
 torpedo::torpedo_text::torpedo_text (torpedo_t const & item) :
     name        (table::new_column),
+    name_ru     (item.torpedo_ru),
+    name_en     (item.torpedo_en),
     caliber     (table::new_column),
     length      (table::new_column),
     speed       (table::new_column),

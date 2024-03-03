@@ -16,6 +16,11 @@ struct mines_charges
         std::vector <mines_charges_t> tmp = database->armament_info.get_mines_charges();
         mines_charges_cache = partial::partial_response <mines_charges_t, mines_charges_partial> (tmp);
         text_cache = partial::text_response <mines_charges_t, mines_charges_text> (tmp);
+        for (size_t i = 0; i != mines_charges_cache.size(); ++i)
+        {
+            mines_charges_cache[i].name_ru = text_cache[i].name_ru;
+            mines_charges_cache[i].name_en = text_cache[i].name_en;
+        }
     }
     
     typedef ship_requests::armament_info_t::mines_charges mines_charges_t;
@@ -28,6 +33,8 @@ struct mines_charges
         mines_charges_text (mines_charges_t const & value);
             
         std::string name;
+        std::optional <std::string> name_ru;
+        std::optional <std::string> name_en;
         std::string mass;
         std::string mass_ex;
         std::string size;
@@ -42,8 +49,8 @@ struct mines_charges
         
         int id;
         int class_id;
-        std::optional <std::string> name_ru;
-        std::optional <std::string> name_en;
+        std::optional <std::string_view> name_ru;
+        std::optional <std::string_view> name_en;
     
         double mass_ex;
         std::optional <std::chrono::year_month_day> in_service;

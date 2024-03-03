@@ -16,6 +16,11 @@ struct catapult
         std::vector <catapult_t> tmp = database->armament_info.get_catapult();
         catapult_cache = partial::partial_response <catapult_t, catapult_partial> (tmp);
         text_cache = partial::text_response <catapult_t, catapult_text> (tmp);
+        for (size_t i = 0; i != catapult_cache.size(); ++i)
+        {
+            catapult_cache[i].name_ru = text_cache[i].name_ru;
+            catapult_cache[i].name_en = text_cache[i].name_en;
+        }
 
         std::vector <picture_t> pictures_list = database->pictures.get_catapult();
         pictures_cache = partial::pictures_response <catapult_t> (pictures_list, tmp);
@@ -32,6 +37,8 @@ struct catapult
         catapult_text (catapult_t const & value);
             
         std::string name;
+        std::optional <std::string> name_ru;
+        std::optional <std::string> name_en;
         std::string length;
         std::string width;
         std::string speed;
@@ -48,8 +55,8 @@ struct catapult
         
         int id;
         int class_id;
-        std::optional <std::string> name_ru;
-        std::optional <std::string> name_en;
+        std::optional <std::string_view> name_ru;
+        std::optional <std::string_view> name_en;
     
         double acceleration;
         double speed;

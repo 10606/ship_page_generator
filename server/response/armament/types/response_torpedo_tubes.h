@@ -16,6 +16,11 @@ struct torpedo_tubes
         std::vector <torpedo_tubes_t> tmp = database->armament_info.get_torpedo_tubes();
         torpedo_tubes_cache = partial::partial_response <torpedo_tubes_t, torpedo_tubes_partial> (tmp);
         text_cache = partial::text_response <torpedo_tubes_t, torpedo_tubes_text> (tmp);
+        for (size_t i = 0; i != torpedo_tubes_cache.size(); ++i)
+        {
+            torpedo_tubes_cache[i].name_ru = text_cache[i].name_ru;
+            torpedo_tubes_cache[i].name_en = text_cache[i].name_en;
+        }
     }
     
     typedef ship_requests::armament_info_t::torpedo_tubes torpedo_tubes_t;
@@ -28,6 +33,8 @@ struct torpedo_tubes
         torpedo_tubes_text (torpedo_tubes_t const & value);
             
         std::string name;
+        std::optional <std::string> name_ru;
+        std::optional <std::string> name_en;
         std::string caliber;
         std::string tubes_count;
         std::string in_service;
@@ -41,8 +48,8 @@ struct torpedo_tubes
         
         int id;
         int class_id;
-        std::optional <std::string> name_ru;
-        std::optional <std::string> name_en;
+        std::optional <std::string_view> name_ru;
+        std::optional <std::string_view> name_en;
     
         double caliber;
         std::optional <std::chrono::year_month_day> in_service;

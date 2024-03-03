@@ -82,14 +82,16 @@ torpedo_tubes::torpedo_tubes_partial::torpedo_tubes_partial (torpedo_tubes_t con
     index(_index),
     id          (value.id),
     class_id    (value.class_id),
-    name_ru     (value.tube_ru),
-    name_en     (value.tube_en),
+    name_ru     (), // filled later as pointer to torpedo_tubes_cache
+    name_en     (), // filled later as pointer to torpedo_tubes_cache
     caliber     (value.caliber.value_or(std::numeric_limits <double> ::infinity())),
     in_service  (value.in_service)
 {}
 
 torpedo_tubes::torpedo_tubes_text::torpedo_tubes_text (torpedo_tubes_t const & item) :
     name        (table::new_column),
+    name_ru     (item.tube_ru),
+    name_en     (item.tube_en),
     caliber     (table::new_column),
     tubes_count (table::new_column),
     in_service  (table::new_column)

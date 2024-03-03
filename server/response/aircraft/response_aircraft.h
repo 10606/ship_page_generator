@@ -19,6 +19,11 @@ struct aircraft
         std::vector <aircraft_t> tmp = database->aircraft_info.get_list("");
         aircraft_cache = partial::partial_response <aircraft_t, aircraft_partial> (tmp);
         text_cache = partial::text_response <aircraft_t, aircraft_text> (tmp);
+        for (size_t i = 0; i != aircraft_cache.size(); ++i)
+        {
+            aircraft_cache[i].aircraft_ru = text_cache[i].aircraft_ru;
+            aircraft_cache[i].aircraft_en = text_cache[i].aircraft_en;
+        }
 
         std::vector <picture_t> pictures_list = database->pictures.get_aircraft();
         pictures_cache = partial::pictures_response <aircraft_t> (pictures_list, tmp);
@@ -37,6 +42,8 @@ struct aircraft
         aircraft_text (aircraft_t const & value);
             
         std::string name;
+        std::optional <std::string> aircraft_ru;
+        std::optional <std::string> aircraft_en;
         std::string crew;
         std::string mass;
         std::string max_mass;
@@ -59,8 +66,8 @@ struct aircraft
         int id;
         int type_id;
         int class_id;
-        std::optional <std::string> aircraft_ru;
-        std::optional <std::string> aircraft_en;
+        std::optional <std::string_view> aircraft_ru;
+        std::optional <std::string_view> aircraft_en;
     
         double mass;             /* kg */
         double engine_power;     /* hp */

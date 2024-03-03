@@ -16,6 +16,11 @@ struct torpedo
         std::vector <torpedo_t> tmp = database->armament_info.get_torpedo();
         torpedo_cache = partial::partial_response <torpedo_t, torpedo_partial> (tmp);
         text_cache = partial::text_response <torpedo_t, torpedo_text> (tmp);
+        for (size_t i = 0; i != torpedo_cache.size(); ++i)
+        {
+            torpedo_cache[i].name_ru = text_cache[i].name_ru;
+            torpedo_cache[i].name_en = text_cache[i].name_en;
+        }
     }
     
     typedef ship_requests::armament_info_t::torpedo torpedo_t;
@@ -28,6 +33,8 @@ struct torpedo
         torpedo_text (torpedo_t const & value);
             
         std::string name;
+        std::optional <std::string> name_ru;
+        std::optional <std::string> name_en;
         std::string caliber;
         std::string length;
         std::string speed;
@@ -44,8 +51,8 @@ struct torpedo
         size_t index;
         
         int id;
-        std::optional <std::string> name_ru;
-        std::optional <std::string> name_en;
+        std::optional <std::string_view> name_ru;
+        std::optional <std::string_view> name_en;
     
         double caliber;
         double mass_ex;
