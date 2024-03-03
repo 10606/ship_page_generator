@@ -288,10 +288,11 @@ method POST url /users/user-dark-features
 method POST url /json/setup-restore.action
 method POST url /GponForm/diag_Form?images/
 method POST url /goform/set_LimitClient_cfg
+method POST url /cgi-bin-igd/netcore_set.cgi
+method POST url /cgi-bin/luci/;stok=/locale?form=country
 method POST url /Autodiscover/Autodiscover.xml
 method POST url /template/custom/content-editor
 method POST url /templates/editor-preload-container
-method POST url /cgi-bin/luci/;stok=/locale?form=country
 method POST url /pages/doenterpagevariables.action
 method POST url /pages/createpage.action?spaceKey=myproj
 method POST url /pages/createpage-entervariables.action

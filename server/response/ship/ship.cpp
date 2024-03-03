@@ -70,6 +70,7 @@ struct ship::add_event
         visited[vertex] = 1;
         size_t index = index_mapping[vertex];
         
+        answer.append(ship::row.begin);
         for (size_t i = 0; i != shift; ++i)
             answer.append(ship::shift);
         answer.append("<b>");
@@ -89,7 +90,7 @@ struct ship::add_event
                   .append(": ");
         if (events[index].description)
             answer.append(*events[index].description);
-        answer.append(ship::new_line);
+        answer.append(ship::row.end);
         
         for (size_t next : graph[vertex])
             visit(next, shift + 1);
@@ -154,6 +155,7 @@ void ship::add_general_info
     ship_requests::ship_info_t::list const & info
 )
 {
+    answer.append(ship::row.begin);
     if (info.ship_ru)
         answer.append("<h2 id=\"id_")
               .append(std::to_string(info.ship_id))
@@ -172,8 +174,9 @@ void ship::add_general_info
                   .append(*info.type_ru);
         answer.append(")");
     }
-    answer.append(ship::new_line);
+    answer.append(ship::row.end);
     
+    answer.append(ship::row.begin);
     answer.append("<b>");
     if (info.commissioned)
     {
@@ -184,19 +187,15 @@ void ship::add_general_info
     }
     answer.append(" -> ");
     if (info.sunk_date)
+        answer.append(to_string(*info.sunk_date));
+    answer.append("</b>");
+    if (info.sunk_reason)
     {
-        answer.append(to_string(*info.sunk_date))
-              .append("</b>");
-        if (info.sunk_reason)
-        {
-            answer.append(" (")
-                  .append(*info.sunk_reason)
-                  .append(") ");
-        }
+        answer.append(" (")
+              .append(*info.sunk_reason)
+              .append(")");
     }
-    else
-        answer.append("</b>");
-    answer.append(ship::new_line);
+    answer.append(ship::row.end);
 }
 
 
@@ -280,7 +279,7 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
         int ship_id = info.first;
         
         response_t answer;
-        answer.begin = std::string("<div class=\"events\"><span>");
+        answer.begin = std::string("<div class=\"events\">");
         answer.armament_link = std::string(query_template);
         answer.armament_link.append(std::to_string(ship_id));
 
@@ -293,6 +292,7 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
         }
         
         // general info
+        answer.begin.append("<table class=\"short_info\" border=0 rules=\"rows\"><tbody>\n");
         {
             add_general_info(answer.begin, answer.armament_link, info.second);
         }
@@ -312,11 +312,12 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
             add_event event_adder(answer.begin, events, std::move(nested), index_mapping_value);
             event_adder();
         }
+        answer.begin.append("</tbody></table>\n");
         
         answer.begin.append(link.begin)
                     .append(answer.armament_link)
                     .append(link.end)
-                    .append("</span></div><div>");
+                    .append("</div><div>\n");
         answer.end.append(new_line);
         {
             add_pictures_t add_pictures(answer.end, pictures);

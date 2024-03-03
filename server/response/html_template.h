@@ -22,6 +22,19 @@ struct pictures_template
 {
     struct picture_template
     {
+        constexpr picture_template
+        (
+            std::string_view _begin__full,
+            std::string_view _full__small,
+            std::string_view _small__descr = "\"></a><br>",
+            std::string_view _descr__end   = "</li>\n"
+        ) :
+            begin__full (_begin__full),
+            full__small (_full__small),
+            small__descr(_small__descr),
+            descr__end  (_descr__end)
+        {}
+            
         std::string_view begin__full;
         std::string_view full__small;
         std::string_view small__descr;
@@ -29,6 +42,19 @@ struct pictures_template
     } picture;
     
     html_template all;
+    
+    constexpr pictures_template
+    (
+        picture_template _picture,
+        html_template _all = 
+        {
+            "<ul>",
+            "</ul><br>"
+        }
+    ) :
+        picture(_picture),
+        all(_all)
+    {}
 };
 
 template <typename string_type>

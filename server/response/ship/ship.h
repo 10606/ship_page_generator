@@ -53,17 +53,23 @@ private:
     static const constexpr std::string_view new_line = "<br>\n";
     static const constexpr std::string_view shift = "&emsp;";
     
+    static const constexpr html_template row =
+    {
+        "<tr><td>",
+        "</td></tr>\n",
+    };
+    
     static const constexpr pictures_template pictures =
     {
         {
             "<li><a href=\"/pictures/ship/",
             "\"><img src=\"/pictures_small/ship/",
             "\"></a><br>",
-            "</li>"
+            "</li>\n"
         },
         {
             "<ul>",
-            "</ul><br>"
+            "</ul><br>\n"
         }
     };
     
@@ -87,7 +93,7 @@ private:
             "{\n"
                 "var date = item.getAttribute(\"date\");\n"
                 "request.push({\n" 
-                    "ship_id:   item.getAttribute(\"ship_id\"),\n"
+                    "ship_id:   item.getAttribute(\"ship\").toString(),\n"
                     "date_str:  date,\n"
                     "date:      str_to_date(date),\n"
                 "});\n"

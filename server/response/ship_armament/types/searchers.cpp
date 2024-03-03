@@ -90,7 +90,10 @@ ship_searchers::p_response_t ship_searchers::partial_response (searcher_t const 
         item.group_name = it->second;
     item.compare = 0;
     item.data += " ";
-    item.data += searcher.searcher_ru.value_or("  ");
+    if (searcher.searcher_ru)
+        item.data.append("<b>")
+                 .append(*searcher.searcher_ru)
+                 .append("</b>");
     return item;
 }
     

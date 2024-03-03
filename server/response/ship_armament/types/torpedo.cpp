@@ -92,7 +92,7 @@ ship_torpedo_tubes::p_response_t ship_torpedo_tubes::partial_response (tube_t co
     if (tube.caliber)
         item.data.append(to_string_10(*tube.caliber))
                  .append("мм");
-    item.data.append("  ")
+    item.data.append(" ")
              .append(tube.tube_ru.value_or("  "));
     item.data.append("</b>")
              .append(new_line);

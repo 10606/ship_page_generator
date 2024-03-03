@@ -77,7 +77,10 @@ ship_catapult::p_response_t ship_catapult::partial_response (catapult_t const & 
     item.compare = catapult.class_id;;
     
     item.data += " ";
-    item.data += catapult.catapult_ru.value_or("  ");
+    if (catapult.catapult_ru)
+        item.data.append("<b>")
+                 .append(*catapult.catapult_ru)
+                 .append("</b>");
     if (catapult.class_ru)
         item.data.append("<br>&emsp;(")
                  .append(*catapult.class_ru)

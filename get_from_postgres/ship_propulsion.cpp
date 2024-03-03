@@ -73,14 +73,14 @@ std::string ship_requests::propulsion_t::diesel::description (print_context prin
     if (volume_of_engine)
         answer.append(print.new_line)
               .append(print.tab)
-              .append(" объемом ")
+              .append("объемом ")
               .append(to_string_10(*volume_of_engine))
               .append("л");
     if (cilinders.diameter || cilinders.stroke)
     {
         answer.append(print.new_line)
               .append(print.tab)
-              .append(" (");
+              .append("(");
         if (cilinders.diameter)
             answer.append("\u2300")
                   .append(to_string_10(*cilinders.diameter))
@@ -272,7 +272,7 @@ std::string ship_requests::propulsion_t::context::boiling_type_t::description (p
     {
         answer.append(print.new_line)
               .append(print.tab)
-              .append(" с ");
+              .append("с ");
         for (size_t i = 0; i != boiling_type_t::total; ++i)
         {
             if (cur_value[0])
@@ -290,16 +290,18 @@ std::string ship_requests::propulsion_t::context::boiling_type_t::description (p
     if (temperature || pressure || heating_surface)
         answer.append(print.new_line)
               .append(print.tab);
+    bool have_prev = 0;
     if (temperature)
-        answer.append(" ")
-              .append(to_string_10(*temperature))
+        answer.append(to_string_10(*temperature))
               .append("°C");
+    have_prev |= temperature.has_value();
     if (pressure)
-        answer.append(" ")
+        answer.append(have_prev? " " : "")
               .append(to_string_10(*pressure))
               .append("атм");
+    have_prev |= pressure.has_value();
     if (heating_surface)
-        answer.append(" ")
+        answer.append(have_prev? " " : "")
               .append(to_string_10(*heating_surface))
               .append("м^2");
     return answer;
@@ -325,17 +327,19 @@ std::string ship_requests::propulsion_t::steam_turbine::description (print_conte
     if (power || rpm || stages)
         answer.append(print.new_line)
               .append(print.tab);
+    bool have_prev = 0;
     if (power)
-        answer.append(" ")
-              .append(to_string_10(*power))
+        answer.append(to_string_10(*power))
               .append("л.с.");
+    have_prev |= power.has_value();
     if (rpm)
-        answer.append(" ")
+        answer.append(have_prev? " " : "")
               .append(to_string_10(*rpm))
               .append("об/мин");
+    have_prev |= rpm.has_value();
     if (stages)
     {
-        answer.append(" ")
+        answer.append(have_prev? " " : "")
               .append(std::to_string(*stages));
         declension(answer, *stages, {" ступень", " ступени", " ступеней"});
     }

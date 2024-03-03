@@ -13,10 +13,10 @@
 
 struct header_column
 {
-    std::string_view begin = "\n<th>\n</th>\n<th>\n";
-    std::string_view new_column = "\n</th>\n<th>\n";
+    std::string_view begin = "<th></th>\n<th>\n";
+    std::string_view new_column = "</th>\n<th>\n";
     std::string_view new_line = "<br>\n";
-    std::string_view end = "\n</th>\n";
+    std::string_view end = "</th>\n";
 };
 
 struct ship_names
@@ -51,8 +51,8 @@ private:
     header_column table;
     static const constexpr html_template_3 checkbox =
     {
-        "<input type=\"checkbox\" onchange=\"toggle_to_detail_compare(event)\" ship_id=\"", 
-        "\" date=\"",
+        "<input type=\"checkbox\" onchange=\"toggle_to_detail_compare(event)\" ship=", 
+        " date=\"",
         "\"></input>"
     };
 };

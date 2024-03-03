@@ -91,9 +91,12 @@ ship_throwers::p_response_t ship_throwers::partial_response (throwers_t const & 
     if (thrower.tubes_count)
         add_value(item.data, *thrower.tubes_count);
     item.data += " ";
-    item.data += (thrower.caliber? (to_string_10(*thrower.caliber) + "мм  ") : "  ");
-    item.data += (thrower.class_ru? *thrower.class_ru + "  ": "");
-    item.data += thrower.thrower_ru.value_or("  ");
+    item.data += (thrower.caliber? (to_string_10(*thrower.caliber) + "мм ") : " ");
+    item.data += (thrower.class_ru? *thrower.class_ru + " ": "");
+    if (thrower.thrower_ru)
+        item.data.append("<b>")
+                 .append(*thrower.thrower_ru)
+                 .append("</b>");
     return item;
 }
 

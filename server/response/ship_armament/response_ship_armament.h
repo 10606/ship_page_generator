@@ -31,27 +31,29 @@ struct rows_table_template
     rows_table_template (std::string_view tr_class = std::string_view())
     {
         if (!tr_class.empty())
-            one_delimeter = group_delimeter = std::string("\n</tr>\n<tr ").append(tr_class).append(">\n");
+            one_delimeter = group_delimeter = std::string("</tr>\n<tr ").append(tr_class).append(">\n");
     }
 
     struct column_t
     {
-        std::string begin = "\n<td>\n";
-        std::string new_column = "\n</td>\n<td>\n";
-        std::string new_line = "<br>\n";
-        std::string end = "\n</td>\n";
-    } column = column_t();
+        std::string_view begin = "<td>";
+        std::string_view new_column = "</td>\n<td>";
+        std::string_view new_line = "<br>\n";
+        std::string_view end = "</td>\n";
+    };
+    column_t column;
     
-    std::string one_delimeter = "\n</tr>\n<tr>\n";
-    std::string group_delimeter = "\n</tr>\n<tr>\n";
+    std::string one_delimeter = "</tr>\n<tr>\n";
+    std::string group_delimeter = "</tr>\n<tr>\n";
 
     struct rowspan_t
     {
         // <begin> number <middle> text <end>
-        std::string begin = "<th rowspan=";
-        std::string middle = ">"; 
-        std::string end = "</th>";
-    } rowspan = rowspan_t();
+        std::string_view begin = "<th rowspan=";
+        std::string_view middle = ">"; 
+        std::string_view end = "</th>\n";
+    };
+    rowspan_t rowspan;
 };
 
 
@@ -93,32 +95,6 @@ private:
 };
 
 
-struct table_template
-{
-    table_template
-    (
-        std::string_view style = std::string_view(),
-        std::string_view tr_class = std::string_view()
-    )
-    {
-        if (!style.empty() || !tr_class.empty())
-            begin = std::string("<table border=1 class=\"ship_armament\">\n")
-                    .append(style)
-                    .append("<tr ")
-                    .append(tr_class)
-                    .append(">\n");
-    }
-
-    std::string begin = "<table border=1 class=\"ship_armament\">\n<tr>\n";
-    std::string new_line = "<br>\n";
-    std::string end = "\n</tr>\n</table>\n";
-
-    std::string new_row (std::string_view tr_class = std::string_view())
-    {
-        return std::string("\n</tr>\n<tr ").append(tr_class).append(">\n");
-    };
-};
-
 
 template <typename armament_type>
 void add_armament 
@@ -140,8 +116,7 @@ void add_armament
 
 struct ship_armament
 {
-    ship_armament (ship_requests * _database, table_template _table = table_template(style, "class=\"header\"")) :
-        table(_table),
+    ship_armament (ship_requests * _database) :
         names(header_column(), _database),
         general      (rows_table_template("class=\"general\""     ), _database, table.new_line),
         guns         (rows_table_template("class=\"guns\""        ), _database, table.new_line),
@@ -168,7 +143,14 @@ struct ship_armament
     void response (simple_string & answer, std::string_view query, piece_t title, bool add_checkbox = 0);
 
 private:
+    struct table_template
+    {
+        std::string_view begin = "<table border=1 class=\"ship_armament\">\n<tr class=\"header\">\n";
+        std::string_view new_line = "<br>\n";
+        std::string_view end = "</tr>\n</table>\n";
+    };
     table_template table;
+
     ship_names names;
     ships_responser <ship_general>       general;
     ships_responser <ship_guns>          guns;

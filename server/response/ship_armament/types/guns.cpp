@@ -145,7 +145,7 @@ ship_guns::p_response_t ship_guns::partial_response (mount_t const & mount)
     if (mount.length)
         item.data.append("/")
                  .append(to_string_10(*mount.length));
-    item.data.append("  <b>")
+    item.data.append(" <b>")
              .append(mount.gun_ru.value_or("  "))
              .append("</b>")
              .append(new_line);
@@ -153,7 +153,7 @@ ship_guns::p_response_t ship_guns::partial_response (mount_t const & mount)
     {
         item.data += "&emsp;(";
         if (mount.mount_ru)
-            item.data += *mount.mount_ru + "  ";
+            item.data += *mount.mount_ru + " ";
         if (mount.angle)
             item.data += to_string_10(*mount.angle) + "°";
         item.data += ")";

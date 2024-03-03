@@ -15,14 +15,12 @@ struct cur_type_t
     {
         id.reset();
         type_descr.clear();
-        link.clear();
         ships_in_type.clear();
         min_date.reset();
     }
 
     std::optional <int> id;
     std::string type_descr;
-    std::string link;
     std::string ships_in_type;
     std::optional <std::chrono::year_month_day> min_date;
 };
@@ -84,8 +82,7 @@ struct inserter_t
         
         answer.append(it_class->second.class_descr);
         for (auto const & cur_type : it_class->second.types)
-            answer.append(cur_type.link)
-                  .append(cur_type.type_descr)
+            answer.append(cur_type.type_descr)
                   .append(cur_type.ships_in_type);
         
         std::map <int, std::vector <int> > :: const_iterator it_graph = classes_graph.find(class_id);
@@ -142,12 +139,10 @@ menu::cache_t menu::response_impl (ship_requests * database)
         auto add_type = 
         [
             close_type = menu_item.close_type, 
-            new_type_link = menu_item.new_type_link,
             &cur_class, 
             &cur_type
         ] () -> void
         {
-            cur_type.link.append(new_type_link.end);
             cur_type.ships_in_type.append(close_type);
             cur_class.types.push_back(std::move(cur_type));
             cur_type.reset();
@@ -200,8 +195,9 @@ menu::cache_t menu::response_impl (ship_requests * database)
                     add_type();
                 cur_type.id = ship.type_id;
                 
-                
-                cur_type.type_descr.append(menu_item.new_type.begin);
+                cur_type.type_descr.append(menu_item.new_type_link.begin)
+                                   .append(std::to_string(*cur_type.id))
+                                   .append(menu_item.new_type_link.middle);
                 if ((i + 1 == ships.size() || ships[i].type_id != ships[i + 1].type_id) &&
                     ship.ship_ru &&
                     (!ship.type_ru || *ship.ship_ru != *ship.type_ru)) // one ship in type with another name
@@ -212,14 +208,12 @@ menu::cache_t menu::response_impl (ship_requests * database)
                 if (ship.commissioned)
                     cur_type.type_descr.append(" ")
                                        .append(std::to_string(static_cast <int> (ship.commissioned->year())));
-                
-                cur_type.type_descr.append(menu_item.new_type.middle)
+                cur_type.type_descr.append(menu_item.new_type_link.end);
+
+                cur_type.type_descr.append(menu_item.new_type.begin)
                                    .append(std::to_string(cnt_ships_in_type.front()))
                                    .append(menu_item.new_type.end);
                 cnt_ships_in_type.pop();
-
-                cur_type.link.append(menu_item.new_type_link.begin)
-                             .append(std::to_string(*cur_type.id));
             }
             
             {
