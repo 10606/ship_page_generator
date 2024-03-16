@@ -11,10 +11,7 @@ set(compile_flags
      -g --pedantic -Wall -ftemplate-depth=10000 -std=c++20"
 )
 
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${release_flags} -DMG_ENABLE_OPENSSL=1")
-set(CMAKE_C_FLAGS    "${CMAKE_C_FLAGS}   -O3 -flto -march=native \
-                                         -DNDEBUG -DMG_ENABLE_OPENSSL=1 -DMG_ENABLE_IPV6=1")
-
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${release_flags}")
 message("CMAKE_CXX_FLAGS" ${CMAKE_CXX_FLAGS})
 
 message("use clang")
@@ -50,9 +47,9 @@ find_library(crypto libcrypto.a)
 add_executable(ship_server
     server/https_server.cpp
     server/driver/ssl_socket.cpp
-    server/date_to_str.cpp
     server/validate_path.cpp
     server/response/ship_armament/response_ship_armament.cpp
+    server/response/ship_armament/ship_names.cpp
     server/response/ship_armament/types/common.cpp
     server/response/ship_armament/types/general.cpp
     server/response/ship_armament/types/guns.cpp
@@ -62,6 +59,7 @@ add_executable(ship_server
     server/response/ship_armament/types/catapult.cpp
     server/response/ship_armament/types/aircraft.cpp
     server/response/ship_armament/types/propulsion.cpp
+    server/response/date_to_str.cpp
     server/response/parse_query.cpp
     server/response/armament/types/response_torpedo.cpp
     server/response/armament/types/response_guns.cpp
@@ -71,7 +69,6 @@ add_executable(ship_server
     server/response/armament/types/response_searchers.cpp
     server/response/aircraft/response_aircraft.cpp
     server/response/documents.cpp
-    server/response/ship_names.cpp
     server/response/menu.cpp
     server/response/menu_html.cpp
     server/response/search.cpp
@@ -102,6 +99,7 @@ target_link_libraries(tests
 
 
 target_link_libraries(ship_server
+    -s
     -static
     pqxx
     pq

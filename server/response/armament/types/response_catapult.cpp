@@ -87,8 +87,7 @@ void catapult::response (simple_string & answer, std::string_view query, piece_t
         append_row <catapult_text, &catapult_text::alleceration> (answer, list, text_cache);
         
         answer.append("на вооружении");
-        for (catapult_partial const & item : list)
-            answer.append(text_cache[item.index].in_service);
+        append_row <catapult_text, &catapult_text::in_service, 0> (answer, list, text_cache);
         
         answer.append(table::end);
 

@@ -17,9 +17,9 @@ struct add_ship_t
         if (old_pos == pos)
             return;
         old_pos = pos;
-        if (search_data.names[pos].class_id != class_id)
+        if (search_data.names[pos].class_id != class_id) [[unlikely]]
         {
-            if (class_id)
+            if (class_id) [[likely]]
                 answer.append("</table>");
             answer.append("<br><table>");
             class_id = search_data.names[pos].class_id;
@@ -31,7 +31,7 @@ struct add_ship_t
     {
         if (class_id)
             answer.append("</table>");
-        class_id.reset();
+        class_id.reset(); // idempotent
     }
     
     ~add_ship_t ()
@@ -48,7 +48,7 @@ private:
     search const & search_data;
     simple_string & answer;
     std::optional <int> class_id;
-    std::optional <uint32_t> old_pos;
+    std::optional <uint32_t> old_pos; // don't add twice
 };
 
 

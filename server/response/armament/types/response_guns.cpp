@@ -89,8 +89,7 @@ void guns::response (simple_string & answer, std::string_view query, piece_t tit
         append_row <guns_text, &guns_text::build_cnt> (answer, list, text_cache);
         
         answer.append("на вооружении");
-        for (guns_partial const & item : list)
-            answer.append(text_cache[item.index].in_service);
+        append_row <guns_text, &guns_text::in_service, 0> (answer, list, text_cache);
         
         answer.append(table::end);
 

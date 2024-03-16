@@ -69,8 +69,7 @@ void torpedo_tubes::response (simple_string & answer, std::string_view query, pi
         append_row <torpedo_tubes_text, &torpedo_tubes_text::tubes_count> (answer, list, text_cache);
         
         answer.append("на вооружении");
-        for (torpedo_tubes_partial const & item : list)
-            answer.append(text_cache[item.index].in_service);
+        append_row <torpedo_tubes_text, &torpedo_tubes_text::in_service, 0> (answer, list, text_cache);
         
         answer.append(table::end);
         answer.append("<br>");

@@ -184,10 +184,13 @@ void connection_handler::handle_head
     static const std::string length_padding(std::numeric_limits <size_t> ::digits10 + 1 + unused_header.size(), ' ');
     
     simple_string response;
-    response.append(http_begin)
-            .append(code_padding)
-            .append(http_middle)
-            .append(length_padding);
+    response.append
+    (
+        http_begin,
+        code_padding,
+        http_middle,
+        length_padding
+    );
     if (conn.get_keep_alive())
         response.append("\r\nConnection: keep-alive\r\n\r\n");
     else

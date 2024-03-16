@@ -2,6 +2,7 @@
 #define HTML_TEMPLATE_H
 
 #include <string_view>
+#include "simple_string.h"
 #include "ship_requests.h"
 #include "pictures.h"
 
@@ -72,8 +73,7 @@ struct add_pictures_t
     {
         try
         {
-            if (!closed)
-                close();
+            close();
         }
         catch (...)
         {}
@@ -81,17 +81,35 @@ struct add_pictures_t
      
     void operator () (ship_requests::pictures_t::picture const & info)
     {
-        answer.append(pictures.picture.begin__full)
-              .append(info.path_full)
-              .append(pictures.picture.full__small)
-              .append(info.path_small)
-              .append(pictures.picture.small__descr)
-              .append(info.description)
-              .append(pictures.picture.descr__end);
+        if constexpr (std::is_same_v <string_type, simple_string> )
+        {
+            answer.append
+            (
+                pictures.picture.begin__full,
+                info.path_full,
+                pictures.picture.full__small,
+                info.path_small,
+                pictures.picture.small__descr,
+                info.description,
+                pictures.picture.descr__end
+            );
+        }
+        else
+        {
+            answer.append(pictures.picture.begin__full)
+                  .append(info.path_full)
+                  .append(pictures.picture.full__small)
+                  .append(info.path_small)
+                  .append(pictures.picture.small__descr)
+                  .append(info.description)
+                  .append(pictures.picture.descr__end);
+        }
     }
     
     void close ()
     {
+        if (closed)
+            return; // idempotent
         answer.append(pictures.all.end);
         closed = 1;
     }

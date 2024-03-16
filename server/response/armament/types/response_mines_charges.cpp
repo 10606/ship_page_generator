@@ -70,8 +70,7 @@ void mines_charges::response (simple_string & answer, std::string_view query, pi
         append_row <mines_charges_text, &mines_charges_text::size> (answer, list, text_cache);
         
         answer.append("на вооружении");
-        for (mines_charges_partial const & item : list)
-            answer.append(text_cache[item.index].in_service);
+        append_row <mines_charges_text, &mines_charges_text::in_service, 0> (answer, list, text_cache);
         
         answer.append(table::end);
         answer.append("<br>");

@@ -343,23 +343,29 @@ struct connection
             {
                 if (file_to_send.size != file_to_send.total_size || file_to_send.offset != 0)
                 {
-                    response.append("HTTP/1.1 206 Partial Content\r\n")
-                            .append("Content-Range: bytes ")
-                            .append(std::to_string(file_to_send.offset))
-                            .append("-")
-                            .append(std::to_string(file_to_send.size - 1))
-                            .append("/")
-                            .append(std::to_string(file_to_send.total_size));
+                    response.append
+                    (
+                        "HTTP/1.1 206 Partial Content\r\n",
+                        "Content-Range: bytes ",
+                        std::to_string(file_to_send.offset),
+                        "-",
+                        std::to_string(file_to_send.size - 1),
+                        "/",
+                        std::to_string(file_to_send.total_size)
+                    );
                 }
                 else
                 {
                     response.append("HTTP/1.1 200 OK");
                 }
-                response.append("\r\nContent-Length: ")
-                        .append(std::to_string(file_to_send.size - file_to_send.offset))
-                        .append("\r\nEtag: \"")
-                        .append(mtime_str)
-                        .append("\"\r\n\r\n");
+                response.append
+                (
+                    "\r\nContent-Length: ",
+                    std::to_string(file_to_send.size - file_to_send.offset),
+                    "\r\nEtag: \"",
+                    mtime_str,
+                    "\"\r\n\r\n"
+                );
             }
             else
             {

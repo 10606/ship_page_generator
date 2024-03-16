@@ -1,6 +1,7 @@
 #ifndef SIMPLE_STRING_CHAR_H
 #define SIMPLE_STRING_CHAR_H
 
+#include <concepts>
 #include <stddef.h>
 #include <string_view>
 #include <stdlib.h>
@@ -48,11 +49,8 @@ struct simple_string
 
     simple_string & append (std::string_view value)
     {
-        if (value.size() + _size > capacity)
-            realloc(3 * value.size() + _size * 4 + 64);
-        if (!value.empty())
-            memcpy(_data + _size, value.data(), value.size());
-        _size += value.size();
+        realloc_if_need(value.size());
+        append_without_realloc(value);
         return *this;
     }
 
@@ -66,6 +64,19 @@ struct simple_string
         return append(std::string_view(value));
     }
     
+    template <typename ... T>
+    requires requires
+    {
+        (std::convertible_to <T, std::string_view> && ...);
+    }
+    simple_string & append (T && ... values)
+    {
+        size_t sum_sizes = (std::string_view(values).size() + ...);
+        realloc_if_need(sum_sizes);
+        (append_without_realloc(values), ...);
+        return *this;
+    }
+    
     size_t size () const noexcept
     {
         return _size;
@@ -77,6 +88,14 @@ struct simple_string
             return;
         memcpy(_data + pos, value.data(), value.size());
     }
+    
+    // DANGER FUNCTION
+    void append_without_realloc (std::string_view value)
+    {
+        if (!value.empty()) [[likely]]
+            memcpy(_data + _size, value.data(), value.size());
+        _size += value.size();
+    }
 
 private:
     char * _data;
@@ -86,11 +105,17 @@ private:
     void realloc (size_t value)
     {
         char * new_data = new char [value];
-        if (_size > 0)
+        if (_size > 0) [[likely]]
             std::memcpy(new_data, _data, _size);
         delete [] _data;
         _data = new_data;
         capacity = value;
+    }
+    
+    void realloc_if_need (size_t sum_sizes)
+    {
+        if (sum_sizes + _size > capacity) [[unlikely]]
+            realloc(3 * sum_sizes + _size * 4 + 64);
     }
 };
 

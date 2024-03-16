@@ -83,8 +83,7 @@ void searcher::response (simple_string & answer, std::string_view query, piece_t
         append_row <searchers_text, &searchers_text::build_cnt> (answer, list, text_cache);
         
         answer.append("на вооружении");
-        for (searchers_partial const & item : list)
-            answer.append(text_cache[item.index].in_service);
+        append_row <searchers_text, &searchers_text::in_service, 0> (answer, list, text_cache);
         
         answer.append(table::end);
 
