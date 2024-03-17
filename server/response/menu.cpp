@@ -259,9 +259,12 @@ menu::cache_t menu::response_impl (ship_requests * database)
 
 void menu::response (simple_string & answer, std::string_view request)
 {
-    answer.append(cache.begin);
-    answer.append(search::get_search_parameter(request));
-    answer.append(cache.end);
+    answer.append
+    (
+        cache.begin,
+        search::get_search_parameter(request),
+        cache.end
+    );
 }
 
 

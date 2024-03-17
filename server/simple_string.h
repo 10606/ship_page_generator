@@ -18,9 +18,33 @@ struct simple_string
     {}
 
     simple_string (simple_string const &) = delete;
-    simple_string (simple_string &&) = delete;
     simple_string & operator = (simple_string const &) = delete;
-    simple_string & operator = (simple_string &&) = delete;
+    
+    simple_string (simple_string && other) noexcept :
+        _data(other._data),
+        _size(other._size),
+        capacity(other.capacity)
+    {
+        other._data = nullptr;
+        other._size = 0;
+        other.capacity = 0;
+    }
+    
+    simple_string & operator = (simple_string && rhs) noexcept
+    {
+        if (&rhs == this)
+            return *this;
+        
+        delete [] _data;
+        _data = rhs._data;
+        _size = rhs._size;
+        capacity = rhs.capacity;
+        
+        rhs._data = nullptr;
+        rhs._size = 0;
+        rhs.capacity = 0;
+        return *this;
+    }
 
     ~simple_string () noexcept
     {
@@ -34,6 +58,11 @@ struct simple_string
     }
 
     char const * data () const noexcept
+    {
+        return _data;
+    }
+    
+    char * data () noexcept
     {
         return _data;
     }
@@ -84,13 +113,13 @@ struct simple_string
     
     void rewrite (size_t pos, std::string_view value) noexcept
     {
-        if (pos + value.size() > _size)
+        if (value.empty() || pos + value.size() > _size) [[unlikely]]
             return;
         memcpy(_data + pos, value.data(), value.size());
     }
     
     // DANGER FUNCTION
-    void append_without_realloc (std::string_view value)
+    void append_without_realloc (std::string_view value) noexcept
     {
         if (!value.empty()) [[likely]]
             memcpy(_data + _size, value.data(), value.size());

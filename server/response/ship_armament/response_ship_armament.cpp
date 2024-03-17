@@ -31,7 +31,7 @@ ships_responser <responser> ::gun_classes
                     have_one_delimeter   |= (cur.first == expect.first);
                     have_group_delimeter |= (cur.first != expect.first);
                     positions[i] = j;
-                    if (!min || *min > cur)
+                    if (!min || *min > cur) [[unlikely]]
                         min = std::move(cur);
                     break;
                 }
@@ -39,14 +39,14 @@ ships_responser <responser> ::gun_classes
                 gun_class.back().second = values[i][j].group_name;
                 
                 // update position if we at end
-                if (++j == values[i].size())
+                if (++j == values[i].size()) [[unlikely]]
                     positions[i] = values[i].size();
             }
         }
         
         // end of row
         gun_class.back().first++;
-        if (!have_one_delimeter && have_group_delimeter)
+        if (have_group_delimeter && !have_one_delimeter)
             gun_class.emplace_back();
     }
 
@@ -71,14 +71,14 @@ ships_responser <responser> ::response
     // extract
     for (size_t i = 0; i != ship_year.size(); ++i)
     {
-        if (modernization[i])
+        if (modernization[i]) [[unlikely]]
         {
             values.emplace_back();
             continue;
         }
         
         values.emplace_back(resp.response(ship_year[i].first, ship_year[i].second));
-        if (!values.back().empty())
+        if (!values.back().empty()) [[likely]]
         {
             response_t const & tmp = values.back().front();
             key_t cur{tmp.group, tmp.compare};
@@ -100,10 +100,13 @@ ships_responser <responser> ::response
             // new gun_class
             answer.append(table.rowspan.begin);
             add_value(answer, gun_class[class_pos].first);
-            answer.append(table.rowspan.middle)
-                  .append(std::move(gun_class[class_pos].second))
-                  .append(table.rowspan.end)
-                  .append(table.column.begin);
+            answer.append
+            (
+                table.rowspan.middle,
+                std::move(gun_class[class_pos].second),
+                table.rowspan.end,
+                table.column.begin
+            );
             class_sum += gun_class[class_pos].first;
             class_pos++;
         }
@@ -118,7 +121,7 @@ ships_responser <responser> ::response
         
         for (size_t i = 0; i != ship_year.size(); ++i)
         {
-            if (i != 0)
+            if (i != 0) [[likely]]
                 answer.append(table.column.new_column);
             
             for (size_t j = positions[i]; j != values[i].size(); )
@@ -134,10 +137,13 @@ ships_responser <responser> ::response
                     break;
                 }
                 
-                if (j != positions[i]) // not first line
+                if (j != positions[i]) [[likely]] // not first line
                     answer.append(table.column.new_line);
-                answer.append(std::move(values[i][j].data_begin))
-                      .append(std::move(values[i][j].data_end));
+                answer.append
+                (
+                    std::move(values[i][j].data_begin),
+                    std::move(values[i][j].data_end)
+                );
                 
                 // update position if we at end
                 if (++j == values[i].size()) 
@@ -157,12 +163,10 @@ ships_responser <responser> ::response
 
 struct status_sy_t
 {
-    enum 
+    enum status_t
     {
         none,
-        ship_id_str,
         ship_id_value,
-        date_str,
         date_value,
         error
     } status;
@@ -190,7 +194,7 @@ std::vector <std::pair <int, std::chrono::year_month_day> > ship_armament::parse
         {
             std::unordered_map <int, std::chrono::year_month_day> ::iterator it =
                 default_date.find(*ship_id);
-            if (it != default_date.end())
+            if (it != default_date.end()) [[likely]]
                 answer.emplace_back(*ship_id, it->second);
             return;
         }
@@ -205,7 +209,7 @@ std::vector <std::pair <int, std::chrono::year_month_day> > ship_armament::parse
             std::chrono::day((*date)[0])
         };
         
-        if (!query_date.ok())
+        if (!query_date.ok()) [[unlikely]]
         {
             date.reset();
             return;
@@ -215,85 +219,110 @@ std::vector <std::pair <int, std::chrono::year_month_day> > ship_armament::parse
         date.reset();
     };
     
-    for (char c : query)
+    for (size_t i = 0; i != query.size(); )
     {
-        if (c == '&')
+        char c = query[i];
+        if (c == '&') [[unlikely]]
         {
             status.status = status_sy_t::none;
+            i++;
             continue;
         }
+        
+        auto check_etalon = [&i, &status, &query] (std::string_view etalon, status_sy_t::status_t next) -> bool
+        {
+            status.pos = 0;
+            status.status = status_sy_t::error;
+            while (status.pos != etalon.size() && i != query.size())
+            {
+                char c = query[i];
+                if (c != etalon[status.pos])
+                    break;
+                status.pos++;
+                i++;
+            }
+            if (status.pos == etalon.size())
+            {
+                status.status = next;
+                status.pos = 0;
+                return 1;
+            }
+            else
+                return 0;
+        };
         
         switch (status.status)
         {
         case status_sy_t::none:
-            if (c == ship_id_str[0]) 
+            if (c == ship_id_str[0])
             {
                 append_if_need();
-                status.status = status_sy_t::ship_id_str;
-                status.pos = 1;
+                if (check_etalon(ship_id_str, status_sy_t::ship_id_value))
+                    ship_id.reset();
             }
             else if (c == date_str[0])
             {
                 if (date)
                     append_if_need();
-                status.status = status_sy_t::date_str;
-                status.pos = 1;
-            }
-            else
-                status.status = status_sy_t::error;
-            break;
-        case status_sy_t::ship_id_str:
-            if (c == ship_id_str[status.pos])
-            {
-                if (++status.pos == ship_id_str.size())
-                {
-                    ship_id.reset();
-                    status.status = status_sy_t::ship_id_value;
-                    status.pos = 0;
-                }
+                if (check_etalon(date_str, status_sy_t::date_value))
+                    date.reset();
             }
             else
                 status.status = status_sy_t::error;
             break;
         case status_sy_t::ship_id_value:
-            if (std::isdigit(c))
+            while (i != query.size())
             {
-                if (!ship_id)
-                    ship_id = 0;
-                *ship_id = *ship_id * 10 + c - '0';
-            }
-            else
-                status.status = status_sy_t::error;
-            break;
-        case status_sy_t::date_str:
-            if (c == date_str[status.pos])
-            {
-                if (++status.pos == date_str.size())
+                char c = query[i];
+                i++;
+                if (std::isdigit(c)) [[likely]]
                 {
-                    date.reset();
-                    status.status = status_sy_t::date_value;
-                    status.pos = 0;
+                    if (!ship_id) [[unlikely]]
+                        ship_id = 0;
+                    *ship_id = *ship_id * 10 + c - '0';
+                }
+                else if (c == '&') [[likely]]
+                {
+                    status.status = status_sy_t::none;
+                    break;
+                }
+                else
+                {
+                    status.status = status_sy_t::error;
+                    break;
                 }
             }
-            else
-                status.status = status_sy_t::error;
             break;
         case status_sy_t::date_value:
-            if (std::isdigit(c))
+            while (i != query.size())
             {
-                if (!date)
-                    date = {0, 0, 0};
-                (*date)[status.pos] = (*date)[status.pos] * 10 + c - '0';
-            }
-            else if (c == '.')
-            {
-                if (++status.pos == date->size())
+                char c = query[i];
+                i++;
+                if (std::isdigit(c)) [[likely]]
+                {
+                    if (!date) [[unlikely]]
+                        date = {0, 0, 0};
+                    (*date)[status.pos] = (*date)[status.pos] * 10 + c - '0';
+                }
+                else if (c == '.') [[likely]]
+                {
+                    if (++status.pos == date->size()) [[unlikely]]
+                        status.status = status_sy_t::error;
+                }
+                else if (c == '&') [[likely]]
+                {
+                    status.status = status_sy_t::none;
+                    break;
+                }
+                else
+                {
                     status.status = status_sy_t::error;
+                    break;
+                }
             }
-            else
-                status.status = status_sy_t::error;
             break;
         case status_sy_t::error:
+            i++;
             break;
         }
     }

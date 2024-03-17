@@ -202,14 +202,11 @@ struct responser
         answer.append(style.begin);
         size_t title_pos = answer.size();
         static const std::string title_placeholder(100, ' ');
-        answer.append(title_placeholder);
-        
-        answer.append(style.middle);
+        answer.append(title_placeholder, style.middle);
         ship_list.response(answer, query);
         answer.append("<div class=\"main\">\n");
         it->second->response(answer, query, {title_pos, title_placeholder.size()});
-        answer.append("</div>\n");
-        answer.append(style.end);
+        answer.append("</div>\n", style.end);
         
         return 1;
     }

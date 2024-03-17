@@ -344,7 +344,7 @@ void ship::response (simple_string & answer, std::string_view query, piece_t tit
     auto short_ship_info = [this, &answer, &type_count] (int id) -> void
     {
         std::unordered_map <int, response_t> :: iterator it = modernizations.find(id);
-        if (it == modernizations.end())
+        if (it == modernizations.end()) [[unlikely]]
             return;
         type_count[it->second.type]++;
         answer.append(it->second.short_info);
@@ -356,7 +356,7 @@ void ship::response (simple_string & answer, std::string_view query, piece_t tit
         else
         {
             std::unordered_map <int, std::vector <int> > ::iterator it = ship_list_in_type.find(id_or_group.value);
-            if (it == ship_list_in_type.end())
+            if (it == ship_list_in_type.end()) [[unlikely]]
                 continue;
             for (int id : it->second)
                 short_ship_info(id);
@@ -372,7 +372,7 @@ void ship::response (simple_string & answer, std::string_view query, piece_t tit
     auto long_ship_info = [this, &answer, &type_count, &not_empty_title, &title] (int id) -> void
     {
         std::unordered_map <int, response_t> :: iterator it = modernizations.find(id);
-        if (it == modernizations.end())
+        if (it == modernizations.end()) [[unlikely]]
             return;
 
         answer.append(it->second.begin);
@@ -404,10 +404,10 @@ void ship::response (simple_string & answer, std::string_view query, piece_t tit
             title.size = 0;
         };
         
-        if (type_count[it->second.type] > 1)
+        if (type_count[it->second.type] > 1) [[likely]]
         {
             static const constexpr std::string_view prefix = "тип ";
-            if (title.size >= need_size + prefix.size() + type_list[it->second.type].size())
+            if (title.size >= need_size + prefix.size() + type_list[it->second.type].size()) [[likely]]
             {
                 add_delimeter();
                 add_to_title(prefix);
@@ -421,7 +421,7 @@ void ship::response (simple_string & answer, std::string_view query, piece_t tit
         if (type_count[it->second.type] == 1)
         {
             piece_t name = it->second.name;
-            if (title.size >= need_size + name.size)
+            if (title.size >= need_size + name.size) [[likely]]
             {
                 add_delimeter();
                 add_to_title(it->second.short_info.substr(name.position, name.size));
@@ -438,7 +438,7 @@ void ship::response (simple_string & answer, std::string_view query, piece_t tit
         else
         {
             std::unordered_map <int, std::vector <int> > ::iterator it = ship_list_in_type.find(id_or_group.value);
-            if (it == ship_list_in_type.end())
+            if (it == ship_list_in_type.end()) [[unlikely]]
                 continue;
             for (int id : it->second)
                 long_ship_info(id);
