@@ -317,7 +317,7 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
         answer.begin.append(link.begin)
                     .append(answer.armament_link)
                     .append(link.end)
-                    .append("</div><div>\n");
+                    .append("</div><div class=\"long_info\">\n");
         answer.end.append(new_line);
         {
             add_pictures_t add_pictures(answer.end, pictures);

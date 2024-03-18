@@ -234,7 +234,9 @@ method GET url /__Additional
 method GET url /cgi/conf.bin
 method GET url /cgi-bin/luci
 method GET url /cgi-bin/luci/admin
+method GET url /cgi-bin/config.exp
 method GET url /cgi-bin/authLogin.cgi
+method GET url /remote/login
 method GET url /showLogin.cc
 method GET url /server-status
 method GET url /Res/login.html
@@ -261,6 +263,7 @@ method GET url //libs/js/iframe.js
 method GET url /telescope/requests
 method GET url /docker-compose.yml
 method GET url /zabbix/favicon.ico
+method GET url /favicon/favicon.ico
 method GET url /00_server_info.php
 method GET url /_info-backoffice.php
 method GET url /actuator/gateway/routes
@@ -449,13 +452,6 @@ method CONNECT url srv57c0d2365c3c.korsan.me:443
 method OPTIONS url /
 method OPTIONS url sip:nm
 method SSTP_DUPLEX_POST url /sra_{BA195980-CD49-458b-9E23-C84EE0ADCD75}/
-
-
-
-
-
-
-
 
 
 

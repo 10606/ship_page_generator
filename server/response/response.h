@@ -118,6 +118,9 @@ static const constexpr html_template_3 style =
             ".short_info a:hover { color: #ff2222; }\n"
             ".short_info a:focus { color: #2222ff; }\n"
             
+            ".long_info { width: min-content; }\n"
+            ".long_info ul { min-width: calc(100vw - 170pt - 100px); }\n"
+            
             ".search { width: 97%; margin: 10px 20px 20px 0; }\n"
             ".search:focus { outline-color: #2222ff; }\n"
             "input { margin: 0 0 0 0; }\n"
