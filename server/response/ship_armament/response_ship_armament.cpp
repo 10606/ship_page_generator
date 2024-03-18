@@ -1,58 +1,5 @@
 #include "response_ship_armament.h"
 
-#include <future>
-
-
-template <typename responser>
-std::vector <std::pair <uint32_t, std::string_view> >
-ships_responser <responser> ::gun_classes
-(
-    std::vector <std::vector <typename responser::response_t> > const & values,
-    std::optional <key_t> min
-) const
-{
-    std::vector <std::pair <uint32_t, std::string_view> > gun_class = {{0, table.column.begin}};
-    std::vector <size_t> positions(values.size(), 0);
-
-    while (min)
-    {
-        bool have_one_delimeter = 0;
-        bool have_group_delimeter = 0;
-        key_t expect = *min;
-        min.reset();
-        
-        for (size_t i = 0; i != values.size(); ++i)
-        {
-            for (size_t j = positions[i]; j != values[i].size(); )
-            {
-                key_t cur{values[i][j].group, values[i][j].compare};
-                if (cur != expect)
-                {
-                    have_one_delimeter   |= (cur.first == expect.first);
-                    have_group_delimeter |= (cur.first != expect.first);
-                    positions[i] = j;
-                    if (!min || *min > cur) [[unlikely]]
-                        min = std::move(cur);
-                    break;
-                }
-                
-                gun_class.back().second = values[i][j].group_name;
-                
-                // update position if we at end
-                if (++j == values[i].size()) [[unlikely]]
-                    positions[i] = values[i].size();
-            }
-        }
-        
-        // end of row
-        gun_class.back().first++;
-        if (have_group_delimeter && !have_one_delimeter)
-            gun_class.emplace_back();
-    }
-
-    return gun_class;
-}
-
 
 template <typename responser>
 void
@@ -66,7 +13,9 @@ ships_responser <responser> ::response
     answer.append(table.group_delimeter);
     std::vector <std::vector <response_t> > values;
     values.reserve(ship_year.size());
+    
     std::optional <key_t> min;
+    std::string_view group_name;
 
     // extract
     for (size_t i = 0; i != ship_year.size(); ++i)
@@ -83,36 +32,43 @@ ships_responser <responser> ::response
             response_t const & tmp = values.back().front();
             key_t cur{tmp.group, tmp.compare};
             if (!min || *min > cur)
+            {
                 min = cur;
+                group_name = tmp.group_name;
+            }
         }
     }
 
     
-    std::vector <std::pair <uint32_t, std::string_view> > gun_class = gun_classes(values, min);
-    std::vector <size_t> positions(ship_year.size(), 0);
     // main part of table
-    uint32_t class_sum = 0, class_pos = 0;
-    uint32_t rows_cnt = 0;
+    std::vector <size_t> positions(ship_year.size(), 0);
+    uint32_t rows_in_group = 1;
+    bool new_group = 1;
+    
+    // for lazy set height rowspan
+    static const constexpr size_t rows_cnt_max_width = 16;
+    static const std::string height_placeholder(rows_cnt_max_width, ' ');
+    size_t height_pos;
+    
     while (min)
     {
-        if (class_sum == rows_cnt)
+        if (new_group)
         {
             // new gun_class
-            answer.append(table.rowspan.begin);
-            add_value(answer, gun_class[class_pos].first);
+            height_pos = answer.size() + table.rowspan.begin.size();
             answer.append
             (
+                table.rowspan.begin,
+                height_placeholder,
                 table.rowspan.middle,
-                std::move(gun_class[class_pos].second),
+                group_name,
                 table.rowspan.end,
                 table.column.begin
             );
-            class_sum += gun_class[class_pos].first;
-            class_pos++;
+            rows_in_group = 1;
         }
         else
             answer.append(table.column.begin);
-        rows_cnt++;
         
         bool have_one_delimeter = 0;
         bool have_group_delimeter = 0;
@@ -133,7 +89,10 @@ ships_responser <responser> ::response
                     have_group_delimeter |= (cur.first != expect.first);
                     positions[i] = j;
                     if (!min || *min > cur)
+                    {
                         min = std::move(cur);
+                        group_name = values[i][j].group_name;
+                    }
                     break;
                 }
                 
@@ -153,32 +112,38 @@ ships_responser <responser> ::response
         
         // end of row
         answer.append(table.column.end);
+        new_group = 0;
         if (have_one_delimeter)
+        {
             answer.append(table.one_delimeter);
-        else if (have_group_delimeter)
-            answer.append(table.group_delimeter);
+            rows_in_group++;
+        }
+        else 
+        {
+            if (have_group_delimeter)
+                answer.append(table.group_delimeter);
+            new_group = 1;
+            char rows_str[rows_cnt_max_width];
+            std::to_chars_result res = std::to_chars(std::begin(rows_str), std::end(rows_str), rows_in_group);
+            answer.rewrite(height_pos, std::string_view(rows_str, res.ptr));
+        }
     }
 }
 
 
-struct status_sy_t
+enum status_sy_t
 {
-    enum status_t
-    {
-        none,
-        ship_id_value,
-        date_value,
-        error
-    } status;
-    
-    size_t pos;
+    none,
+    ship_id_value,
+    date_value,
+    error
 };
 
 std::vector <std::pair <int, std::chrono::year_month_day> > ship_armament::parse_query__ship_year (std::string_view query)
 {
     std::vector <std::pair <int, std::chrono::year_month_day> > answer;
     
-    status_sy_t status = {status_sy_t::none, 0};
+    status_sy_t status = status_sy_t::none;
     std::optional <uint32_t> ship_id;
     std::optional <std::array <uint32_t, 3> > date;
     
@@ -224,34 +189,33 @@ std::vector <std::pair <int, std::chrono::year_month_day> > ship_armament::parse
         char c = query[i];
         if (c == '&') [[unlikely]]
         {
-            status.status = status_sy_t::none;
+            status = status_sy_t::none;
             i++;
             continue;
         }
         
-        auto check_etalon = [&i, &status, &query] (std::string_view etalon, status_sy_t::status_t next) -> bool
+        auto check_etalon = [&i, &status, &query] (std::string_view etalon, status_sy_t next) -> bool
         {
-            status.pos = 0;
-            status.status = status_sy_t::error;
-            while (status.pos != etalon.size() && i != query.size())
+            size_t pos = 0;
+            status = status_sy_t::error;
+            while (pos != etalon.size() && i != query.size())
             {
                 char c = query[i];
-                if (c != etalon[status.pos])
+                if (c != etalon[pos]) [[unlikely]]
                     break;
-                status.pos++;
+                pos++;
                 i++;
             }
-            if (status.pos == etalon.size())
+            if (pos == etalon.size()) [[likely]]
             {
-                status.status = next;
-                status.pos = 0;
+                status = next;
                 return 1;
             }
             else
                 return 0;
         };
         
-        switch (status.status)
+        switch (status)
         {
         case status_sy_t::none:
             if (c == ship_id_str[0])
@@ -268,55 +232,55 @@ std::vector <std::pair <int, std::chrono::year_month_day> > ship_armament::parse
                     date.reset();
             }
             else
-                status.status = status_sy_t::error;
+                status = status_sy_t::error;
             break;
         case status_sy_t::ship_id_value:
+            if (std::isdigit(c)) [[likely]]
+                ship_id = 0;
             while (i != query.size())
             {
-                char c = query[i];
+                c = query[i];
                 i++;
                 if (std::isdigit(c)) [[likely]]
                 {
-                    if (!ship_id) [[unlikely]]
-                        ship_id = 0;
                     *ship_id = *ship_id * 10 + c - '0';
                 }
                 else if (c == '&') [[likely]]
                 {
-                    status.status = status_sy_t::none;
+                    status = status_sy_t::none;
                     break;
                 }
                 else
                 {
-                    status.status = status_sy_t::error;
+                    status = status_sy_t::error;
                     break;
                 }
             }
             break;
         case status_sy_t::date_value:
-            while (i != query.size())
+            if (std::isdigit(c)) [[likely]]
+                date = {0, 0, 0};
+            for (size_t pos = 0; i != query.size(); )
             {
-                char c = query[i];
+                c = query[i];
                 i++;
                 if (std::isdigit(c)) [[likely]]
                 {
-                    if (!date) [[unlikely]]
-                        date = {0, 0, 0};
-                    (*date)[status.pos] = (*date)[status.pos] * 10 + c - '0';
+                    (*date)[pos] = (*date)[pos] * 10 + c - '0';
                 }
                 else if (c == '.') [[likely]]
                 {
-                    if (++status.pos == date->size()) [[unlikely]]
-                        status.status = status_sy_t::error;
+                    if (++pos == date->size()) [[unlikely]]
+                        status = status_sy_t::error;
                 }
                 else if (c == '&') [[likely]]
                 {
-                    status.status = status_sy_t::none;
+                    status = status_sy_t::none;
                     break;
                 }
                 else
                 {
-                    status.status = status_sy_t::error;
+                    status = status_sy_t::error;
                     break;
                 }
             }

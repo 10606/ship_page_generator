@@ -102,7 +102,7 @@ struct simple_string
     {
         size_t sum_sizes = (std::string_view(values).size() + ...);
         realloc_if_need(sum_sizes);
-        (append_without_realloc(values), ...);
+        (append_without_realloc(std::forward <T> (values)), ...);
         return *this;
     }
     

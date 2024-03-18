@@ -82,13 +82,6 @@ struct ships_responser
         std::vector <uint8_t> const & modernization
     ) const;
     
-    std::vector <std::pair <uint32_t, std::string_view> >
-    gun_classes
-    (
-        std::vector <std::vector <typename responser::response_t> > const & values,
-        std::optional <key_t> min
-    ) const;
-
 private:
     rows_table_template table;
     responser resp;
