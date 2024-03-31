@@ -73,7 +73,7 @@ struct ship::add_event
         answer.append(ship::row.begin);
         for (size_t i = 0; i != shift; ++i)
             answer.append(ship::shift);
-        answer.append("<b>");
+        answer.append(ship::bold_text.begin);
         if (events[index].date_from)
             answer.append(to_string(*events[index].date_from));
         else
@@ -83,14 +83,16 @@ struct ship::add_event
             answer.append(to_string(*events[index].date_to));
         else
             answer.append(date_placeholder);
-        answer.append("</b>");
-        answer.append(" ");
+        answer.append(ship::bold_text.end);
+        answer.append(" ")
+              .append(ship::text.begin);
         if (events[index].class_ru)
             answer.append(*events[index].class_ru)
                   .append(": ");
         if (events[index].description)
             answer.append(*events[index].description);
-        answer.append(ship::row.end);
+        answer.append(ship::text.end)
+              .append(ship::row.end);
         
         for (size_t next : graph[vertex])
             visit(next, shift + 1);
@@ -157,14 +159,15 @@ void ship::add_general_info
 {
     answer.append(ship::row.begin);
     if (info.ship_ru)
-        answer.append("<h2 id=\"id_")
+        answer.append(ship::name.begin)
               .append(std::to_string(info.ship_id))
-              .append("\">")
+              .append(ship::name.middle)
               .append(*info.ship_ru)
-              .append("</h2> ");
+              .append(ship::name.end);
     if (info.class_ru || info.type_ru)
     {
-        answer.append("(");
+        answer.append(ship::text.begin)
+              .append("(");
         if (info.class_ru)
             answer.append(*info.class_ru);
         if (info.class_ru && info.type_ru)
@@ -172,12 +175,13 @@ void ship::add_general_info
         if (info.type_ru)
             answer.append("типа ")
                   .append(*info.type_ru);
-        answer.append(")");
+        answer.append(")")
+              .append(ship::text.end);
     }
     answer.append(ship::row.end);
     
-    answer.append(ship::row.begin);
-    answer.append("<b>");
+    answer.append(ship::row.begin)
+          .append(ship::bold_text.begin);
     if (info.commissioned)
     {
         std::string commissioned_str = to_string(*info.commissioned);
@@ -188,12 +192,15 @@ void ship::add_general_info
     answer.append(" -> ");
     if (info.sunk_date)
         answer.append(to_string(*info.sunk_date));
-    answer.append("</b>");
+    answer.append(ship::bold_text.end);
     if (info.sunk_reason)
     {
-        answer.append(" (")
+        answer.append(" ")
+              .append(ship::text.begin)
+              .append("(")
               .append(*info.sunk_reason)
-              .append(")");
+              .append(")")
+              .append(ship::text.end);
     }
     answer.append(ship::row.end);
 }
@@ -319,6 +326,7 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
                     .append(link.end)
                     .append("</div><div class=\"long_info\">\n");
         answer.end.append(new_line);
+        answer.end.append("<button onclick=view_pictures(event) class=\"view_pictures\"> просмотр </button>");
         {
             add_pictures_t add_pictures(answer.end, pictures);
             for (auto const & info : ship_pictures[ship_id])
@@ -365,7 +373,7 @@ void ship::response (simple_string & answer, std::string_view query, piece_t tit
     answer.append
     (
         "</tbody></table><br>\n",
-        detail_compare_ships,
+        compare_ships__view_pictures,
         "<br><br>"
     );
     

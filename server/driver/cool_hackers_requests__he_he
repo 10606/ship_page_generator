@@ -73,6 +73,7 @@ method GET url /hudson/script
 method GET url /mysql/
 method GET url /script
 method GET url /webdb/
+method GET url /.ghauri
 method GET url /version
 method GET url /sqlweb/
 method GET url /websql/
@@ -147,10 +148,12 @@ method GET url /laravel/.env%20
 method GET url /admin-app/.env%20
 method GET url /development/.env%20
 method GET url /geoserver
+method GET url /login.rsp
 method GET url /.git/HEAD
 method GET url /.git/config
 method GET url /auth1.html
 method GET url /elrekt.php
+method GET url /evox/about
 method GET url /PSIA/index
 method GET url /config.json
 method GET url /phpmyadmin/
@@ -239,6 +242,7 @@ method GET url /cgi-bin/authLogin.cgi
 method GET url /remote/login
 method GET url /showLogin.cc
 method GET url /server-status
+method GET url /image/lgbg.jpg
 method GET url /Res/login.html
 method GET url /Portal0000.htm
 method GET url /Portal/Portal.mwsl
@@ -255,7 +259,6 @@ method GET url /SQLiteManager/main.php
 method GET url /SQLiteManager-1.2.4/main.php
 method GET url /agSearch/SQlite/main.php
 method GET url /test/sqlite/SQLiteManager-1.2.0/SQLiteManager-1.2.0/main.php
-method GET url http://azenv.net/
 method GET url /invoker/readonly
 method GET url /sslvpnLogin.html
 method GET url /manager/text/list
@@ -266,9 +269,11 @@ method GET url /zabbix/favicon.ico
 method GET url /favicon/favicon.ico
 method GET url /00_server_info.php
 method GET url /_info-backoffice.php
+method GET url /download/powershell/
 method GET url /actuator/gateway/routes
 method GET url /.well-known/security.txt
 method GET url /nmaplowercheck1705222954
+method GET url /nmaplowercheck1711560081
 method GET url /pfblockerng/www/index.php
 method GET url /app/config/parameters.yml
 method GET url /_ignition/execute-solution
@@ -277,6 +282,7 @@ method GET url /app?service=page/PrinterList
 method GET url /app?service=page/SetupCompleted
 method GET url /../../mnt/mtd/Config/Account1
 method GET url /../../mnt/mtd/Config/Account2
+method GET url /skin/default_1/images/logo.png
 method GET url /?XDEBUG_SESSION_START=phpstorm
 method GET url /nice%20ports%2C/Tri%6Eity.txt%2ebak
 method GET url /sitecore/shell/sitecore.version.xml
@@ -289,6 +295,8 @@ method GET url /yms/fileserver/customize/default/web_favicon.ico
 method GET url /dns-query?name=dnsscan.shadowserver.org&type=A
 method GET url /boaform/admin/formLogin?username=admin&psd=admin
 method GET url /vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php
+method GET url http://azenv.net/
+method GET url http://httpbin.org/ip
 method GET url http://www.google.com
 method GET url http://5.188.210.227/echo.php
 method GET url http://www.msftncsi.com/ncsi.txt
@@ -383,6 +391,7 @@ method POST url /admin-app/.env%20
 method POST url /development/.env%20
 method POST url /v1/statement
 method POST url /rpcform/login
+method POST url /tmUnblock.cgi
 method POST url /mgmt/tm/util/bash
 method POST url /scripts/WPnBr.dll
 method POST url /users?page=&size=5
@@ -435,6 +444,8 @@ method CONNECT url 45.61.136.175:7227
 method CONNECT url 49.13.151.148:2241
 method CONNECT url 185.65.245.140:7227
 method CONNECT url 193.149.189.126:7227
+method CONNECT url rev.pm:443
+method CONNECT url api.rev.pm:443
 method CONNECT url github.com:443
 method CONNECT url google.com:443
 method CONNECT url www.google.com:80
@@ -452,6 +463,7 @@ method CONNECT url srv57c0d2365c3c.korsan.me:443
 method OPTIONS url /
 method OPTIONS url sip:nm
 method SSTP_DUPLEX_POST url /sra_{BA195980-CD49-458b-9E23-C84EE0ADCD75}/
+
 
 
 

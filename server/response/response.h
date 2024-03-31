@@ -126,6 +126,7 @@ static const constexpr html_template_3 style =
             "input { margin: 0 0 0 0; }\n"
             "h2 { display: inline; }\n"
             "ship-cnt { float:right; }\n"
+            "b-t { font-weight: bold; }\n"
             ".document       { min-width: 0px; }\n"
             ".document_group { min-width: 1200px; }\n"
         "</style>\n"
