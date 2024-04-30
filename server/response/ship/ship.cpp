@@ -7,6 +7,7 @@
 #include "pictures.h"
 #include "date_to_str.h"
 #include "parse_query.h"
+#include "html_view_pictures.h"
 
 
 void add_modernizations
@@ -326,7 +327,6 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
                     .append(link.end)
                     .append("</div><div class=\"long_info\">\n");
         answer.end.append(new_line);
-        answer.end.append("<button onclick=view_pictures(event) class=\"view_pictures\"> просмотр </button>");
         {
             add_pictures_t add_pictures(answer.end, pictures);
             for (auto const & info : ship_pictures[ship_id])
@@ -373,7 +373,8 @@ void ship::response (simple_string & answer, std::string_view query, piece_t tit
     answer.append
     (
         "</tbody></table><br>\n",
-        compare_ships__view_pictures,
+        compare_ships,
+        html_view_pictures,
         "<br><br>"
     );
     

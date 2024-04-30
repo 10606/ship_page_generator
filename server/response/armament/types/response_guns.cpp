@@ -9,6 +9,8 @@
 #include "base_comparators.h"
 #include "html_template.h"
 #include "append_row.h"
+#include "html_view_pictures.h"
+
 
 static const constexpr pictures_template pictures =
 {
@@ -63,6 +65,8 @@ void guns::response (simple_string & answer, std::string_view query, piece_t tit
 
     std::vector <std::vector <guns_partial> > list_group = 
          parse_group_and_sort <guns_partial, guns_cmp> (guns_cache, query);
+
+    answer.append(html_view_pictures);
 
     for (std::vector <guns_partial> const & list : list_group)
     {

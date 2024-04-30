@@ -28,17 +28,20 @@ struct pictures_template
             std::string_view _begin__full,
             std::string_view _full__small,
             std::string_view _small__descr = "\"></a><br>",
+            std::string_view _button = "<button onclick=view_pictures(event) class=\"view_pictures\"> просмотр </button>",
             std::string_view _descr__end   = "</li>\n"
         ) :
             begin__full (_begin__full),
             full__small (_full__small),
             small__descr(_small__descr),
+            button      (_button),
             descr__end  (_descr__end)
         {}
             
         std::string_view begin__full;
         std::string_view full__small;
         std::string_view small__descr;
+        std::string_view button;
         std::string_view descr__end;
     } picture;
     
@@ -90,6 +93,7 @@ struct add_pictures_t
                 pictures.picture.full__small,
                 info.path_small,
                 pictures.picture.small__descr,
+                pictures.picture.button,
                 info.description,
                 pictures.picture.descr__end
             );
@@ -101,6 +105,7 @@ struct add_pictures_t
                   .append(pictures.picture.full__small)
                   .append(info.path_small)
                   .append(pictures.picture.small__descr)
+                  .append(pictures.picture.button)
                   .append(info.description)
                   .append(pictures.picture.descr__end);
         }

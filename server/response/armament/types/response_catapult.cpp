@@ -9,6 +9,7 @@
 #include "base_comparators.h"
 #include "html_template.h"
 #include "append_row.h"
+#include "html_view_pictures.h"
 
 
 static const constexpr pictures_template pictures =
@@ -64,6 +65,8 @@ void catapult::response (simple_string & answer, std::string_view query, piece_t
 
     std::vector <std::vector <catapult_partial> > list_group = 
          parse_group_and_sort <catapult_partial, catapult_cmp> (catapult_cache, query);
+
+    answer.append(html_view_pictures);
 
     for (std::vector <catapult_partial> const & list : list_group)
     {

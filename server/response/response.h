@@ -36,9 +36,9 @@ static const constexpr html_template_3 style =
 
             ".menu {\n"
                 "display: inline;\n"
-                "min-width: 170pt;\n"
-                "width:     170pt;\n"
-                "max-width: 170pt;\n"
+                "min-width: 230px;\n"
+                "width:     230px;\n"
+                "max-width: 230px;\n"
                 "padding: 0px 10px 0px 0px;\n"
             "}\n"
             ".main { display: inline; }\n"
@@ -119,7 +119,7 @@ static const constexpr html_template_3 style =
             ".short_info a:focus { color: #2222ff; }\n"
             
             ".long_info { width: min-content; }\n"
-            ".long_info ul { min-width: calc(100vw - 170pt - 100px); }\n"
+            ".long_info ul { min-width: calc(100vw - 230px - 100px); }\n"
             
             ".search { width: 97%; margin: 10px 20px 20px 0; }\n"
             ".search:focus { outline-color: #2222ff; }\n"
@@ -135,8 +135,8 @@ static const constexpr html_template_3 style =
         "</div>\n"
         "<footer>\n"
             "disclaimer:\n"
-            "мир перестал существовать 02.09.1945<br>\n"
-            "и да, здесь не просто могут быть... а гарантирванно есть ошибки и неточности!<br>\n"
+            "рассматриваемый период: 07.12.1941 - 02.09.1945<br>\n"
+            "и да, здесь не просто могут быть... а гарантированно есть ошибки и неточности!<br>\n"
             "сайт в разработке и хостится даже не в гараже (нету у меня гаража), поэтому SLA 9.999%<br>\n"
         "</footer>\n"
     "</body>\n"
