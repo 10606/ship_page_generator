@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 
+message("use clang")
+set(CMAKE_C_COMPILER clang)
+set(CMAKE_CXX_COMPILER clang++)
+
 project(ship_server VERSION 1.0 LANGUAGES C CXX)
 
 set(release_flags
@@ -13,10 +17,6 @@ set(compile_flags
 
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${release_flags}")
 message("CMAKE_CXX_FLAGS" ${CMAKE_CXX_FLAGS})
-
-message("use clang")
-set(CMAKE_C_COMPILER clang)
-set(CMAKE_CXX_COMPILER clang++)
 
 include_directories(
     server/
@@ -32,14 +32,30 @@ include_directories(
 )
 
 message(${CMAKE_SOURCE_DIR})
-include_directories(${CMAKE_SOURCE_DIR}/libraries/libpqxx/include)
-link_directories(${CMAKE_SOURCE_DIR}/libraries/libpqxx/src)
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/libraries/libpqxx/CMakeLists.txt")
+    message("local pqxx found: use libc++")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++ -Wno-deprecated-declarations")
+    set(stdlib c++ c++abi)
+    add_subdirectory("${CMAKE_SOURCE_DIR}/libraries/libpqxx")
+    add_library(my_pqxx STATIC "${CMAKE_SOURCE_DIR}/libraries/libpqxx")
+    set_target_properties(my_pqxx PROPERTIES LINKER_LANGUAGE CXX)
+    set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/libraries/libpqxx" APPEND PROPERTY "-DSKIP_BUILD_TEST=1")
+    target_compile_options(my_pqxx PUBLIC "-stdlib=libc++")
+else()
+    message("local pqxx not found: use system")
+    set(stdlib -static-libstdc++ -static-libgcc)
+    find_library(SYSTEM_PQXX pqxx REQUIRED)
+    add_library(my_pqxx IMPORTED ${SYSTEM_PQXX})
+    # include_directories(${CMAKE_SOURCE_DIR}/libraries/libpqxx/include)
+    # link_directories(${CMAKE_SOURCE_DIR}/libraries/libpqxx/src)
+endif()
+
 link_directories(${CMAKE_SOURCE_DIR}/libraries/openssl)
 link_directories(${CMAKE_SOURCE_DIR}/libraries/postgresql/src/interfaces/libpq)
 link_directories(${CMAKE_SOURCE_DIR}/libraries/postgresql/src/common)
 link_directories(${CMAKE_SOURCE_DIR}/libraries/postgresql/src/port)
 
-find_library(pqxx libpqxx.a)
 find_library(ssl libssl.a)
 find_library(crypto libcrypto.a)
 
@@ -87,28 +103,28 @@ add_executable(ship_server
     get_from_postgres/documents_info.cpp
 )
 
-add_executable(tests
-    test/main.cpp
-    test/dekart_tree.cpp
-    server/response/ship/date_order/nested_segments.cpp
-    test/nested_segments.cpp
-)
-
-target_link_libraries(tests
-    gtest
-)
+# add_executable(tests
+#     test/main.cpp
+#     test/dekart_tree.cpp
+#     server/response/ship/date_order/nested_segments.cpp
+#     test/nested_segments.cpp
+# )
+# 
+# target_link_libraries(tests
+#     gtest
+# )
 
 
 target_link_libraries(ship_server
     -s
     -static
+    my_pqxx
     pqxx
     pq
     pgcommon
     pgport
     ssl
     crypto
-    -static-libstdc++
-    -static-libgcc
+    ${stdlib}
 )
 

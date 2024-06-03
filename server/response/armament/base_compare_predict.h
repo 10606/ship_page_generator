@@ -98,6 +98,8 @@ private:
 template <typename T>
 concept number = std::numeric_limits <T> ::is_integer || std::is_floating_point_v <T>;
 
+#ifdef __cpp_lib_to_chars
+
 template <number T>
 inline std::optional <T> parse_number (std::string_view value)
 {
@@ -110,6 +112,40 @@ inline std::optional <T> parse_number (std::string_view value)
     else
         return std::nullopt;
 }
+
+#else
+#warning stupid stdlib without support std::from_chars
+
+template <number T>
+requires std::numeric_limits <T> ::is_integer
+inline std::optional <T> parse_number (std::string_view value)
+{
+    if (value.empty())
+        return std::nullopt;
+    T answer;
+    std::from_chars_result res = std::from_chars(value.begin(), value.end(), answer);
+    if (res.ec == std::errc())
+        return answer;
+    else
+        return std::nullopt;
+}
+
+template <std::floating_point T>
+inline std::optional <T> parse_number (std::string_view value)
+{
+    if (value.empty())
+        return std::nullopt;
+    try
+    {
+        return std::stod(std::string(value));
+    }
+    catch (...)
+    {
+        return std::nullopt;
+    }
+}
+
+#endif
 
 
 template <typename T>
