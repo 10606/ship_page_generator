@@ -37,18 +37,16 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/libraries/libpqxx/CMakeLists.txt")
     message("local pqxx found: use libc++")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++ -Wno-deprecated-declarations")
     set(stdlib c++ c++abi)
-    add_subdirectory("${CMAKE_SOURCE_DIR}/libraries/libpqxx")
-    add_library(my_pqxx STATIC "${CMAKE_SOURCE_DIR}/libraries/libpqxx")
-    set_target_properties(my_pqxx PROPERTIES LINKER_LANGUAGE CXX)
+    add_subdirectory("${CMAKE_SOURCE_DIR}/libraries/libpqxx" EXCLUDE_FROM_ALL)
+    add_library(my_pqxx ALIAS pqxx)
+    set_target_properties(pqxx PROPERTIES LINKER_LANGUAGE CXX)
     set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/libraries/libpqxx" APPEND PROPERTY "-DSKIP_BUILD_TEST=1")
-    target_compile_options(my_pqxx PUBLIC "-stdlib=libc++")
+    target_compile_options(pqxx PUBLIC "-stdlib=libc++")
 else()
     message("local pqxx not found: use system")
     set(stdlib -static-libstdc++ -static-libgcc)
     find_library(SYSTEM_PQXX pqxx REQUIRED)
     add_library(my_pqxx IMPORTED ${SYSTEM_PQXX})
-    # include_directories(${CMAKE_SOURCE_DIR}/libraries/libpqxx/include)
-    # link_directories(${CMAKE_SOURCE_DIR}/libraries/libpqxx/src)
 endif()
 
 link_directories(${CMAKE_SOURCE_DIR}/libraries/openssl)
@@ -102,18 +100,6 @@ add_executable(ship_server
     get_from_postgres/ship_propulsion.cpp
     get_from_postgres/documents_info.cpp
 )
-
-# add_executable(tests
-#     test/main.cpp
-#     test/dekart_tree.cpp
-#     server/response/ship/date_order/nested_segments.cpp
-#     test/nested_segments.cpp
-# )
-# 
-# target_link_libraries(tests
-#     gtest
-# )
-
 
 target_link_libraries(ship_server
     -s
