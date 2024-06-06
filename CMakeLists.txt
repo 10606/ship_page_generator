@@ -33,7 +33,8 @@ include_directories(
 
 message(${CMAKE_SOURCE_DIR})
 
-if(EXISTS "${CMAKE_SOURCE_DIR}/libraries/libpqxx/CMakeLists.txt")
+find_library(libcxx c++)
+if(libcxx AND EXISTS "${CMAKE_SOURCE_DIR}/libraries/libpqxx/CMakeLists.txt")
     message("local pqxx found: use libc++")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++ -Wno-deprecated-declarations")
     set(stdlib c++ c++abi)
@@ -43,10 +44,10 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/libraries/libpqxx/CMakeLists.txt")
     set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/libraries/libpqxx" APPEND PROPERTY "-DSKIP_BUILD_TEST=1")
     target_compile_options(pqxx PUBLIC "-stdlib=libc++")
 else()
-    message("local pqxx not found: use system")
+    message("libc++ or local pqxx not found: use system")
     set(stdlib -static-libstdc++ -static-libgcc)
-    find_library(SYSTEM_PQXX pqxx REQUIRED)
-    add_library(my_pqxx IMPORTED ${SYSTEM_PQXX})
+    include_directories(${CMAKE_SOURCE_DIR}/libraries/libpqxx/include)
+    link_directories(${CMAKE_SOURCE_DIR}/libraries/libpqxx/src)
 endif()
 
 link_directories(${CMAKE_SOURCE_DIR}/libraries/openssl)
@@ -54,9 +55,33 @@ link_directories(${CMAKE_SOURCE_DIR}/libraries/postgresql/src/interfaces/libpq)
 link_directories(${CMAKE_SOURCE_DIR}/libraries/postgresql/src/common)
 link_directories(${CMAKE_SOURCE_DIR}/libraries/postgresql/src/port)
 
-find_library(ssl libssl.a)
-find_library(crypto libcrypto.a)
+find_library(pqxx   NAMES libpqxx.a     libpqxx.so      pqxx    PATHS ${CMAKE_SOURCE_DIR}/libraries/libpqxx/src)
+find_library(pqa    NAMES libpq.a       libpq.so        pq      PATHS ${CMAKE_SOURCE_DIR}/libraries/postgresql/src/interfaces/libpq)
+find_library(ssla   NAMES libssl.a      libssl.so       ssl     PATHS ${CMAKE_SOURCE_DIR}/libraries/openssl)
+find_library(crypto NAMES libcrypto.a   librcypto.so    crypto  PATHS ${CMAKE_SOURCE_DIR}/libraries/openssl)
 
+set(use_static TRUE)
+if(pqxx)
+    message("found pqxx ${pqxx}")
+    set(use_static ${use_static} AND ${pqxx} MATCHES ".*\\.a")
+endif()
+if(pqa)
+    message("found pq ${pqa}")
+    set(use_static ${use_static} AND ${pqa} MATCHES ".*\\.a")
+endif()
+if(ssla)
+    message("found ssl ${ssla}")
+    set(use_static ${use_static} AND ${ssla} MATCHES ".*\\.a")
+endif()
+if(crypto)
+    message("found crypto ${crypto}")
+    set(use_static ${use_static} AND ${crypto} MATCHES ".*\\.a")
+endif()
+if(${use_static})
+    message("static linkage")
+    set(static_flags "-s -static")
+endif()
+    
 
 add_executable(ship_server
     server/https_server.cpp
@@ -102,9 +127,7 @@ add_executable(ship_server
 )
 
 target_link_libraries(ship_server
-    -s
-    -static
-    my_pqxx
+    ${static_flags}
     pqxx
     pq
     pgcommon
