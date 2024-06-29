@@ -4,6 +4,7 @@
 #include <vector>
 #include <chrono>
 #include <cmath>
+#include "allocator.h"
 #include "ship_requests.h"
 #include "armament_info.h"
 #include "ship_armament_lt.h"
@@ -45,7 +46,9 @@ struct ship_aircrafts
     typedef ship_requests::aircraft_info_t::list aircraft_t;
     typedef ship_requests::aircraft_info_t::classes aircraft_class;
     
-    std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
+    std::vector <response_t, allocator_for_temp <response_t> >
+    response (int id, std::chrono::year_month_day date) const;
+    
     p_response_t partial_response (aircraft_t const & aircraft);
 
     struct ship_items_lt

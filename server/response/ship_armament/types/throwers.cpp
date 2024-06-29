@@ -60,9 +60,10 @@ ship_throwers::ship_throwers (ship_requests * database, std::string_view _new_li
     );
 }
 
-std::vector <ship_throwers::response_t> ship_throwers::response (int id, std::chrono::year_month_day date) const
+std::vector <ship_throwers::response_t, allocator_for_temp <ship_throwers::response_t> >
+ship_throwers::response (int id, std::chrono::year_month_day date) const
 {
-    std::vector <response_t> answer;
+    std::vector <response_t, allocator_for_temp <response_t> > answer;
 
     std::unordered_map <int, std::vector <ship_items_lt> > :: const_iterator it = ship_throwers_list.find(id);
     if (it == ship_throwers_list.end())

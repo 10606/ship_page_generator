@@ -7,7 +7,7 @@ set(CMAKE_CXX_COMPILER clang++)
 project(ship_server VERSION 1.0 LANGUAGES C CXX)
 
 set(release_flags
-    "-O3 --pedantic -flto -march=native -Wall -ftemplate-depth=10000 -std=c++20 -DNDEBUG"
+    "-O3 --pedantic -flto -march=native -Wall -ftemplate-depth=10000 -std=c++20 -DNDEBUG -g"
 )
 
 set(compile_flags
@@ -15,11 +15,22 @@ set(compile_flags
      -g --pedantic -Wall -ftemplate-depth=10000 -std=c++20"
 )
 
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${release_flags}")
+if(NOT DEFINED debug)
+    set(debug FALSE)
+endif()
+
+if(debug)
+    set(use_static FALSE)
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${compile_flags}")
+else()
+    set(use_static TRUE)
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${release_flags}")
+endif()
 message("CMAKE_CXX_FLAGS" ${CMAKE_CXX_FLAGS})
 
 include_directories(
     server/
+    server/allocators
     server/response
     server/response/ship_armament
     server/response/ship_armament/types
@@ -34,17 +45,21 @@ include_directories(
 message(${CMAKE_SOURCE_DIR})
 
 find_library(libcxx c++)
-if(libcxx AND EXISTS "${CMAKE_SOURCE_DIR}/libraries/libpqxx/CMakeLists.txt")
-    message("local pqxx found: use libc++")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++ -Wno-deprecated-declarations")
-    set(stdlib c++ c++abi)
+if((libcxx OR not_use_cxx) AND EXISTS "${CMAKE_SOURCE_DIR}/libraries/libpqxx/CMakeLists.txt")
+    if(not_use_cxx) 
+        message("local pqxx found")
+    else()
+        message("local pqxx found -> use libc++")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++ -Wno-deprecated-declarations")
+        set(stdlib c++ c++abi)
+    endif()
+    
     add_subdirectory("${CMAKE_SOURCE_DIR}/libraries/libpqxx" EXCLUDE_FROM_ALL)
     add_library(my_pqxx ALIAS pqxx)
     set_target_properties(pqxx PROPERTIES LINKER_LANGUAGE CXX)
     set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/libraries/libpqxx" APPEND PROPERTY "-DSKIP_BUILD_TEST=1")
-    target_compile_options(pqxx PUBLIC "-stdlib=libc++")
 else()
-    message("libc++ or local pqxx not found: use system")
+    message("libc++ or local pqxx not found -> use system")
     set(stdlib -static-libstdc++ -static-libgcc)
     include_directories(${CMAKE_SOURCE_DIR}/libraries/libpqxx/include)
     link_directories(${CMAKE_SOURCE_DIR}/libraries/libpqxx/src)
@@ -60,7 +75,6 @@ find_library(pqa    NAMES libpq.a       libpq.so        pq      PATHS ${CMAKE_SO
 find_library(ssla   NAMES libssl.a      libssl.so       ssl     PATHS ${CMAKE_SOURCE_DIR}/libraries/openssl)
 find_library(crypto NAMES libcrypto.a   librcypto.so    crypto  PATHS ${CMAKE_SOURCE_DIR}/libraries/openssl)
 
-set(use_static TRUE)
 if(pqxx)
     message("found pqxx ${pqxx}")
     set(use_static ${use_static} AND ${pqxx} MATCHES ".*\\.a")
@@ -79,7 +93,7 @@ if(crypto)
 endif()
 if(${use_static})
     message("static linkage")
-    set(static_flags "-s -static")
+    set(static_flags "-static")
 endif()
     
 
@@ -127,6 +141,7 @@ add_executable(ship_server
 )
 
 target_link_libraries(ship_server
+    # -s
     ${static_flags}
     pqxx
     pq

@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <chrono>
 #include <cmath>
+#include "allocator.h"
 #include "ship_requests.h"
 #include "armament_info.h"
 #include "ship_armament_lt.h"
@@ -44,7 +45,9 @@ struct ship_searchers
     typedef ship_requests::ship_armament_lt_t::searchers ship_searchers_t;
     typedef ship_requests::armament_info_t::searchers searcher_t;
     
-    std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
+    std::vector <response_t, allocator_for_temp <response_t> >
+    response (int id, std::chrono::year_month_day date) const;
+    
     p_response_t partial_response (searcher_t const & searcher);
 
     struct ship_items_lt

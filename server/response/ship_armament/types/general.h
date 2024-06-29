@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <chrono>
 #include <cmath>
+#include "allocator.h"
 #include "ship_requests.h"
 
 
@@ -39,7 +40,8 @@ struct ship_general
         std::string_view data_end;
     };
 
-    std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
+    std::vector <response_t, allocator_for_temp <response_t> >
+    response (int id, std::chrono::year_month_day date) const;
 
 private:
     struct response_with_time_label

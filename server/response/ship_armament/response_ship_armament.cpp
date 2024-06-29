@@ -1,5 +1,7 @@
 #include "response_ship_armament.h"
 
+#include "allocator.h"
+
 
 template <typename responser>
 void
@@ -11,7 +13,7 @@ ships_responser <responser> ::response
 ) const
 {
     answer.append(table.group_delimeter);
-    std::vector <std::vector <response_t> > values;
+    std::vector <std::vector <response_t, allocator_for_temp <response_t> > > values;
     values.reserve(ship_year.size());
     
     std::optional <key_t> min;

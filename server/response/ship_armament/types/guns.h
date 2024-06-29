@@ -6,6 +6,7 @@
 #include <map>
 #include <chrono>
 #include <cmath>
+#include "allocator.h"
 #include "armament_info.h"
 #include "ship_armament_lt.h"
 #include "get_segments.h"
@@ -45,7 +46,8 @@ struct ship_guns
     typedef ship_requests::ship_armament_lt_t::guns ship_guns_t;
     typedef ship_requests::armament_info_t::mount mount_t;
     
-    std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
+    std::vector <response_t, allocator_for_temp <response_t> >
+    response (int id, std::chrono::year_month_day date) const;
 
     p_response_t partial_response (mount_t const & mount);
 

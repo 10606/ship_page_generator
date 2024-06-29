@@ -27,16 +27,17 @@ ship_general::ship_general (ship_requests * database, std::string_view _new_line
 }
 
 
-std::vector <ship_general::response_t> ship_general::response (int id, std::chrono::year_month_day date) const
+std::vector <ship_general::response_t, allocator_for_temp <ship_general::response_t> >
+ship_general::response (int id, std::chrono::year_month_day date) const
 {
     std::unordered_map <int, std::vector <response_with_time_label> > :: const_iterator it = ship_general_list.find(id);
     if (it == ship_general_list.end())
-        return std::vector <response_t> ();
+        return {};
     for (response_with_time_label const & response_with_time : it->second)
     {
         if (between(response_with_time.date_from, date, response_with_time.date_to))
         {
-            std::vector <response_t> answer;
+            std::vector <response_t, allocator_for_temp <response_t> > answer;
             answer.reserve(response_with_time.answer.size());
             for (p_response_t const & item : response_with_time.answer)
                 answer.push_back(item);
@@ -44,7 +45,7 @@ std::vector <ship_general::response_t> ship_general::response (int id, std::chro
         }
     }
     
-    return std::vector <response_t> ();
+    return {};
 }
 
 

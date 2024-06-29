@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <chrono>
+#include "allocator.h"
 #include "ship_requests.h"
 #include "ship_propulsion.h"
 
@@ -41,7 +42,9 @@ struct ship_propulsion
     typedef std::unique_ptr <ship_requests::propulsion_t::propulsion> propulsion_t;
     typedef ship_requests::propulsion_t::ship_propulsion ship_propulsions_t;
     
-    std::vector <response_t> response (int id, std::chrono::year_month_day date) const;
+    std::vector <response_t, allocator_for_temp <response_t> >
+    response (int id, std::chrono::year_month_day date) const;
+    
     p_response_t partial_response (propulsion_t const & propulsion, ship_requests::propulsion_t::context const & storage);
 
     struct ship_items_lt

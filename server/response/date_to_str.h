@@ -7,6 +7,8 @@
 #include "simple_string.h"
 
 std::string to_string (std::chrono::year_month_day const & value);
+// get_from_postgres/parse_response.cpp
+
 std::string to_string_sql (std::chrono::year_month_day const & value);
 std::string to_string_10 (double value);
 

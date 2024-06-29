@@ -102,9 +102,10 @@ ship_guns::ship_guns (ship_requests * database, std::string_view _new_line) :
 }
 
 
-std::vector <ship_guns::response_t> ship_guns::response (int id, std::chrono::year_month_day date) const
+std::vector <ship_guns::response_t, allocator_for_temp <ship_guns::response_t> >
+ship_guns::response (int id, std::chrono::year_month_day date) const
 {
-    std::vector <response_t> answer;
+    std::vector <response_t, allocator_for_temp <response_t> > answer;
 
     std::unordered_map <int, segments_t> :: const_iterator it = ship_guns_list_segmented.find(id);
     if (it == ship_guns_list_segmented.end())

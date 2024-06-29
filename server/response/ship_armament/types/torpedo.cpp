@@ -58,9 +58,10 @@ ship_torpedo_tubes::ship_torpedo_tubes (ship_requests * database, std::string_vi
     );
 }
 
-std::vector <ship_torpedo_tubes::response_t> ship_torpedo_tubes::response (int id, std::chrono::year_month_day date) const
+std::vector <ship_torpedo_tubes::response_t, allocator_for_temp <ship_torpedo_tubes::response_t> >
+ship_torpedo_tubes::response (int id, std::chrono::year_month_day date) const
 {
-    std::vector <response_t> answer;
+    std::vector <response_t, allocator_for_temp <response_t> > answer;
 
     std::unordered_map <int, std::vector <ship_items_lt> > :: const_iterator it = ship_tubes_list.find(id);
     if (it == ship_tubes_list.end())

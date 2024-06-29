@@ -60,9 +60,10 @@ ship_aircrafts::ship_aircrafts (ship_requests * database, std::string_view _new_
     );
 }
 
-std::vector <ship_aircrafts::response_t> ship_aircrafts::response (int id, std::chrono::year_month_day date) const
+std::vector <ship_aircrafts::response_t, allocator_for_temp <ship_aircrafts::response_t> >
+ship_aircrafts::response (int id, std::chrono::year_month_day date) const
 {
-    std::vector <response_t> answer;
+    std::vector <response_t, allocator_for_temp <response_t> > answer;
 
     std::unordered_map <int, std::vector <ship_items_lt> > :: const_iterator it = ship_aircrafts_list.find(id);
     if (it == ship_aircrafts_list.end())
