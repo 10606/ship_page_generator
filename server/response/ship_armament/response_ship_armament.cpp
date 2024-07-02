@@ -84,11 +84,11 @@ ships_responser <responser> ::response
             
             for (size_t j = positions[i]; j != values[i].size(); )
             {
-                key_t cur{std::move(values[i][j].group), std::move(values[i][j].compare)};
+                key_t cur{values[i][j].group, values[i][j].compare};
                 if (cur != expect)
                 {
-                    have_one_delimeter   |= (cur.first == expect.first);
-                    have_group_delimeter |= (cur.first != expect.first);
+                    have_one_delimeter   |= (cur.group == expect.group);
+                    have_group_delimeter |= (cur.group != expect.group);
                     positions[i] = j;
                     if (!min || *min > cur)
                     {
@@ -299,6 +299,23 @@ std::vector <std::pair <int, std::chrono::year_month_day> > ship_armament::parse
 }
 
 
+void ship_armament::response (simple_string & answer, std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year, bool add_checkbox)
+{
+    answer.append(table.begin);
+    std::vector <uint8_t> modernizations = names.response(answer, ship_year, add_checkbox);
+    
+    add_armament(answer, general,       ship_year, modernizations);
+    add_armament(answer, guns,          ship_year, modernizations);
+    add_armament(answer, torpedo_tubes, ship_year, modernizations);
+    add_armament(answer, throwers,      ship_year, modernizations);
+    add_armament(answer, searchers,     ship_year, modernizations);
+    add_armament(answer, catapult,      ship_year, modernizations);
+    add_armament(answer, aircraft,      ship_year, modernizations);
+    add_armament(answer, propulsion,    ship_year, modernizations);
+        
+    answer.append(table.end);
+}
+
 void ship_armament::response (simple_string & answer, std::string_view query, piece_t title, bool add_checkbox)
 {
     static const constexpr std::string_view title_text = "сравнение японских корабликов";
@@ -308,20 +325,7 @@ void ship_armament::response (simple_string & answer, std::string_view query, pi
     {
         std::vector <std::pair <int, std::chrono::year_month_day> > ship_year =
             parse_query__ship_year(query);
-    
-        answer.append(table.begin);
-        std::vector <uint8_t> modernizations = names.response(answer, ship_year, add_checkbox);
-        
-        add_armament(answer, general,       ship_year, modernizations);
-        add_armament(answer, guns,          ship_year, modernizations);
-        add_armament(answer, torpedo_tubes, ship_year, modernizations);
-        add_armament(answer, throwers,      ship_year, modernizations);
-        add_armament(answer, searchers,     ship_year, modernizations);
-        add_armament(answer, catapult,      ship_year, modernizations);
-        add_armament(answer, aircraft,      ship_year, modernizations);
-        add_armament(answer, propulsion,    ship_year, modernizations);
-        
-        answer.append(table.end);
+        response(answer, ship_year, add_checkbox);
     }
     catch (...)
     {}

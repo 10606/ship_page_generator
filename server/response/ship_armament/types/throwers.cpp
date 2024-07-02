@@ -72,9 +72,8 @@ ship_throwers::response (int id, std::chrono::year_month_day date) const
     {
         if (between(thrower.date_from, date, thrower.date_to))
         {
-            response_t item = throwers[thrower.thrower_id];
-            add_value(item.data_begin, thrower.mount_count);
-            answer.push_back(item);
+            answer.emplace_back(throwers[thrower.thrower_id]);
+            add_value(answer.back().data_begin, thrower.mount_count);
             answer.back().group_name = group_name;
         }
     }
@@ -85,8 +84,6 @@ ship_throwers::response (int id, std::chrono::year_month_day date) const
 ship_throwers::p_response_t ship_throwers::partial_response (throwers_t const & thrower)
 {
     p_response_t item;
-    item.group = 0;
-    item.compare = 0;
     
     item.data += "x";
     if (thrower.tubes_count)

@@ -34,6 +34,14 @@ inline char * add_value (char (& answer) [n], uint32_t value)
     return ret;
 }
 
+template <typename T>
+void add_value (number_holder <T> & answer, T value)
+{
+    char * ret = std::to_chars(std::begin(answer.data), std::end(answer.data), value).ptr;
+    *ret = '\0';
+    answer.size = ret - answer.data;
+}
+
 std::string where
 (
     std::string const & table_name,

@@ -72,9 +72,8 @@ ship_aircrafts::response (int id, std::chrono::year_month_day date) const
     {
         if (between(aircraft.date_from, date, aircraft.date_to))
         {
-            response_t item = aircrafts[aircraft.aircraft_id];
-            item.data_begin = aircraft.count;
-            answer.push_back(item);
+            answer.emplace_back(aircrafts[aircraft.aircraft_id]);
+            answer.back().data_begin = aircraft.count;
         }
     }
     
@@ -84,7 +83,6 @@ ship_aircrafts::response (int id, std::chrono::year_month_day date) const
 ship_aircrafts::p_response_t ship_aircrafts::partial_response (aircraft_t const & aircraft)
 {
     p_response_t item;
-    item.compare = 0;
     item.group = aircraft.class_id;
     
     std::unordered_map <int, std::string> :: iterator it = cache_class_names.find(aircraft.class_id);

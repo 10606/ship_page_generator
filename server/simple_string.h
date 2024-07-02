@@ -149,6 +149,27 @@ private:
 };
 
 
+template <typename T>
+requires requires 
+{
+    {std::numeric_limits <T> ::digits10} -> std::convertible_to <size_t>;
+}
+struct number_holder
+{
+    number_holder () :
+        size(0)
+    {}
+    
+    char data[std::numeric_limits <T> ::digits10 + 2]; // 1 most significant + \0
+    size_t size;
+    
+    operator std::string_view ()
+    {
+        return std::string_view(data, size);
+    }
+};
+
+
 #endif
 
 

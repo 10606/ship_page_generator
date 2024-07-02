@@ -40,7 +40,7 @@ ship_general::response (int id, std::chrono::year_month_day date) const
             std::vector <response_t, allocator_for_temp <response_t> > answer;
             answer.reserve(response_with_time.answer.size());
             for (p_response_t const & item : response_with_time.answer)
-                answer.push_back(item);
+                answer.emplace_back(item);
             return answer;
         }
     }
@@ -56,7 +56,6 @@ ship_general::response_with_time_label ship_general::partial_response (general_t
 
     {
         p_response_t item;
-        item.group = 0;
         item.compare = 0;
         item.group_name = "характеристики";
         
@@ -73,9 +72,8 @@ ship_general::response_with_time_label ship_general::partial_response (general_t
     
     {
         p_response_t item;
-        item.group = 0;
-        item.group_name = "характеристики";
         item.compare = 1;
+        item.group_name = "характеристики";
         
         if (general.length || general.width || general.draft)
         {
@@ -90,9 +88,8 @@ ship_general::response_with_time_label ship_general::partial_response (general_t
     
     {
         p_response_t item;
-        item.group = 0;
-        item.group_name = "характеристики";
         item.compare = 2;
+        item.group_name = "характеристики";
         
         if (general.crew)
         {
@@ -104,9 +101,8 @@ ship_general::response_with_time_label ship_general::partial_response (general_t
     
     {
         p_response_t item;
-        item.group = 0;
-        item.group_name = "характеристики";
         item.compare = 3;
+        item.group_name = "характеристики";
         
         item.data.append("<b>");
         if (general.speed_max)
@@ -117,9 +113,8 @@ ship_general::response_with_time_label ship_general::partial_response (general_t
     
     {
         p_response_t item;
-        item.group = 0;
-        item.group_name = "характеристики";
         item.compare = 4;
+        item.group_name = "характеристики";
         
         if (general.speed_cruise)
             item.data += to_string_10(*general.speed_cruise) + "узлов ";

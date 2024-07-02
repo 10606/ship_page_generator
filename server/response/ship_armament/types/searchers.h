@@ -6,6 +6,7 @@
 #include <chrono>
 #include <cmath>
 #include "allocator.h"
+#include "simple_string.h"
 #include "ship_requests.h"
 #include "armament_info.h"
 #include "ship_armament_lt.h"
@@ -15,30 +16,29 @@ struct ship_searchers
 {
     ship_searchers (ship_requests * database, std::string_view _new_line);
 
-    struct p_response_t
+    struct responses_common_t
     {
         int group;
-        bool compare;
+        static const constexpr bool compare = 0;
         std::string_view group_name;
+    };
+    
+    struct p_response_t : responses_common_t
+    {
         std::string data;
     };
 
-    struct response_t
+    struct response_t : responses_common_t
     {
         response_t () = default;
     
         response_t (p_response_t const & value) :
-            group(value.group),
-            compare(value.compare),
-            group_name(value.group_name),
+            responses_common_t(value),
             data_begin(),
             data_end(value.data)
         {}
     
-        int group;
-        bool compare;
-        std::string_view group_name;
-        char data_begin[16];
+        number_holder <uint32_t> data_begin;
         std::string_view data_end;
     };
 

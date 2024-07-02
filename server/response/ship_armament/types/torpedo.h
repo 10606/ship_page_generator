@@ -9,36 +9,36 @@
 #include "ship_requests.h"
 #include "armament_info.h"
 #include "ship_armament_lt.h"
+#include "simple_string.h"
 
 
 struct ship_torpedo_tubes
 {
     ship_torpedo_tubes (ship_requests * database, std::string_view _new_line);
 
-    struct p_response_t
+    struct responses_common_t
     {
-        bool group;
+        static const constexpr bool group = 0;
         int compare;
         std::string_view group_name;
+    };
+    
+    struct p_response_t : responses_common_t
+    {
         std::string data;
     };
 
-    struct response_t
+    struct response_t : responses_common_t
     {
         response_t () = default;
     
         response_t (p_response_t const & value) :
-            group(value.group),
-            compare(value.compare),
-            group_name(value.group_name),
+            responses_common_t(value),
             data_begin(),
             data_end(value.data)
         {}
     
-        bool group;
-        int compare;
-        std::string_view group_name;
-        char data_begin[16];
+        number_holder <uint32_t> data_begin;
         std::string_view data_end;
     };
 

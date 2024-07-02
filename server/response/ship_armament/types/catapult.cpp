@@ -61,9 +61,8 @@ ship_catapult::response (int id, std::chrono::year_month_day date) const
     {
         if (between(catapult.date_from, date, catapult.date_to))
         {
-            response_t item = catapults[catapult.catapult_id];
-            add_value(item.data_begin, catapult.count);
-            answer.push_back(item);
+            answer.emplace_back(catapults[catapult.catapult_id]);
+            add_value(answer.back().data_begin, catapult.count);
             answer.back().group_name = group_name;
         }
     }
@@ -74,7 +73,6 @@ ship_catapult::response (int id, std::chrono::year_month_day date) const
 ship_catapult::p_response_t ship_catapult::partial_response (catapult_t const & catapult)
 {
     p_response_t item;
-    item.group = 0;
     item.compare = catapult.class_id;;
     
     item.data += " ";

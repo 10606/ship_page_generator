@@ -72,9 +72,8 @@ ship_searchers::response (int id, std::chrono::year_month_day date) const
     {
         if (between(searcher.date_from, date, searcher.date_to))
         {
-            response_t item = searchers[searcher.searcher_id];
-            add_value(item.data_begin, searcher.count);
-            answer.push_back(item);
+            answer.emplace_back(searchers[searcher.searcher_id]);
+            add_value(answer.back().data_begin, searcher.count);
         }
     }
     
@@ -89,7 +88,6 @@ ship_searchers::p_response_t ship_searchers::partial_response (searcher_t const 
     std::unordered_map <int, std::string> ::iterator it = cache_class_names.find(searcher.class_id);
     if (it != cache_class_names.end())
         item.group_name = it->second;
-    item.compare = 0;
     item.data += " ";
     if (searcher.searcher_ru)
         item.data.append("<b>")

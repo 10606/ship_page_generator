@@ -5,6 +5,7 @@
 #include "response_ship_armament.h"
 #include "simple_string.h"
 #include "html_template.h"
+#include "nested_segments.h"
 #include <map>
 
 
@@ -25,7 +26,7 @@ private:
         size_t type;
 
         std::string begin;
-        std::string armament_link;
+        std::vector <std::pair <int, std::chrono::year_month_day> > ship_year;
         std::string end;
     };
     
@@ -39,6 +40,7 @@ private:
     (
         std::string & answer, 
         std::string & modernization_link, 
+        std::vector <std::pair <int, std::chrono::year_month_day> > & ship_year,
         ship_requests::ship_info_t::list const & info
     );
 
@@ -46,6 +48,16 @@ private:
     (
         response_t & answer, 
         ship_requests::ship_info_t::list const & info
+    );
+    
+    static void add_modernizations
+    (
+        std::string & answer, 
+        std::vector <std::pair <int, std::chrono::year_month_day> > & ship_year,
+        ship_requests::ship_info_t::list const & info,
+        std::vector <ship_requests::ship_event_t::event_lt_descr> const & events,
+        std::vector <size_t> const & index_mapping,
+        std::vector <segment> segments
     );
     
     static const constexpr std::string_view query_template = "ship=";

@@ -114,9 +114,8 @@ ship_guns::response (int id, std::chrono::year_month_day date) const
     answer.reserve(values.size());
     for (mount_info_t const & i : values)
     {
-        response_t item = mounts[i.mount_id];
-        add_value(item.data_begin, i.mount_count);
-        answer.push_back(item);
+        answer.emplace_back(mounts[i.mount_id]);
+        add_value(answer.back().data_begin, i.mount_count);
     }
     
     return answer;

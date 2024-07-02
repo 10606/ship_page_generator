@@ -1,4 +1,5 @@
 #include <signal.h>
+#include <sched.h>
 #include "driver/server.h"
 #include "validate_path.h"
 #include "response_ship_armament.h"
@@ -297,6 +298,12 @@ int main ()
         set_sig_handler(SIGPIPE, SIG_IGN);
         set_sig_handler(SIGUSR1, SIG_IGN);
         set_sig_handler(SIGUSR2, SIG_IGN);
+        
+        cpu_set_t cpu_mask;
+        CPU_ZERO(&cpu_mask);
+        CPU_SET(0, &cpu_mask);
+        CPU_SET(2, &cpu_mask);
+        sched_setaffinity(0, sizeof(cpu_mask), &cpu_mask);
 
         std::string_view ssl_cert = "server/keys/server.pem";
         std::string_view ssl_key = "server/keys/server.key";

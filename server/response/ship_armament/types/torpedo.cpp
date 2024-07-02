@@ -83,7 +83,6 @@ ship_torpedo_tubes::response (int id, std::chrono::year_month_day date) const
 ship_torpedo_tubes::p_response_t ship_torpedo_tubes::partial_response (tube_t const & tube)
 {
     p_response_t item;
-    item.group = 0;
     item.compare = tube.class_id;;
     
     item.data.append("x<b>");

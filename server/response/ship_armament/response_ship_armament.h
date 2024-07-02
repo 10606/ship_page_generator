@@ -1,6 +1,7 @@
 #ifndef RESPONSE_SHIP_ARMAMENT_H
 #define RESPONSE_SHIP_ARMAMENT_H
 
+#include <compare>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -71,9 +72,64 @@ struct ships_responser
         resp(_database, std::forward <T> (args) ...)
     {}
     
+    template <typename T, typename V>
+    struct key_impl
+    {
+        key_impl (T const & _group, V const & _compare) :
+            group(_group),
+            compare(_compare)
+        {}
+        
+        T group;
+        V compare;
+        
+        std::partial_ordering operator <=> (key_impl const &) const = default; 
+    };
+    
+    template <typename T, typename V>
+    requires (std::is_const_v <T> && !std::is_const_v <V>)
+    struct key_impl <T, V>
+    {
+        key_impl (T const &, V const & _compare) :
+            compare(_compare)
+        {}
+        
+        static const constexpr bool group = 0;
+        V compare;
+        
+        std::strong_ordering operator <=> (key_impl const &) const = default; 
+    };
+    
+    template <typename T, typename V>
+    requires (!std::is_const_v <T> && std::is_const_v <V>)
+    struct key_impl <T, V>
+    {
+        key_impl (T const & _group, V const &) :
+            group(_group)
+        {}
+        
+        T group;
+        static const constexpr bool compare = 0;
+        
+        std::strong_ordering operator <=> (key_impl const &) const = default; 
+    };
+    
+    template <typename T, typename V>
+    requires (std::is_const_v <T> && std::is_const_v <V>)
+    struct key_impl <T, V>
+    {
+        key_impl (T const &, V const &)
+        {}
+        
+        static const constexpr bool group = 0;
+        static const constexpr bool compare = 0;
+        
+        std::strong_ordering operator <=> (key_impl const &) const = default; 
+    };
+    
     using response_t = typename responser::response_t;
-    using key_t = std::pair <decltype(std::declval <response_t>().group),
-                             decltype(std::declval <response_t>().compare)>;
+    using key_t = key_impl <decltype(std::declval <response_t>().group),
+                            decltype(std::declval <response_t>().compare)>;
 
     void response
     (
@@ -134,6 +190,7 @@ struct ship_armament
 
     // http://127.0.0.1:8080/ship/armament?ship=40&date=9.7.44&ship=42&date=14.7.44&ship=43&date=8.7.44&ship=50&date=30.1.39&date=9.7.44&ship=52&date=9.7.44&ship=54&date=23.7.45
     void response (simple_string & answer, std::string_view query, piece_t title, bool add_checkbox = 0);
+    void response (simple_string & answer, std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year, bool add_checkbox = 0);
 
 private:
     struct table_template

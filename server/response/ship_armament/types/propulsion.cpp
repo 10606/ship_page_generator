@@ -57,18 +57,17 @@ ship_propulsion::response (int id, std::chrono::year_month_day date) const
     {
         if (between(propulsion.date_from, date, propulsion.date_to))
         {
-            response_t item = propulsions[propulsion.propulsion_id];
+            answer.emplace_back(propulsions[propulsion.propulsion_id]);
             if (i != 0)
-                item.data_begin.append("<br>");
+                answer.back().data_begin.append("<br>");
             if (propulsion.count > 1)
             {
-                item.data_begin.append("<b>");
-                add_value(item.data_begin, propulsion.count);
-                declension(item.data_begin, propulsion.count, {" установка", " установки", " установок"});
-                item.data_begin.append("</b>:<br><br>");
+                answer.back().data_begin.append("<b>");
+                add_value(answer.back().data_begin, propulsion.count);
+                declension(answer.back().data_begin, propulsion.count, {" установка", " установки", " установок"});
+                answer.back().data_begin.append("</b>:<br><br>");
             }
-            item.group_name = group_name;
-            answer.push_back(item);
+            answer.back().group_name = group_name;
             i++;
         }
     }
@@ -79,8 +78,6 @@ ship_propulsion::response (int id, std::chrono::year_month_day date) const
 ship_propulsion::p_response_t ship_propulsion::partial_response (propulsion_t const & propulsion, ship_requests::propulsion_t::context const & storage)
 {
     p_response_t item;
-    item.group = 0;
-    item.compare = 0;
     
     ship_requests::propulsion_t::print_context print
     {

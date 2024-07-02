@@ -10,13 +10,14 @@
 #include "html_view_pictures.h"
 
 
-void add_modernizations
+void ship::add_modernizations
 (
     std::string & answer, 
+    std::vector <std::pair <int, std::chrono::year_month_day> > & ship_year,
+    ship_requests::ship_info_t::list const & info,
     std::vector <ship_requests::ship_event_t::event_lt_descr> const & events,
     std::vector <size_t> const & index_mapping,
-    std::vector <segment> segments,
-    std::optional <std::chrono::year_month_day> commisioned
+    std::vector <segment> segments
 )
 {
     std::vector <segment> :: iterator part = 
@@ -37,7 +38,7 @@ void add_modernizations
     modernizations.reserve(part - segments.begin());
 
     for (std::vector <segment> :: iterator it = segments.begin(); it != part; ++it)
-        if (it->end && commisioned && (*commisioned <= *it->end))
+        if (it->end && info.commissioned && (*info.commissioned <= *it->end))
         {
             while (!modernizations.empty() && it->begin && modernizations.back() >= *it->begin)
                 modernizations.pop_back();
@@ -45,8 +46,11 @@ void add_modernizations
         }
 
     for (auto const & date : modernizations)
+    {
         answer.append("&date=")
               .append(to_string(date));
+        ship_year.push_back({info.ship_id, date});
+    }
 }
 
 
@@ -155,6 +159,7 @@ void ship::add_general_info
 (
     std::string & answer, 
     std::string & modernization_link, 
+    std::vector <std::pair <int, std::chrono::year_month_day> > & ship_year,
     ship_requests::ship_info_t::list const & info
 )
 {
@@ -189,6 +194,7 @@ void ship::add_general_info
         answer.append(commissioned_str);
         modernization_link.append("&date=")
                           .append(std::move(commissioned_str));
+        ship_year.push_back({info.ship_id, *info.commissioned});
     }
     answer.append(" -> ");
     if (info.sunk_date)
@@ -288,31 +294,24 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
         
         response_t answer;
         answer.begin = std::string("<div class=\"events\">");
-        answer.armament_link = std::string(query_template);
-        answer.armament_link.append(std::to_string(ship_id));
+        std::string armament_link = std::string(query_template);
+        armament_link.append(std::to_string(ship_id));
 
         std::unordered_map <int, size_t> ::iterator it = ship_types.find(info.second.type_id);
         answer.type = (it == ship_types.end())? 0 : it->second;
 
         // short info
-        {
-            add_short_info(answer, info.second);
-        }
+        add_short_info(answer, info.second);
         
         // general info
         answer.begin.append("<table class=\"short_info\" border=0 rules=\"rows\"><tbody>\n");
-        {
-            add_general_info(answer.begin, answer.armament_link, info.second);
-        }
+        add_general_info(answer.begin, armament_link, answer.ship_year, info.second);
 
         auto & ship_data = ship_to_segment[ship_id];
         std::vector <size_t> const & index_mapping_value = index_mapping[ship_id];
         
         // modernizations link
-        {
-            std::optional <std::chrono::year_month_day> commisioned = info.second.commissioned;
-            add_modernizations(answer.armament_link, events, index_mapping_value, ship_data, commisioned);
-        }
+        add_modernizations(armament_link, answer.ship_year, info.second, events, index_mapping_value, ship_data);
         
         // add events
         {
@@ -323,7 +322,7 @@ ship::ship (ship_requests * database, ship_armament & _armament) :
         answer.begin.append("</tbody></table>\n");
         
         answer.begin.append(link.begin)
-                    .append(answer.armament_link)
+                    .append(armament_link)
                     .append(link.end)
                     .append("</div><div class=\"long_info\">\n");
         answer.end.append(new_line);
@@ -385,7 +384,7 @@ void ship::response (simple_string & answer, std::string_view query, piece_t tit
             return;
 
         answer.append(it->second.begin);
-        armament.response(answer, it->second.armament_link, {0, 0}, 1);
+        armament.response(answer, it->second.ship_year, 1);
         answer.append(it->second.end);
 
         

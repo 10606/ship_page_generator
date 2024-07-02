@@ -444,7 +444,8 @@ private:
 };
 
 
-template <typename T, std::enable_if_t <alignof(T) <= alignof(std::max_align_t), int> = 0>
+template <typename T>
+requires (alignof(T) <= alignof(std::max_align_t))
 struct allocator_for_temp
 {
     using value_type = T;
