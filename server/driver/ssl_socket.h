@@ -168,17 +168,17 @@ struct ssl_socket
         return ret;
     }
     
-    size_t write (std::span <const char> buffer)
+    std::pair <size_t, bool> write (std::span <const char> buffer)
     {
         check_error();
         int ret = SSL_write(ssl, buffer.data(), buffer.size());
         if (ret <= 0)
         {
             if (SSL_get_error(ssl, ret) == SSL_ERROR_WANT_WRITE)
-                return 0;
+                return {0, 0};
             throw std::runtime_error("ssl error write");
         }
-        return ret;
+        return {ret, 0};
     }
     
     void send_file (file_to_send_t & file)
@@ -210,7 +210,7 @@ struct ssl_socket
                     throw std::runtime_error("ssl error read file");
                 return;
             }
-            size_t wb = write(std::span <char> (buffer, rb));
+            size_t wb = write(std::span <char> (buffer, rb)).first;
             file.offset += wb;
             if ((size_t)rb != wb)
             {
@@ -283,6 +283,11 @@ struct ssl_socket
         ERR_clear_error();
         if (SSL_get_shutdown(ssl) & SSL_RECEIVED_SHUTDOWN)
             throw std::runtime_error("ssl shutdowned");
+    }
+    
+    std::optional <zero_copy_range_t> notify_err ()
+    {
+        return std::nullopt;
     }
     
     int fd;

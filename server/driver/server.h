@@ -156,10 +156,14 @@ struct server
         typename connections_storage <socket_t> ::iterator it_raw
     )
     {
-        auto remove = [this, &connections, it_raw] () -> void
+        bool removed = 0;
+        auto remove = [this, &connections, it_raw, &removed] () -> void
         {
+            if (removed)
+                return;
             epoll.del(it_raw->first);
             connections.erase(it_raw);
+            removed = 1;
         };
         
         try
@@ -173,16 +177,19 @@ struct server
                 it_raw->second.write();
             if (event.events & EPOLLRDHUP)
                 it_raw->second.end_read();
-            if (event.events & (EPOLLERR | EPOLLHUP))
+            if (event.events & EPOLLERR)
+                if (!it_raw->second.notify_err())
+                    remove();
+            if (event.events & EPOLLHUP)
                 remove();
-            else
+            if (!removed)
             {
                 uint32_t mask = 0;
                 if (it_raw->second.want_read())
                     mask |= EPOLLIN;
                 if (it_raw->second.want_write())
                     mask |= EPOLLOUT;
-                if (mask == 0)
+                if (mask == 0 && !it_raw->second.want_wait())
                     remove();
                 else
                     epoll.mod(it_raw->first, mask);

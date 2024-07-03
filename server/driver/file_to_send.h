@@ -4,6 +4,7 @@
 #include <optional>
 #include <stddef.h>
 #include <stdexcept>
+#include <stdint.h>
 
 #include <unistd.h>
 #include <sys/stat.h>
@@ -111,6 +112,13 @@ struct file_to_send_t
     off_t size;
     off_t total_size;
     time_t mtime;
+};
+
+
+struct zero_copy_range_t
+{
+    uint32_t from;
+    size_t count;
 };
 
 

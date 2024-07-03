@@ -11,6 +11,8 @@
 #include <numeric>
 #include <vector>
 #include <iostream>
+#include <deque>
+#include <stdint.h>
 
 #include <unistd.h>
 
@@ -46,7 +48,9 @@ struct connection
         content_length(std::numeric_limits <size_t> ::max()),
         keep_alive(0),
         
-        server_to_client(),
+        server_to_client_queue(),
+        server_to_client_pos(0),
+        zero_copy_counter(0),
         socket(std::forward <Args> (args) ...)
     {}
 
@@ -64,7 +68,9 @@ struct connection
         content_length(other.content_length),
         keep_alive(other.keep_alive),
 
-        server_to_client(std::move(other.server_to_client)),
+        server_to_client_queue(std::move(other.server_to_client_queue)),
+        server_to_client_pos(other.server_to_client_pos),
+        zero_copy_counter(other.zero_copy_counter),
         socket(std::move(other.socket))
     {
         client_read.buf = &client_to_server;
@@ -271,18 +277,18 @@ struct connection
             socket.do_accept();
             return socket.want_write();
         }
-        bool answer;
-        if (!server_to_client.empty())
+        if (!have_to_send())
+            return 0;
+        if (!server_to_client().data.empty())
         {
-            size_t wb = socket.write(server_to_client.get_data());
-            server_to_client.readed(wb);
-            answer = !server_to_client.empty() || file_to_send.want_write();
+            auto [wb, is_zero_copy] = socket.write(server_to_client().data.get_data());
+            server_to_client().data.readed(wb);
+            if (is_zero_copy)
+                server_to_client().zero_copy_set_range(zero_copy_counter);
         }
         else
-        {
-            socket.send_file(file_to_send);
-            answer = file_to_send.want_write();
-        }
+            socket.send_file(server_to_client().file_to_send);
+        bool answer = have_to_send();
         do_on_keep_alive();
         return answer;
     }
@@ -315,13 +321,14 @@ struct connection
     template <typename ... Args>
     void send (Args && ... args)
     {
-        server_to_client = buffer_t(std::forward <Args> (args) ...);
+        server_to_client_queue.push_back(data_to_send{.data = buffer_t(std::forward <Args> (args) ...)});
         // direction = send_response;
     }
     
     void send_file (std::string_view file_name)
     {
         simple_string response;
+        file_to_send_t file_to_send;
         try
         {
             // Range
@@ -379,7 +386,7 @@ struct connection
             file_to_send = file_to_send_t();
         }
         size_t header_size = response.size();
-        server_to_client = buffer_t(response.reset(), header_size);
+        server_to_client_queue.push_back(data_to_send{.data = buffer_t(response.reset(), header_size), .file_to_send = std::move(file_to_send)});
         // direction = send_response;
     }
     
@@ -387,21 +394,26 @@ struct connection
     {
         if (!socket.connected())
             return socket.want_write();
-        return (!server_to_client.empty() || file_to_send.want_write());
+        return have_to_send();
     }
     
     bool want_read () const noexcept
     {
         if (!socket.connected())
             return socket.want_read();
-        return keep_alive || direction == get_request;
+        return server_to_client_queue.size() < server_to_client_limit && (keep_alive || direction == get_request);
     }
     
     bool can_read () const noexcept
     {
-        return socket.can_read();
+        return server_to_client_queue.size() < server_to_client_limit && socket.can_read();
     }
     
+    bool want_wait () const noexcept
+    {
+        have_to_send();
+        return server_to_client_pos != 0;
+    }
 
     handler_t handler;
     
@@ -429,8 +441,89 @@ struct connection
     size_t content_length;
     bool keep_alive;
     
-    buffer_t server_to_client;
-    file_to_send_t file_to_send;
+    struct data_to_send
+    {
+        buffer_t data;
+        file_to_send_t file_to_send;
+        
+        zero_copy_range_t zero_copy_range = {0, 0}; // first, count
+        uint32_t already_free = 0;
+        
+        bool can_remove () const noexcept
+        {
+            return zero_copy_range.count == already_free;
+        }
+
+        void zero_copy_set_range (uint32_t & value)
+        {
+            if (!zero_copy_range.count)
+                zero_copy_range.from = value;
+            zero_copy_range.count++;
+            value++;
+        }
+        
+        void free (zero_copy_range_t range)
+        {
+            if (range.from < zero_copy_range.from)
+            {
+                if (range.from + range.count <= zero_copy_range.from)
+                    return;
+                size_t intersect_size = range.count - (zero_copy_range.from - range.from);
+                already_free += std::min(intersect_size, zero_copy_range.count);
+            }
+            else
+            {
+                if (zero_copy_range.from + zero_copy_range.count <= range.from)
+                    return;
+                size_t intersect_size = zero_copy_range.count - (range.from - zero_copy_range.from);
+                already_free += std::min(intersect_size, range.count);
+            }
+        }
+    };
+    mutable std::deque <data_to_send> server_to_client_queue;
+    mutable size_t server_to_client_pos;
+    uint32_t zero_copy_counter;
+    static const constexpr size_t server_to_client_limit = 4;
+    
+    data_to_send & server_to_client () const
+    {
+        return server_to_client_queue[server_to_client_pos];
+    }
+    
+    bool have_to_send () const noexcept
+    {
+        while (!server_to_client_queue.empty())
+        {
+            if (server_to_client_queue.front().data.empty() &&
+                !server_to_client_queue.front().file_to_send.want_write() &&
+                server_to_client_queue.front().can_remove())
+            {
+                server_to_client_queue.pop_front();
+                server_to_client_pos--;
+            }
+            else
+                break;
+        }
+        while (server_to_client_pos != server_to_client_queue.size())
+        {
+            if (server_to_client().data.empty() &&
+                !server_to_client().file_to_send.want_write())
+                server_to_client_pos++;
+            else
+                break;
+        }
+        return server_to_client_pos != server_to_client_queue.size();
+    }
+    
+    bool notify_err ()
+    {
+        std::optional <zero_copy_range_t> zero_copy_range = socket.notify_err();
+        if (!zero_copy_range)
+            return 0;
+        for (data_to_send & data : server_to_client_queue)
+            data.free(*zero_copy_range);
+        return 1;
+    }
     
     socket_t socket;
     
