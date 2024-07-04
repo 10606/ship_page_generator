@@ -72,6 +72,10 @@ struct raw_socket
     std::pair <size_t, bool> write (std::span <const char> buffer)
     {
         ssize_t ret;
+        // zero copy disabled
+        // it got worse in localhost, zero copy is piece of shit
+        // with:    3 * 10^6 KB/s
+        // without: 4 * 10^6 KB/s
         ret = -1; // ::send(fd, buffer.data(), buffer.size(), MSG_ZEROCOPY);
         if (ret >= 0)
         {

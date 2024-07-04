@@ -169,10 +169,9 @@ struct server
         try
         {
             if (event.events & EPOLLIN)
-                do
-                {
-                    it_raw->second.read();
-                } while (it_raw->second.can_read());
+                it_raw->second.read();
+            while (it_raw->second.can_read())
+                it_raw->second.read();
             if (event.events & EPOLLOUT)
                 it_raw->second.write();
             if (event.events & EPOLLRDHUP)
