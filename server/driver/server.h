@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <numeric>
 #include <cctype>
+#include <chrono>
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -16,6 +17,7 @@
 #include "raw_socket.h"
 #include "ssl_socket.h"
 #include "connection.h"
+#include "last_active.h"
 
 
 template <typename handler_t>
@@ -31,9 +33,11 @@ struct server
     (
         std::vector <port_descr> ports,
         std::string_view cert = {}, 
-        std::string_view key = {}
+        std::string_view key = {},
+        std::chrono::seconds _time_limit = std::chrono::minutes(1)
     ) :
-        ssl(cert, key)
+        ssl(cert, key),
+        time_limit(_time_limit)
     {
         for (port_descr port : ports)
             open_socket(port);
@@ -41,7 +45,7 @@ struct server
     
     ~server ()
     {
-        for (auto fd : server_fds)
+        for (auto fd : listen_fds)
         {
             epoll.del(fd.first);
             ::close(fd.first);
@@ -99,7 +103,7 @@ struct server
 
         try
         {
-            server_fds.insert({fd, port.is_ssl});
+            listen_fds.insert({fd, port.is_ssl});
         }
         catch (...)
         {
@@ -114,7 +118,7 @@ struct server
         if (event.events & EPOLLERR)
         {
             epoll.del(event.fd);
-            server_fds.erase(event.fd);
+            listen_fds.erase(event.fd);
             close(event.fd);
         }
         int fd = ::accept(event.fd, NULL, NULL);
@@ -132,6 +136,7 @@ struct server
                         raw_connections.insert({fd_moved, connection_t <raw_socket> (std::move(tmp), fd_moved)});
                     else
                         ssl_connections.insert({fd_moved, connection_t <ssl_socket> (std::move(tmp), fd_moved, ssl)});
+                    last_active.insert(fd_moved);
                 }
                 catch (std::exception & e)
                 {
@@ -161,6 +166,7 @@ struct server
         {
             if (removed)
                 return;
+            last_active.erase(it_raw->first);
             epoll.del(it_raw->first);
             connections.erase(it_raw);
             removed = 1;
@@ -199,6 +205,9 @@ struct server
             // std::cerr << e.what() << std::endl;
             remove();
         }
+        
+        if (!removed)
+            last_active.update(it_raw->first);
     }
     
     void process (int timeout)
@@ -207,8 +216,8 @@ struct server
         size_t count = epoll.wait(events, timeout);
         for (size_t i = 0; i != count; ++i)
         {   
-            std::map <int, bool> ::iterator it_server = server_fds.find(events[i].fd);
-            if (it_server != server_fds.end())
+            std::map <int, bool> ::iterator it_server = listen_fds.find(events[i].fd);
+            if (it_server != listen_fds.end())
             {
                 accept(events[i], it_server->second);
                 continue;
@@ -230,15 +239,26 @@ struct server
                 continue;
             }
         }
+        
+        for (std::optional <int> inactive = last_active.get_inactive(time_limit); inactive; inactive = last_active.get_inactive(time_limit))
+        {
+            last_active.erase(*inactive);
+            epoll.del(*inactive);
+            raw_connections.erase(*inactive);
+            ssl_connections.erase(*inactive);
+        }
     }
     
     
     handler_t handler;
     epoll_wrap epoll;
-    std::map <int, bool> server_fds; // is_ssl
+    std::map <int, bool> listen_fds; // is_ssl
     ssl_wrap ssl;
     connections_storage <raw_socket> raw_connections;
     connections_storage <ssl_socket> ssl_connections;
+    
+    last_active_t last_active;
+    std::chrono::seconds time_limit;
 };
 
 
