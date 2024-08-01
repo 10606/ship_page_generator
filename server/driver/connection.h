@@ -415,7 +415,7 @@ struct connection
     
     bool can_process () noexcept
     {
-        return client_read != client_to_server.safe_end();
+        return server_to_client_queue.size() < server_to_client_limit && client_read != client_to_server.safe_end();
     }
     
     bool want_wait () const noexcept
