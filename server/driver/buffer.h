@@ -76,12 +76,15 @@ struct buffer_t
 
     constexpr std::span <char> get_buffer ()
     {
-        if (_size == capacity)
+        // don't eat all capacity
+        if (_size + 1 >= capacity)
             realloc();
-        if (offset + _size < capacity)
+        if (offset == 0)
+            return {data + _size, capacity - _size - 1};
+        else if (offset + _size < capacity)
             return {data + offset + _size, capacity - offset - _size};
         else
-            return {data + _size + offset - capacity, capacity - _size};
+            return {data + _size + offset - capacity, capacity - _size - 1};
     }
 
     constexpr void written (size_t count) noexcept
@@ -452,7 +455,7 @@ struct buffer_t
     char * data;
     size_t offset;
     size_t _size;
-    size_t capacity;
+    size_t capacity; // capacity == 0 || size + 1 <= capacity
     size_t total_offset; // for non invalid iterators
 };
 

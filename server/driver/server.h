@@ -176,10 +176,12 @@ struct server
         {
             if (event.events & EPOLLIN)
                 it_raw->second.read();
-            while (it_raw->second.can_read())
-                it_raw->second.read();
             if (event.events & EPOLLOUT)
                 it_raw->second.write();
+            while (it_raw->second.can_read())
+                it_raw->second.read();
+            while (it_raw->second.can_process())
+                it_raw->second.process();
             if (event.events & EPOLLRDHUP)
                 it_raw->second.end_read();
             if (event.events & EPOLLERR)

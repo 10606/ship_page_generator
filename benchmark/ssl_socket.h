@@ -5,6 +5,8 @@
 #include <span>
 #include <stdexcept>
 #include <iostream>
+#include <atomic>
+#include <mutex>
 
 #include <openssl/ssl.h>
 #include <openssl/err.h>
@@ -13,12 +15,10 @@
 #include <unistd.h>
 #include <errno.h>
 
-#include "file_to_send.h"
-
 
 struct ssl_wrap
 {
-    ssl_wrap (std::string_view cert, std::string_view key) :
+    ssl_wrap () :
         ssl_ctx(nullptr),
         ssl(nullptr)
     {
@@ -27,7 +27,8 @@ struct ssl_wrap
             SSL_library_init();
             init = 1;
         }
-        ssl_ctx = SSL_CTX_new(TLS_server_method());
+        ssl_ctx = SSL_CTX_new(TLS_client_method());
+        
         if (!ssl_ctx)
             throw std::runtime_error("can't initialize ssl ctx");
         SSL_CTX_set_options(ssl_ctx, SSL_OP_ENABLE_KTLS);
@@ -41,27 +42,6 @@ struct ssl_wrap
         SSL_set_options(ssl, SSL_OP_NO_SSLv3);
         SSL_set_options(ssl, SSL_OP_NO_TLSv1);
         SSL_set_options(ssl, SSL_OP_NO_TLSv1_1);
-        
-        if (!cert.empty())
-        {
-            if (key.empty()) 
-                key = cert;
-            if (SSL_use_certificate_file(ssl, cert.data(), 1) != 1)
-            {
-                close();
-                throw std::runtime_error("can't use cert file");
-            } 
-            if (SSL_use_PrivateKey_file(ssl, key.data(), 1) != 1) 
-            {
-                close();
-                throw std::runtime_error("can't use key file");
-            } 
-            if (SSL_use_certificate_chain_file(ssl, cert.data()) != 1) 
-            {
-                close();
-                throw std::runtime_error("can't set cert as chain");
-            }
-        }
     }
     
     ~ssl_wrap ()
@@ -69,6 +49,12 @@ struct ssl_wrap
         close();
     }
 
+    static ssl_wrap & get ()
+    {
+        static ssl_wrap answer;
+        return answer;
+    }
+    
     void close () noexcept
     {
         if (ssl)
@@ -78,15 +64,16 @@ struct ssl_wrap
     }
     
     static bool init;
+    
     SSL_CTX * ssl_ctx;
     SSL * ssl;
 };
 
 struct ssl_socket
 {
-    ssl_socket (int _fd, ssl_wrap & _ssl) :
+    ssl_socket (int _fd) :
         fd(_fd),
-        ssl(SSL_dup(_ssl.ssl)),
+        ssl(SSL_dup(ssl_wrap::get().ssl)),
         need_read(0),
         need_write(0)
     {
@@ -105,11 +92,11 @@ struct ssl_socket
             close();
             throw std::runtime_error("can't set SSL fd");
         }
-        SSL_set_accept_state(ssl);
+        SSL_set_connect_state(ssl);
         need_read = 1;
         need_write = 1;
         /*
-        if (SSL_accept(ssl) <= 0)
+        if (SSL_connect(ssl) <= 0)
         {
             close();
             throw std::runtime_error("SSL accept error");
@@ -169,57 +156,17 @@ struct ssl_socket
         return ret;
     }
     
-    std::pair <size_t, bool> write (std::span <const char> buffer)
+    size_t write (std::span <const char> buffer)
     {
         check_error();
         int ret = SSL_write(ssl, buffer.data(), buffer.size());
         if (ret <= 0)
         {
             if (SSL_get_error(ssl, ret) == SSL_ERROR_WANT_WRITE)
-                return {0, 0};
+                return 0;
             throw std::runtime_error("ssl error write");
         }
-        return {ret, 0};
-    }
-    
-    void send_file (file_to_send_t & file)
-    {
-        check_error();
-        if (BIO_get_ktls_send(SSL_get_wbio(ssl)))
-        {
-            // std::cerr << "ktls" << std::endl;
-            // TODO enable this
-            // modprobe tls
-            ssize_t ret = SSL_sendfile(ssl, file.fd, file.offset, file.size - file.offset, 0);
-            if (ret < 0)
-            {
-                if (SSL_get_error(ssl, ret) == SSL_ERROR_WANT_WRITE)
-                    return;
-                throw std::runtime_error("ssl error send file");
-            }
-            file.offset += ret;
-        }
-        else
-        {
-            // std::cerr << "no ktls" << std::endl;
-            char buffer[20 * 1024];
-            ssize_t rb = ::read(file.fd, buffer, sizeof(buffer));
-            if (rb == -1)
-            {
-                if (errno == EINTR ||
-                    errno == EAGAIN)
-                    throw std::runtime_error("ssl error read file");
-                return;
-            }
-            size_t wb = write(std::span <char> (buffer, rb)).first;
-            file.offset += wb;
-            if ((size_t)rb != wb)
-            {
-                off_t ret = lseek(file.fd, file.offset, SEEK_SET);
-                if (ret == -1)
-                    throw std::runtime_error("ssl error seek file");
-            }
-        }
+        return ret;
     }
     
     bool connected () const noexcept
@@ -242,7 +189,7 @@ struct ssl_socket
         return SSL_pending(ssl);
     }
     
-    void do_accept ()
+    void do_connect ()
     {
         check_error();
         if (!want_read() && !want_write())
@@ -284,11 +231,6 @@ struct ssl_socket
         ERR_clear_error();
         if (SSL_get_shutdown(ssl) & SSL_RECEIVED_SHUTDOWN)
             throw std::runtime_error("ssl shutdowned");
-    }
-    
-    std::optional <zero_copy_range_t> notify_err ()
-    {
-        return std::nullopt;
     }
     
     int fd;

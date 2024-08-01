@@ -114,7 +114,11 @@ struct connection
                 end_read(1);
             return content_length != 0;
         }
+        return process();
+    }
         
+    bool process ()
+    {
         buffer_t::overflow_iterator readed = client_read.overflow();
         buffer_t::overflow_iterator parsed = client_parsed.overflow();
         switch (read_state)
@@ -409,6 +413,11 @@ struct connection
         return server_to_client_queue.size() < server_to_client_limit && socket.can_read();
     }
     
+    bool can_process () noexcept
+    {
+        return client_read != client_to_server.safe_end();
+    }
+    
     bool want_wait () const noexcept
     {
         have_to_send();
@@ -499,7 +508,8 @@ struct connection
                 server_to_client_queue.front().can_remove())
             {
                 server_to_client_queue.pop_front();
-                server_to_client_pos--;
+                if (server_to_client_pos)
+                    server_to_client_pos--;
             }
             else
                 break;
