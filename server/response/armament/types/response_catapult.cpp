@@ -94,11 +94,14 @@ void catapult::response (simple_string & answer, std::string_view query, piece_t
         
         answer.append(table::end);
 
-        add_pictures_t add_pictures(answer, pictures);
-        for (catapult_partial const & item : list)
-            for (picture_t const & picture : pictures_cache[item.index])
-                add_pictures(picture);
-        add_pictures.close();
+        add_pictures <catapult_partial, catapult_text>
+        (
+            answer,
+            pictures,
+            list, 
+            pictures_cache,
+            text_cache
+        );
     }
 }
 

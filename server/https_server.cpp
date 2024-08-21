@@ -178,10 +178,11 @@ void connection_handler::handle_head
     uint32_t code;
     static const std::string_view http_begin = "HTTP/1.1 ";
     static const std::string code_padding(get_resp_code_str.max_size(), ' ');
-    static const std::string_view http_middle = "\r\nServer: japan_ships\r\n"
+    static const std::string_view http_middle = "\r\n"
                                                 "Content-Type: text/html; charset=utf-8\r\n"
                                                 "Content-Length: ";
-    static const std::string unused_header = "\r\nCookie: a=a";
+    static const std::string unused_header = "\r\nServer: japan_ships";
+    // some stupid clients not allow spaces at end of Content-Length header, so we place something after it
     static const std::string length_padding(std::numeric_limits <size_t> ::digits10 + 1 + unused_header.size(), ' ');
     
     simple_string response;

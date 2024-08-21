@@ -396,6 +396,7 @@ method GET url /solr/admin/info/system
 method GET url /solr/admin/cores?action=STATUS&wt=json
 method GET url /query?q=SHOW+DIAGNOSTICS
 method GET url /invoker/readonly
+method GET url /shell?uname%20-a
 method GET url /sslvpnLogin.html
 method GET url /.vscode/sftp.json
 method GET url /manager/text/list
@@ -614,6 +615,7 @@ method HEAD url /
 method HEAD url http://www.google.com
 method HEAD url http://112.124.42.80:63435/
 method HEAD url /invoker/EJBInvokerServlet
+method CONNECT url 1.1.1.1:443
 method CONNECT url 45.61.137.126:7227
 method CONNECT url 45.61.136.175:7227
 method CONNECT url 49.13.151.148:2241

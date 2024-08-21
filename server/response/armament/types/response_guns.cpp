@@ -97,11 +97,14 @@ void guns::response (simple_string & answer, std::string_view query, piece_t tit
         
         answer.append(table::end);
 
-        add_pictures_t add_pictures(answer, pictures);
-        for (guns_partial const & item : list)
-            for (picture_t const & picture : pictures_cache[item.index])
-                add_pictures(picture);
-        add_pictures.close();
+        add_pictures <guns_partial, guns_text>
+        (
+            answer,
+            pictures,
+            list, 
+            pictures_cache,
+            text_cache
+        );
     }
 }
 

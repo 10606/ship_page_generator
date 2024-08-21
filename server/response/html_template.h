@@ -45,19 +45,20 @@ struct pictures_template
         std::string_view descr__end;
     } picture;
     
-    html_template all;
+    html_template_3 group;
     
     constexpr pictures_template
     (
         picture_template _picture,
-        html_template _all = 
+        html_template_3 _group = 
         {
+            "",
             "<ul>",
             "</ul><br>"
         }
     ) :
         picture(_picture),
-        all(_all)
+        group(_group)
     {}
 };
 
@@ -67,10 +68,9 @@ struct add_pictures_t
     add_pictures_t (string_type & _answer, pictures_template const & _pictures) :
         answer(_answer),
         pictures(_pictures),
-        closed(0)
-    {
-        answer.append(pictures.all.begin);
-    }
+        closed(0),
+        have_head(0)
+    {}
 
     ~add_pictures_t ()
     {
@@ -86,6 +86,9 @@ struct add_pictures_t
     {
         if constexpr (std::is_same_v <string_type, simple_string> )
         {
+            if (!have_head)
+                answer.append(pictures.group.begin,
+                              pictures.group.middle);
             answer.append
             (
                 pictures.picture.begin__full,
@@ -100,6 +103,9 @@ struct add_pictures_t
         }
         else
         {
+            if (!have_head)
+                answer.append(pictures.group.begin)
+                      .append(pictures.group.middle);
             answer.append(pictures.picture.begin__full)
                   .append(info.path_full)
                   .append(pictures.picture.full__small)
@@ -109,13 +115,34 @@ struct add_pictures_t
                   .append(info.description)
                   .append(pictures.picture.descr__end);
         }
+        have_head = 1;
+    }
+    
+    void new_group (std::string_view name)
+    {
+        if (have_head)
+            answer.append(pictures.group.end);
+        if constexpr (std::is_same_v <string_type, simple_string> )
+        {
+            answer.append(pictures.group.begin,
+                          name,
+                          pictures.group.middle);
+        }
+        else
+        {
+            answer.append(pictures.group.begin)
+                  .append(name)
+                  .append(pictures.group.middle);
+        }
+        have_head = 1;
     }
     
     void close ()
     {
         if (closed)
             return; // idempotent
-        answer.append(pictures.all.end);
+        if (have_head) 
+            answer.append(pictures.group.end);
         closed = 1;
     }
 
@@ -123,7 +150,35 @@ private:
     string_type & answer;
     pictures_template const & pictures;
     bool closed;
+    bool have_head;
 };
+
+template <typename partial_response, typename text_response>
+void add_pictures
+(
+    simple_string & answer,
+    pictures_template const & pictures,
+    std::vector <partial_response> const & list, 
+    std::vector <std::vector <ship_requests::pictures_t::picture> > pictures_cache,
+    std::vector <text_response> text_cache
+)
+{
+    size_t picture_count = 0;
+    for (partial_response const & item : list)
+        picture_count += pictures_cache[item.index].size();
+    bool too_many_pictures = picture_count > 20;
+    if (too_many_pictures)
+        answer.append("<br>");
+    add_pictures_t add_pictures(answer, pictures);
+    for (partial_response const & item : list)
+    {
+        if (too_many_pictures && !pictures_cache[item.index].empty())
+            add_pictures.new_group(text_cache[item.index].name);
+        for (ship_requests::pictures_t::picture const & picture : pictures_cache[item.index])
+            add_pictures(picture);
+    }
+    add_pictures.close();
+}
 
 #endif
 

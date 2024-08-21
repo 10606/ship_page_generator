@@ -298,9 +298,9 @@ int main ()
     };
     
     size_t raw_connections = 20;
-    size_t ssl_connections = 20;
+    size_t ssl_connections = 0;
 
-    size_t requests_per_connection = 1000;
+    size_t requests_per_connection = 100;
     size_t queued_requests = 100;
     size_t total_requests = 100000;
     
@@ -332,20 +332,20 @@ int main ()
 
     std::cout << "raw:" << std::endl;
     std::cout << "  requests: " << bench.statistic_raw.complete_requests << std::endl;
-    std::cout << "            " << static_cast <double> (bench.statistic_raw.complete_requests) / spend_seconds << "/s" << std::endl;
+    std::cout << "            " << static_cast <double> (bench.statistic_raw.complete_requests) / spend_seconds << " /s" << std::endl;
     std::cout << "  total:    " << bench.statistic_raw.read_bytes_total  << std::endl;
-    std::cout << "            " << static_cast <double> (bench.statistic_raw.read_bytes_total)  / spend_seconds << "/s" << std::endl;
+    std::cout << "            " << static_cast <double> (bench.statistic_raw.read_bytes_total)  / spend_seconds << " B/s" << std::endl;
     std::cout << "  body:     " << bench.statistic_raw.read_bytes_body   << std::endl;
-    std::cout << "            " << static_cast <double> (bench.statistic_raw.read_bytes_body)   / spend_seconds << "/s" << std::endl;
+    std::cout << "            " << static_cast <double> (bench.statistic_raw.read_bytes_body)   / spend_seconds << " B/s" << std::endl;
     std::cout << std::endl;
     
     std::cout << "ssl:" << std::endl;
     std::cout << "  requests: " << bench.statistic_ssl.complete_requests << std::endl;
-    std::cout << "            " << static_cast <double> (bench.statistic_ssl.complete_requests) / spend_seconds << "/s" << std::endl;
+    std::cout << "            " << static_cast <double> (bench.statistic_ssl.complete_requests) / spend_seconds << " /s" << std::endl;
     std::cout << "  total:    " << bench.statistic_ssl.read_bytes_total  << std::endl;
-    std::cout << "            " << static_cast <double> (bench.statistic_ssl.read_bytes_total)  / spend_seconds << "/s" << std::endl;
+    std::cout << "            " << static_cast <double> (bench.statistic_ssl.read_bytes_total)  / spend_seconds << " B/s" << std::endl;
     std::cout << "  body:     " << bench.statistic_ssl.read_bytes_body   << std::endl;
-    std::cout << "            " << static_cast <double> (bench.statistic_ssl.read_bytes_body)   / spend_seconds << "/s" << std::endl;
+    std::cout << "            " << static_cast <double> (bench.statistic_ssl.read_bytes_body)   / spend_seconds << " B/s" << std::endl;
     std::cout << std::endl;
 }
 

@@ -401,21 +401,26 @@ struct connection
         return have_to_send();
     }
     
+    bool in_server_to_client_limit () const noexcept
+    {
+        return server_to_client_queue.size() < server_to_client_limit;
+    }
+    
     bool want_read () const noexcept
     {
         if (!socket.connected())
             return socket.want_read();
-        return server_to_client_queue.size() < server_to_client_limit && (keep_alive || direction == get_request);
+        return in_server_to_client_limit() && (keep_alive || direction == get_request);
     }
     
     bool can_read () const noexcept
     {
-        return server_to_client_queue.size() < server_to_client_limit && socket.can_read();
+        return in_server_to_client_limit() && socket.can_read();
     }
     
     bool can_process () noexcept
     {
-        return server_to_client_queue.size() < server_to_client_limit && client_read != client_to_server.safe_end();
+        return in_server_to_client_limit() && client_read != client_to_server.safe_end();
     }
     
     bool want_wait () const noexcept
