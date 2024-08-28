@@ -183,7 +183,8 @@ void connection_handler::handle_head
                                                 "Content-Length: ";
     static const std::string unused_header = "\r\nServer: japan_ships";
     // some stupid clients not allow spaces at end of Content-Length header, so we place something after it
-    static const std::string length_padding(std::numeric_limits <size_t> ::digits10 + 1 + unused_header.size(), ' ');
+    static const constexpr size_t length_size = std::numeric_limits <size_t> ::digits10 + 1;
+    static const std::string length_padding(length_size + unused_header.size(), ' ');
     
     simple_string response;
     response.append
@@ -203,7 +204,7 @@ void connection_handler::handle_head
     {
         try
         {
-            std::cerr << "\033[01;36mmethod\033[0m " << method << " \033[01;36murl\033[0m " << uri_full << std::endl;
+            // std::cerr << "\033[01;36mmethod\033[0m " << method << " \033[01;36murl\033[0m " << uri_full << std::endl;
         }
         catch (...)
         {}
@@ -253,17 +254,17 @@ void connection_handler::handle_head
     
     // status code
     response.rewrite(http_begin.size(), get_resp_code_str(code).data());
-    std::string length = std::to_string(response.size() - http_header_size);
     // content length
-    response.rewrite(http_begin.size() +
-                     code_padding.size() +
-                     http_middle.size(),
-                     length);
+    char * length_place = response.data() +
+                          http_begin.size() +   
+                          code_padding.size() +
+                          http_middle.size();
+    std::to_chars_result length_convert = std::to_chars(length_place, length_place + length_size, response.size() - http_header_size);
     // placeholder after content length
     response.rewrite(http_begin.size() +
                      code_padding.size() +
                      http_middle.size() +
-                     length.size(),
+                     length_convert.ptr - length_place,
                      unused_header);
     size_t answer_size = response.size();
     conn.send(response.reset(), answer_size);

@@ -287,6 +287,14 @@ int main ()
 
     std::vector <std::string_view> uris =
     {
+        // "/documents", // static
+        "/../../.,/", // error
+        // "asdkjasldkjaslkdjlkasjdlkasjdlkasjdlkasjdlkkajslkdjaslkdjaslkdjalskjdlaksjdlkasjdlkasjdlkasjdlkajsdlkjaslkdjasldjaslkdjaslkdjalkjdlkasjdlkasjdlkasjdlkasjdlkasjlkdasjlkdajslkdjaslkdjaslkdjaslkjdaslkjasldkjdlaskjdlaks/../../.,/", // error
+        // "/favicon.ico", // file
+    };
+    /*
+    std::vector <std::string_view> uris =
+    {
         "/ship?type_id=18",
         "/ship?type_id=21",
         "/ship?type_id=14",
@@ -296,6 +304,7 @@ int main ()
         "/ship?type_id=19",
         "/ship?type_id=3"
     };
+    */
     
     size_t raw_connections = 20;
     size_t ssl_connections = 0;

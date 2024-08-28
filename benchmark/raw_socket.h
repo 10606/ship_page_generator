@@ -7,6 +7,8 @@
 #include <iostream>
 #include <cstring>
 
+#include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -29,6 +31,7 @@ struct raw_socket
         
         int one = 1;
         setsockopt(fd, SOL_SOCKET, SO_ZEROCOPY, &one, sizeof(one));
+        setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
     }
     
     raw_socket (raw_socket && other) noexcept :

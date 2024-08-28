@@ -9,6 +9,8 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
+#include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
@@ -117,6 +119,9 @@ struct ssl_socket
         */
         
         fcntl(fd, F_SETFL, O_NONBLOCK);
+        
+        int one = 1;
+        setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
     }
     
     ssl_socket (ssl_socket && other) noexcept :

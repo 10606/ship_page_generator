@@ -54,7 +54,7 @@ std::string filesystem_check (std::string_view path)
 {
     try
     {
-        while (path[0] == '/')
+        while (!path.empty() && path[0] == '/')
             path = path.substr(1);
         std::string path_decoded = percent_dec(path, 0);
         

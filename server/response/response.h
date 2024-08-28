@@ -189,15 +189,15 @@ struct responser
 
     
     template <typename T, typename ... U>
-    void reg (std::string name, U && ... args)
+    void reg (std::string_view name, U && ... args)
     {
-        resp.insert({std::move(name), std::make_unique <resp_impl <T> > (std::forward <U> (args) ...)});
+        resp.insert({name, std::make_unique <resp_impl <T> > (std::forward <U> (args) ...)});
     }
     
     bool response (simple_string & answer, std::string_view uri, std::string_view query)
     {
-        std::unordered_map <std::string, std::unique_ptr <resp_base> > :: iterator it =
-            resp.find(std::string(uri));
+        std::unordered_map <std::string_view, std::unique_ptr <resp_base> > :: iterator it =
+            resp.find(uri);
         if (it == resp.end())
             return 0;
 
@@ -217,14 +217,14 @@ struct responser
 
 private:
     menu ship_list;
-    std::unordered_map <std::string, std::unique_ptr <resp_base> > resp;
+    std::unordered_map <std::string_view, std::unique_ptr <resp_base> > resp;
 };
 
 template <typename T>
 T & responser::get (std::string_view uri)
 {
-    std::unordered_map <std::string, std::unique_ptr <resp_base> > :: iterator it =
-        resp.find(std::string(uri));
+    std::unordered_map <std::string_view, std::unique_ptr <resp_base> > :: iterator it =
+        resp.find(uri);
     if (it == resp.end())
         throw std::runtime_error("can't find responser");
     resp_impl <T> & value_impl = dynamic_cast <resp_impl <T> &> (*it->second);
@@ -234,7 +234,7 @@ T & responser::get (std::string_view uri)
 template <typename T>
 T & responser::get_unsafe (std::string_view uri)
 {
-    resp_impl <T> & value_impl = static_cast <resp_impl <T> &> (*resp.find(std::string(uri))->second);
+    resp_impl <T> & value_impl = static_cast <resp_impl <T> &> (*resp.find(uri)->second);
     return value_impl.value;
 }
 
