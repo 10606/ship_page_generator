@@ -288,9 +288,9 @@ int main ()
     std::vector <std::string_view> uris =
     {
         // "/documents", // static
-        "/../../.,/", // error
+        // "/../../.,/", // error
         // "asdkjasldkjaslkdjlkasjdlkasjdlkasjdlkasjdlkkajslkdjaslkdjaslkdjalskjdlaksjdlkasjdlkasjdlkasjdlkajsdlkjaslkdjasldjaslkdjaslkdjalkjdlkasjdlkasjdlkasjdlkasjdlkasjlkdasjlkdajslkdjaslkdjaslkdjaslkjdaslkjasldkjdlaskjdlaks/../../.,/", // error
-        // "/favicon.ico", // file
+        "/favicon.ico", // file
     };
     /*
     std::vector <std::string_view> uris =

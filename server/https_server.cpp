@@ -15,6 +15,7 @@
 #include "simple_string.h"
 #include "search.h"
 #include "documents.h"
+#include "file_cacher.h"
 
 
 struct get_resp_code_str_t
@@ -155,6 +156,8 @@ struct server_handler
         resp.reg <document>         ("/documents",              &(*database));
 
         database.reset();
+        
+        file_cache.add_file("/pictures/Naganami_multi.ico");
     }
 
     connection_handler accept ()
@@ -164,6 +167,7 @@ struct server_handler
 
     std::optional <ship_requests> database;
     responser resp;
+    file_cacher file_cache;
 };
 
 template <typename socket_t>
@@ -181,7 +185,7 @@ void connection_handler::handle_head
     static const std::string_view http_middle = "\r\n"
                                                 "Content-Type: text/html; charset=utf-8\r\n"
                                                 "Content-Length: ";
-    static const std::string unused_header = "\r\nServer: japan_ships";
+    static const constexpr std::string_view unused_header = "\r\nServer: japan_ships";
     // some stupid clients not allow spaces at end of Content-Length header, so we place something after it
     static const constexpr size_t length_size = std::numeric_limits <size_t> ::digits10 + 1;
     static const std::string length_padding(length_size + unused_header.size(), ' ');
@@ -204,7 +208,7 @@ void connection_handler::handle_head
     {
         try
         {
-            // std::cerr << "\033[01;36mmethod\033[0m " << method << " \033[01;36murl\033[0m " << uri_full << std::endl;
+            std::cerr << "\033[01;36mmethod\033[0m " << method << " \033[01;36murl\033[0m " << uri_full << std::endl;
         }
         catch (...)
         {}
@@ -238,6 +242,12 @@ void connection_handler::handle_head
         {
             if (uri == "/favicon.ico")
                 uri = "/pictures/Naganami_multi.ico";
+            if (cur->file_cache.response(response, uri, headers))
+            {
+                size_t answer_size = response.size();
+                conn.send(response.reset(), answer_size);
+                return;
+            }
             std::string path = filesystem_check(uri);
             if (!path.empty())
             {

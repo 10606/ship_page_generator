@@ -125,6 +125,11 @@ struct simple_string
             memcpy(_data + _size, value.data(), value.size());
         _size += value.size();
     }
+    
+    void clear ()
+    {
+        _size = 0;
+    }
 
 private:
     char * _data;
