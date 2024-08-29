@@ -338,8 +338,11 @@ struct connection
             // Range
             content_range_t content_range(headers);
             file_to_send = file_to_send_t(file_name, content_range.start, content_range.size);
-            std::string mtime_str = std::to_string(file_to_send.mtime);
-            std::string mtime_cmp = "\"" + mtime_str + "\"";
+            char time_buffer[1 + std::numeric_limits <decltype(file_to_send.mtime)> ::digits10 + 2];
+            std::to_chars_result length_time = std::to_chars(time_buffer + 1, time_buffer + sizeof(time_buffer) - 1, file_to_send.mtime);
+            time_buffer[0] = '\"';
+            length_time.ptr[0] = '\"';
+            std::string_view mtime_cmp(time_buffer, length_time.ptr + 1);
             bool cached = 0;
             for (header_t & header : headers)
             {
@@ -349,6 +352,14 @@ struct connection
                     header_sv.second == mtime_cmp)
                     cached = 1;
             }
+            
+            auto set_keep_alive = [this, &response] () ->void
+            {
+                if (get_keep_alive())
+                    response.append("\r\nConnection: keep-alive");
+                else
+                    response.append("\r\nConnection: close");
+            };
             
             if (!cached)
             {
@@ -369,18 +380,21 @@ struct connection
                 {
                     response.append("HTTP/1.1 200 OK");
                 }
+                set_keep_alive();
                 response.append
                 (
                     "\r\nContent-Length: ",
                     std::to_string(file_to_send.size - file_to_send.offset),
-                    "\r\nEtag: \"",
-                    mtime_str,
-                    "\"\r\n\r\n"
+                    "\r\nEtag: ",
+                    mtime_cmp,
+                    "\r\n\r\n"
                 );
             }
             else
             {
-                response.append("HTTP/1.1 304 Not Modified\r\nContent-Length: 0\r\n\r\n");
+                response.append("HTTP/1.1 304 Not Modified");
+                set_keep_alive();
+                response.append("\r\nContent-Length: 0\r\n\r\n");
                 file_to_send = file_to_send_t();
             }
         }

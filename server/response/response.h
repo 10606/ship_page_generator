@@ -19,6 +19,7 @@ static const constexpr html_template_3 style =
         "<title>\n",
 
         "</title>\n"
+        "<link rel=\"icon\" type=\"image/x-icon\" href=\"/pictures/Naganami_multi.ico\">"
     "</head>\n"
     "<body>\n"
         "<style>\n"

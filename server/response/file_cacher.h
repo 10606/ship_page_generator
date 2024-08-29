@@ -10,6 +10,9 @@
 #include <vector>
 #include <iostream>
 
+#include <fcntl.h>
+#include <sys/stat.h>
+
 #include "simple_string.h"
 
 struct file_cacher
@@ -20,14 +23,23 @@ struct file_cacher
         {
             std::filesystem::path path("files");
             path += _path;
-            if (std::filesystem::file_size(path) > size_limit)
+            
+            struct stat stat_value;
+            int fd = open(path.c_str(), O_RDONLY);
+            if (fd == -1)
                 return;
-            std::filesystem::file_time_type mtime = std::filesystem::last_write_time(path);
+            int ret = fstat(fd, &stat_value);
+            if (ret == -1)
+                return;
+            if (static_cast <size_t> (stat_value.st_size) > size_limit)
+                return;
             
             std::ifstream file(path);
             std::streamsize size = 0;
             file_content cur_file;
-            cur_file.etag = std::format("{}", mtime);
+            cur_file.etag.append("\"")
+                         .append(std::to_string(stat_value.st_mtim.tv_sec))
+                         .append("\"");
             while (file.good())
             {
                 char buffer[4096];
@@ -39,7 +51,7 @@ struct file_cacher
                 cur_file.data.append(buffer, rb);
             }
             cur_file.headers.append(std::to_string(size))
-                            .append("\r\nEtag: ")
+                            .append("\r\nConnection: keep-alive\r\nEtag: ")
                             .append(cur_file.etag)
                             .append("\r\n\r\n");
             answer.emplace(_path, cur_file);
@@ -60,7 +72,7 @@ struct file_cacher
             {
                 if (header.first == "If-None-Match" && header.second == it->second.etag)
                 {
-                    response.append("HTTP/1.1 304 Not Modified\r\nContent-Length: 0\r\n\r\n");
+                    response.append("HTTP/1.1 304 Not Modified\r\nContent-Length: 0\r\nConnection: keep-alive\r\n\r\n");
                     return 1;
                 }
             }
