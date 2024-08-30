@@ -12,6 +12,7 @@
 
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 #include "simple_string.h"
 
@@ -21,6 +22,7 @@ struct file_cacher
     {
         try
         {
+            file_content cur_file;
             std::filesystem::path path("files");
             path += _path;
             
@@ -31,30 +33,50 @@ struct file_cacher
             int ret = fstat(fd, &stat_value);
             if (ret == -1)
                 return;
-            if (static_cast <size_t> (stat_value.st_size) > size_limit)
+            if (stat_value.st_size > static_cast <decltype(stat_value.st_size)> (size_limit))
                 return;
             
-            std::ifstream file(path);
-            std::streamsize size = 0;
-            file_content cur_file;
+            decltype(stat_value.st_size) size = 0;
+            try
+            {
+                cur_file.data.reserve(stat_value.st_size);
+                while (1)
+                {
+                    char buffer[4096];
+                    ssize_t rb = read(fd, buffer, sizeof(buffer));
+                    if (rb == 0) [[unlikely]]
+                        break;
+                    if (rb < 0) [[unlikely]]
+                    {
+                        if (errno == EAGAIN || errno == EINTR)
+                            continue;
+                        close(fd);
+                        return;
+                    }
+                    size += rb;
+                    if (size > static_cast <std::streamsize> (size_limit)) [[unlikely]]
+                    {
+                        close(fd);
+                        return;
+                    }
+                    cur_file.data.append(buffer, rb);
+                }
+            }
+            catch (...)
+            {
+                close(fd);
+                return;
+            }
+            close(fd);
+            
             cur_file.etag.append("\"")
                          .append(std::to_string(stat_value.st_mtim.tv_sec))
                          .append("\"");
-            while (file.good())
-            {
-                char buffer[4096];
-                file.read(buffer, sizeof(buffer));
-                std::streamsize rb = file.gcount();
-                size += rb;
-                if (size > static_cast <std::streamsize> (size_limit)) [[unlikely]]
-                    return;
-                cur_file.data.append(buffer, rb);
-            }
             cur_file.headers.append(std::to_string(size))
                             .append("\r\nConnection: keep-alive\r\nEtag: ")
                             .append(cur_file.etag)
                             .append("\r\n\r\n");
-            answer.emplace(_path, cur_file);
+            answer.emplace(_path, std::move(cur_file));
         }
         catch (...)
         {}
