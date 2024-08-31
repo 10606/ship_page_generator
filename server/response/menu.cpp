@@ -189,6 +189,7 @@ menu::cache_t menu::response_impl (ship_requests * database)
                                      .append(std::to_string(cnt_ships_in_class.front()))
                                      .append(menu_item.new_class.end);
                 cnt_ships_in_class.pop();
+                cur_type.reset();
             }
             
             if (!cur_type.id || *cur_type.id != ship.type_id)
@@ -199,23 +200,26 @@ menu::cache_t menu::response_impl (ship_requests * database)
                 cur_type.id = ship.type_id;
                 
                 cur_type.type_descr.append(menu_item.new_type_link.begin);
-                if (cnt_ships_in_type.front() == all_ships_in_type[*cur_type.id])
+                if (cnt_ships_in_type.front() == all_ships_in_type[*cur_type.id]) [[likely]]
                     cur_type.type_descr.append("type_id=")
                                        .append(std::to_string(*cur_type.id));
-                else
+                else [[unlikely]]
                 {
                     cur_type.type_descr.append("id=")
                                        .append(std::to_string(ships[i].ship_id));
                     for (size_t j = i + 1; j != ships.size(); ++j)
                     {
-                        if (ships[i].type_id != ships[j].type_id)
+                        if (ships[i].type_id  != ships[j].type_id ||
+                            ships[i].class_id != ships[j].class_id)
                             break;
                         cur_type.type_descr.append("&id=")
                                            .append(std::to_string(ships[j].ship_id));
                     }
                 }
                 cur_type.type_descr.append(menu_item.new_type_link.middle);
-                if ((i + 1 == ships.size() || ships[i].type_id != ships[i + 1].type_id) &&
+                if ((i + 1 == ships.size() ||
+                     ships[i].type_id  != ships[i + 1].type_id ||
+                     ships[i].class_id != ships[i + 1].class_id) &&
                     ship.ship_ru &&
                     (!ship.type_ru || *ship.ship_ru != *ship.type_ru)) // one ship in type with another name
                     cur_type.type_descr.append(*ship.ship_ru);
