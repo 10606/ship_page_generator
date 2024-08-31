@@ -128,8 +128,6 @@ static const constexpr html_template_3 style =
             "h2 { display: inline; }\n"
             "ship-cnt { float:right; }\n"
             "b-t { font-weight: bold; }\n"
-            ".document       { min-width: 0px; }\n"
-            ".document_group { min-width: 1200px; }\n"
         "</style>\n"
         "<div class=\"wrapper\">\n",
 
@@ -155,6 +153,7 @@ struct responser
     {
         virtual void response (simple_string &, std::string_view, piece_t) = 0;
         virtual ~resp_base () = default;
+        virtual std::string_view additional_in_menu () const = 0;
     };
     
     template <typename T>
@@ -170,10 +169,15 @@ struct responser
         resp_impl (U && ... args) :
             value(std::forward <U> (args) ...)
         {}
-        
+
         virtual void response (simple_string & answer, std::string_view query, piece_t title) override
         {
             value.response(answer, query, title);
+        }
+
+        virtual std::string_view additional_in_menu () const override
+        {
+            return additional_in_menu <T> (value);
         }
 
         virtual ~resp_impl () = default;
@@ -185,6 +189,22 @@ struct responser
         friend U & responser::get_unsafe (std::string_view uri);
         
     private:
+        template <typename U>
+        static std::string_view additional_in_menu (U const &)
+        {
+            return {};
+        }
+        
+        template <typename U>
+        requires requires (U const & value)
+        {
+            {value.menu_list} -> std::convertible_to <std::string_view>;
+        }
+        static std::string_view additional_in_menu (U const & value)
+        {
+            return value.menu_list;
+        }
+        
         T value;
     };
 
@@ -208,7 +228,7 @@ struct responser
         size_t title_pos = answer.size();
         static const std::string title_placeholder(100, ' ');
         answer.append(title_placeholder, style.middle);
-        ship_list.response(answer, query);
+        ship_list.response(answer, query, it->second->additional_in_menu());
         answer.append("<div class=\"main\">\n");
         it->second->response(answer, query, {title_pos, title_placeholder.size()});
         answer.append("</div>\n", style.end);

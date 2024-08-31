@@ -11,21 +11,19 @@
 struct menu_item_template
 {
     menu_item_template (ship_requests * database) :
-        something_needed(generate_aircraft_links(database, around, link_template)),
-        all{menu_begin, something_needed, menu_end}
+        aircraft_links(generate_aircraft_links(database, around, link_template))
     {}
 
 private:
-    std::string something_needed;
     static std::string generate_aircraft_links (ship_requests * database, html_template around, html_template_3 link);
 
-    static std::string_view menu_begin;
     static html_template around;
     static html_template_3 link_template;
-    static std::string_view menu_end;
 
 public:
-    html_template_3 all;
+    static std::string_view menu_begin;
+    std::string aircraft_links;
+    static html_template menu_end;
     
     html_template_3 new_class = {"<button type=\"button\"class=\"collapsible\">", 
                                  "<ship-cnt>(",
@@ -52,13 +50,14 @@ struct menu
         cache(response_impl(database))
     {}
     
-    void response (simple_string & answer, std::string_view request);
+    void response (simple_string & answer, std::string_view request, std::string_view additional_in_menu = {});
     
 private:
     struct cache_t
     {
-        std::string begin;
-        std::string end;
+        std::string_view begin;
+        std::string middle;
+        std::string_view end;
     };
 
     cache_t response_impl (ship_requests * database);

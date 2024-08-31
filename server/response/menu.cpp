@@ -242,11 +242,11 @@ menu::cache_t menu::response_impl (ship_requests * database)
             classes.insert({*cur_class.id, std::move(cur_class)});
         }
         
-        cache_t answer{std::string(menu_item.all.begin), std::string(menu_item.all.middle)};
-        inserter_t inserter(classes_graph, classes, answer.end);
+        cache_t answer{menu_item.menu_begin, std::string(menu_item.aircraft_links), menu_item.menu_end.end};
+        inserter_t inserter(classes_graph, classes, answer.middle);
         for (int root : classes_root)
             inserter(root);
-        answer.end.append(menu_item.all.end);
+        answer.middle.append(menu_item.menu_end.begin);
         
         return answer;
     }
@@ -257,12 +257,14 @@ menu::cache_t menu::response_impl (ship_requests * database)
 }
 
 
-void menu::response (simple_string & answer, std::string_view request)
+void menu::response (simple_string & answer, std::string_view request, std::string_view additional_in_menu)
 {
     answer.append
     (
         cache.begin,
         search::get_search_parameter(request),
+        cache.middle,
+        additional_in_menu,
         cache.end
     );
 }

@@ -138,6 +138,8 @@ struct add_pictures_t
             return; // idempotent
         if (have_head) 
             answer.append(pictures.group.end);
+        else
+            answer.append("<br>");
         closed = 1;
     }
 

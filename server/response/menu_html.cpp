@@ -109,7 +109,8 @@ html_template_3 menu_item_template::link_template =
     "</a><br>\n"
 };
     
-std::string_view menu_item_template::menu_end =
+html_template menu_item_template::menu_end =
+{
     "<script>\n"
         "function collapse_menu (event)\n"
         "{\n"
@@ -155,6 +156,8 @@ std::string_view menu_item_template::menu_end =
         "}\n"
     "</script>\n"
     "<br>\n"
-    "<div class=\"menu_link\"><a name=\"compare_ships_button\" href=\"/ship?\">сравнение корабликов</a></div>\n"
-"</div>\n";
+    "<div class=\"menu_link\"><a name=\"compare_ships_button\" href=\"/ship?\">сравнение корабликов</a></div>\n",
+    
+"</div>\n"
+};
 

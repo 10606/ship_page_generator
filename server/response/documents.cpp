@@ -41,8 +41,55 @@ document::document (ship_requests * database)
     
     static const constexpr doc_page_template_t doc_page_template = 
     {
-        "<div><ul>",
-        "</ul></div>",
+            "<style>\n"
+                ".main .document br {}\n"
+                ".main .document {\n"
+                    "min-width: 0px;\n"
+                    "list-style-type: none;\n"
+                "}\n"
+                ".main .document_group { min-width: 1200px; }\n"
+            "</style>\n"
+            "<script>\n"
+                "function toggle_preview (event)\n"
+                "{\n"
+                    "for (style_sheet of document.styleSheets)\n"
+                    "{\n"
+                        "for (css_rule of style_sheet.cssRules)\n"
+                        "{\n"
+                            "var selector = css_rule.selectorText;\n"
+                            "var style_map = css_rule.styleMap\n;"
+                            "if (!event.target.checked)\n"
+                            "{\n"
+                                "if (selector == \".main img\")\n"
+                                    "style_map.set(\"display\", \"none\");\n"
+                                "if (selector == \".main .document br\")\n"
+                                    "style_map.set(\"display\", \"none\");\n"
+                                "if (selector == \".main li\")\n"
+                                    "style_map.set(\"max-width\", \"none\");\n"
+                                "if (selector == \".main .document\")\n"
+                                    "style_map.set(\"display\", \"list-item\");\n"
+                            "}\n"
+                            "else\n"
+                            "{\n"
+                                "if (selector == \".main img\")\n"
+                                    "style_map.set(\"display\", \"inline\");\n"
+                                "if (selector == \".main .document br\")\n"
+                                    "style_map.set(\"display\", \"block\");\n"
+                                "if (selector == \".main li\")\n"
+                                    "style_map.set(\"max-width\", \"180px\");\n"
+                                "if (selector == \".main .document\")\n"
+                                    "style_map.set(\"display\", \"inline-block\");\n"
+                            "}\n"
+                        "}\n"
+                    "}\n"
+                    "event.target.nextSibling.textContent = "
+                        "(!event.target.checked)? \" превью: выключено \" : \" превью: включено \";\n"
+                "}\n"
+            "</script>\n"
+        "<div>\n"
+            "<ul>\n",
+            "</ul>\n"
+        "</div>\n",
     };
     
     static const constexpr group_template_t group_template = 
