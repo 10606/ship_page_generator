@@ -29,7 +29,7 @@ public:
                                  "<ship-cnt>(",
                                  ")</ship-cnt></button><br><div class=\"content\">\n"};
     
-    html_template_3 new_type_link = {"<button type=\"button\"class=\"collapsible\"><a href=\"/ship?type_id=", 
+    html_template_3 new_type_link = {"<button type=\"button\"class=\"collapsible\"><a href=\"/ship?", 
                                      "\">",
                                      "</a>"};
     html_template new_type = {"<ship-cnt>(",

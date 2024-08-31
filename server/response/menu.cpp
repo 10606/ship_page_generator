@@ -150,6 +150,7 @@ menu::cache_t menu::response_impl (ship_requests * database)
 
         std::queue <size_t> cnt_ships_in_class;
         std::queue <size_t> cnt_ships_in_type;
+        std::unordered_map <int, size_t> all_ships_in_type;
         for (size_t i = 0; i != ships.size(); ++i)
         {
             if (cnt_ships_in_class.empty() ||
@@ -163,6 +164,8 @@ menu::cache_t menu::response_impl (ship_requests * database)
                 cnt_ships_in_type.push(1);
             else
                 cnt_ships_in_type.back()++;
+            
+            all_ships_in_type[ships[i].type_id]++;
         }
         
         for (size_t i = 0; i != ships.size(); ++i)
@@ -195,9 +198,23 @@ menu::cache_t menu::response_impl (ship_requests * database)
                     add_type();
                 cur_type.id = ship.type_id;
                 
-                cur_type.type_descr.append(menu_item.new_type_link.begin)
-                                   .append(std::to_string(*cur_type.id))
-                                   .append(menu_item.new_type_link.middle);
+                cur_type.type_descr.append(menu_item.new_type_link.begin);
+                if (cnt_ships_in_type.front() == all_ships_in_type[*cur_type.id])
+                    cur_type.type_descr.append("type_id=")
+                                       .append(std::to_string(*cur_type.id));
+                else
+                {
+                    cur_type.type_descr.append("id=")
+                                       .append(std::to_string(ships[i].ship_id));
+                    for (size_t j = i + 1; j != ships.size(); ++j)
+                    {
+                        if (ships[i].type_id != ships[j].type_id)
+                            break;
+                        cur_type.type_descr.append("&id=")
+                                           .append(std::to_string(ships[j].ship_id));
+                    }
+                }
+                cur_type.type_descr.append(menu_item.new_type_link.middle);
                 if ((i + 1 == ships.size() || ships[i].type_id != ships[i + 1].type_id) &&
                     ship.ship_ru &&
                     (!ship.type_ru || *ship.ship_ru != *ship.type_ru)) // one ship in type with another name
