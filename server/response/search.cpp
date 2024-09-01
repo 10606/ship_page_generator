@@ -3,67 +3,20 @@
 #include <set>
 #include <iostream>
 
-struct add_ship_t
-{
-    add_ship_t (search const & _search_data, simple_string & _answer) :
-        search_data(_search_data),
-        answer(_answer),
-        class_id(),
-        old_pos()
-    {}
-
-    void operator () (uint32_t pos)
-    {
-        if (old_pos == pos)
-            return;
-        old_pos = pos;
-        if (search_data.names[pos].class_id != class_id) [[unlikely]]
-        {
-            if (class_id) [[likely]]
-                answer.append("</table>");
-            answer.append("<br><table>");
-            class_id = search_data.names[pos].class_id;
-        }
-        answer.append(search_data.names[pos].answer);
-    }
-
-    void close ()
-    {
-        if (class_id)
-            answer.append("</table>");
-        class_id.reset(); // idempotent
-    }
-    
-    ~add_ship_t ()
-    {
-        try
-        {
-            close();
-        }
-        catch (...)
-        {}
-    }
-    
-private:
-    search const & search_data;
-    simple_string & answer;
-    std::optional <int> class_id;
-    std::optional <uint32_t> old_pos; // don't add twice
-};
-
 
 void search::response (simple_string & answer, std::string_view request_percent_enc, piece_t title)
 {
     static const constexpr std::string_view title_text = "поиск японских корабликов";
     answer.rewrite(title.position, title_text.substr(0, std::min(title_text.size(), title.size)));
 
+    std::vector <ship_names_list::ship_info_t> const & names = ship_names.names();
     if (request_percent_enc.starts_with(search_keyword))
         request_percent_enc = request_percent_enc.substr(search_keyword.size());
     std::string request = percent_dec(request_percent_enc);
 
     if (request.empty())
         return;
-    add_ship_t add_ship(*this, answer);
+    ship_names_list::add_ship_t add_ship(names, answer);
     if (request.size() <= 1)
         for (uint32_t pos : by_1_chars[static_cast <uint8_t> (request[0])])
             add_ship(pos);

@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <string>
 #include <string_view>
+#include "ship_names_list.h"
 #include "ship_requests.h"
 #include "ship_info.h"
 #include "simple_string.h"
@@ -16,16 +17,10 @@
 
 struct search
 {
-    search (ship_requests * database)
+    search (ship_requests *, ship_names_list const & _ship_names) :
+        ship_names(_ship_names)
     {
-        std::vector <ship_info_long> ship_names =
-            database->ship_info.get_list("order by ((select get_ancestor_by_id (ship_list.class_id)), ship_list.class_id, \
-                                                    ship_list.type_id, commissioned, ship_list.name_ru,  ship_list.id)");
-
-        names.reserve(ship_names.size());
-        for (ship_info_long const & ship_info : ship_names)
-            names.emplace_back(ship_info);
-        
+        std::vector <ship_names_list::ship_info_t> const & names = ship_names.names();
         for (size_t i = 0; i != names.size(); ++i)
         {
             add(names[i].name_ru, i);
@@ -38,6 +33,8 @@ struct search
     static std::string get_search_parameter (std::string_view request);
     
 private:
+    ship_names_list const & ship_names;
+    
     static const constexpr std::string_view search_keyword = "search=";
 
     friend struct add_ship_t;
@@ -49,40 +46,6 @@ private:
         uint32_t offset;
     };
     
-    struct ship_info_t
-    {
-        ship_info_t (ship_info_long value) :
-            class_id(value.class_id),
-            name_en(value.ship_en.value_or("")),
-            name_ru(value.ship_ru.value_or("")),
-            answer()
-        {
-            answer.append("<tr><td>")
-                  .append(armament_links::base("/ship?id=" + std::to_string(value.ship_id), value.ship_ru.value_or("--")))
-                  .append(" ");
-            if (value.class_ru || value.type_ru)
-            {
-                answer.append("</td><td>(")
-                      .append(value.class_ru.value_or(""));
-                if (value.type_ru)
-                    answer.append(" <a href=\"/ship?type_id=")
-                          .append(std::to_string(value.type_id))
-                          .append("\">")
-                          .append("типа ")
-                          .append(*value.type_ru)
-                          .append("<a>");
-                answer.append(")");
-            }
-            answer.append("</td></tr>");
-        }
-
-        int class_id;
-        std::string name_en;
-        std::string name_ru;
-        std::string answer;
-    };
-    
-    std::vector <ship_info_t> names;
     std::array <std::vector <uint32_t>, 256> by_1_chars;
     std::unordered_map <uint8_t, std::array <std::vector <position_t>, (1lu << 6)> > by_2_chars_mb2; // multi_byte 2
     std::array <std::vector <position_t>, (1lu << (7 + 7))> by_2_chars_ascii; // ascii | acsii,  ascii | mb <n> here use second char

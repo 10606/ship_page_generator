@@ -98,6 +98,9 @@ html_template menu_item_template::around =
         "<a href=\"/documents\">"
             "документы"
         "</a><br>\n"
+        "<a href=\"/\">"
+            "события"
+        "</a><br>\n"
     "</div>\n"
     "<br>"
 };

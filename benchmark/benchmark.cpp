@@ -290,7 +290,8 @@ int main ()
         // "/documents", // static
         // "/../../.,/", // error
         // "asdkjasldkjaslkdjlkasjdlkasjdlkasjdlkasjdlkkajslkdjaslkdjaslkdjalskjdlaksjdlkasjdlkasjdlkasjdlkajsdlkjaslkdjasldjaslkdjaslkdjalkjdlkasjdlkasjdlkasjdlkasjdlkasjlkdasjlkdajslkdjaslkdjaslkdjaslkjdaslkjasldkjdlaskjdlaks/../../.,/", // error
-        "/favicon.ico", // file
+        // "/favicon.ico", // file
+        "/", // day events
     };
     /*
     std::vector <std::string_view> uris =

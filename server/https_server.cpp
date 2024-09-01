@@ -16,6 +16,7 @@
 #include "search.h"
 #include "documents.h"
 #include "file_cacher.h"
+#include "day_events.h"
 
 
 struct get_resp_code_str_t
@@ -138,10 +139,10 @@ private:
 
 struct server_handler
 {
-
     server_handler () :
         database(std::in_place),
-        resp(*database)
+        resp(*database),
+        ship_names(&(*database))
     {
         resp.reg <ship_armament>    ("/ship/armament",          &(*database));
         resp.reg <torpedo>          ("/armament/torpedo",       &(*database));
@@ -152,13 +153,19 @@ struct server_handler
         resp.reg <searcher>         ("/armament/searcher",      &(*database));
         resp.reg <aircraft>         ("/aircraft",               &(*database));
         resp.reg <ship>             ("/ship",                   &(*database), resp.get_unsafe <ship_armament> ("/ship/armament"));
-        resp.reg <search>           ("/search",                 &(*database));
+        resp.reg <search>           ("/search",                 &(*database), ship_names);
         resp.reg <document>         ("/documents",              &(*database));
+        resp.reg <day_events>       ("/",                       &(*database), ship_names);
 
         database.reset();
         
         file_cache.add_file("/pictures/Naganami_multi.ico");
     }
+    
+    server_handler (server_handler &&) = delete;
+    server_handler (server_handler const &) = delete;
+    server_handler & operator = (server_handler &&) = delete;
+    server_handler & operator = (server_handler const &) = delete;
 
     connection_handler accept ()
     {
@@ -168,6 +175,7 @@ struct server_handler
     std::optional <ship_requests> database;
     responser resp;
     file_cacher file_cache;
+    ship_names_list ship_names;
 };
 
 template <typename socket_t>
