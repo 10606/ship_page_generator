@@ -20,17 +20,26 @@ struct day_events
         }
     }
 
-    void response (simple_string & answer, std::string_view, piece_t title)
+    void response (simple_string & answer, std::string_view query, piece_t title)
     {
         static const constexpr std::string_view title_text = "судьба японских корабликов";
         answer.rewrite(title.position, title_text.substr(0, std::min(title_text.size(), title.size)));
         
         std::vector <ship_names_list::ship_info_t> const & names = ship_names.names();
-        std::chrono::year_month_day today(std::chrono::floor <std::chrono::days> (std::chrono::system_clock::now()));
+        std::optional <std::chrono::year_month_day> date_from_query = parse(query);
+        std::chrono::year_month_day date_for
+            (date_from_query? *date_from_query : std::chrono::year_month_day(std::chrono::floor <std::chrono::days> (std::chrono::system_clock::now())));
         
-        uint16_t today_id = index_of_day(today);
-        answer.append("события сегодня ",
-                      to_string(today),
+        uint16_t today_id = index_of_day(date_for);
+        unsigned day   = static_cast <unsigned> (date_for.day());
+        unsigned month = static_cast <unsigned> (date_for.month());
+        char date_str[5] = {static_cast <char> ('0' + day / 10),
+                            static_cast <char> ('0' + day % 10),
+                            '.',
+                            static_cast <char> ('0' + month / 10),
+                            static_cast <char> ('0' + month % 10)};
+        answer.append("события ",
+                      date_str,
                       "<br>");
         {
             if (!commissioned_by_day[today_id].empty())
@@ -71,6 +80,43 @@ private:
         unsigned day   = static_cast <unsigned> (date.day());
         return sum_month_table.value[month] + day - 1;
     }
+    
+    std::optional <std::chrono::year_month_day> parse (std::string_view query)
+    {
+        static const constexpr std::string_view etalon = "date=";
+        if (std::mismatch(query.begin(), query.end(), etalon.begin(), etalon.end()).second != etalon.end())
+            return std::nullopt;
+            
+        std::array <uint16_t, 2> parsed = {0, 0};
+        size_t id = 0;
+        size_t digits = 0;
+        for (size_t i = etalon.size(); i != query.size(); ++i)
+        {
+            if (query[i] == '.')
+            {
+                if (digits == 0)
+                    return std::nullopt;
+                id++;
+                digits = 0;
+                if (id >= 2)
+                    return std::nullopt;
+                continue;
+            }
+            if (!std::isdigit(query[i]))
+                return std::nullopt;
+            parsed[id] = parsed[id] * 10 + (query[i] - '0');
+            digits++;
+            if (digits > 2)
+                return std::nullopt;
+        }
+        if (id != 1)
+            return std::nullopt;
+        std::chrono::year_month_day answer(std::chrono::year(1944), std::chrono::month(parsed[1]), std::chrono::day(parsed[0]));
+        if (answer.ok())
+            return answer;
+        else
+            return std::nullopt;
+    };
     
     ship_names_list const & ship_names;
     std::array <std::vector <size_t>, 366> commissioned_by_day;
