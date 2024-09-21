@@ -159,7 +159,7 @@ struct server_handler
 
         database.reset();
         
-        file_cache.add_file("/pictures/Naganami_multi.ico");
+        file_cache.add_file("/pictures/favicon.ico");
     }
     
     server_handler (server_handler &&) = delete;
@@ -248,8 +248,6 @@ void connection_handler::handle_head
             code = 200;
         else
         {
-            if (uri == "/favicon.ico")
-                uri = "/pictures/Naganami_multi.ico";
             if (cur->file_cache.response(response, uri, headers))
             {
                 size_t answer_size = response.size();

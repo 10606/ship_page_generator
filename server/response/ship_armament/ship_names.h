@@ -51,7 +51,7 @@ private:
     header_column table;
     static const constexpr html_template_3 checkbox =
     {
-        "<input type=\"checkbox\" onchange=\"toggle_to_detail_compare(event)\" ship=", 
+        "<input type=checkbox onchange=toggle_to_detail_compare(event) ship=", 
         " date=\"",
         "\"></input>"
     };

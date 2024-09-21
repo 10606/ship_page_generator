@@ -128,6 +128,7 @@ add_executable(ship_server
     server/response/search.cpp
     server/response/ship/ship.cpp
     server/response/ship/date_order/nested_segments.cpp
+    server/response/style.cpp
     get_from_postgres/parse_response.cpp
     get_from_postgres/ship_armament.cpp
     get_from_postgres/ship_armament_lt.cpp

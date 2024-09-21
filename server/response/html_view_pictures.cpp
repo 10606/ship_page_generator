@@ -199,12 +199,12 @@ std::string_view const html_view_pictures =
     ".view_pictures:hover { background-color: #ff5555; }\n"
     ".view_pictures:focus { background-color: #6666ff; }\n"
 "</style>\n"
-"<div id=\"picture_viewer\" class=\"picture_viewer\">\n"
-    "<img src=\"\" id=\"picture_view\">\n"
-    "<button class=\"close_button\" onclick=clear_picture(event)> x </button>\n"
-    "<p id=\"picture_description\"> </p>\n"
-    "<button class=\"prev_button\" onclick=prev_picture(event)> < </button>\n"
-    "<button class=\"next_button\" onclick=next_picture(event)> > </button>\n"
+"<div id=picture_viewer class=picture_viewer>\n"
+    "<img src=\"\" id=picture_view>\n"
+    "<button class=close_button onclick=clear_picture(event)> x </button>\n"
+    "<p id=picture_description> </p>\n"
+    "<button class=prev_button onclick=prev_picture(event)> < </button>\n"
+    "<button class=next_button onclick=next_picture(event)> > </button>\n"
 "</div>\n";
 
 

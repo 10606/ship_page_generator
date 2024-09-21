@@ -31,12 +31,19 @@ struct ship_names_list
             sunk_date   (value.sunk_date),
             answer()
         {
-            answer.append("<tr><td>")
+            answer.append("<tr><td><b>")
                   .append(armament_links::base("/ship?id=" + std::to_string(value.ship_id), value.ship_ru.value_or("--")))
-                  .append(" ");
+                  .append(" ")
+                  .append("</b></td><th>");
+            if (value.commissioned)
+                answer.append(to_string(*value.commissioned));
+            answer.append("</th><td>-</td><th>");
+            if (value.sunk_date)
+                answer.append(to_string(*value.sunk_date));
+            answer.append("</th><td>");
             if (value.class_ru || value.type_ru)
             {
-                answer.append("</td><td>(")
+                answer.append("(")
                       .append(value.class_ru.value_or(""));
                 if (value.type_ru)
                     answer.append(" <a href=\"/ship?type_id=")

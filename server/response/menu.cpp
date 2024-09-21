@@ -160,7 +160,8 @@ menu::cache_t menu::response_impl (ship_requests * database)
                 cnt_ships_in_class.back()++;
 
             if (cnt_ships_in_type.empty() ||
-                ships[i - 1].type_id != ships[i].type_id)
+                ships[i - 1].type_id  != ships[i].type_id ||
+                ships[i - 1].class_id != ships[i].class_id)
                 cnt_ships_in_type.push(1);
             else
                 cnt_ships_in_type.back()++;

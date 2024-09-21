@@ -38,9 +38,9 @@ struct day_events
                             '.',
                             static_cast <char> ('0' + month / 10),
                             static_cast <char> ('0' + month % 10)};
-        answer.append("события ",
+        answer.append("<h2>события ",
                       date_str,
-                      "<br>");
+                      "</h2><br>");
         {
             if (!commissioned_by_day[today_id].empty())
                 answer.append("<br><h2>вошли в строй:</h2>");

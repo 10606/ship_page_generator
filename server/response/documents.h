@@ -15,7 +15,7 @@ struct document
 
     void response (simple_string & answer, std::string_view query, piece_t title);
 
-    std::string_view menu_list = "<br>&nbsp<input type=\"checkbox\" onclick=toggle_preview(event) checked> превью: включено <br>\n";
+    std::string_view menu_list = "<br>&nbsp<input type=checkbox onchange=toggle_preview(event) checked> превью: включено <br>\n";
     
 private:
     std::string value;

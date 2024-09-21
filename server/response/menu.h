@@ -25,22 +25,22 @@ public:
     std::string aircraft_links;
     static html_template menu_end;
     
-    html_template_3 new_class = {"<button type=\"button\"class=\"collapsible\">", 
+    html_template_3 new_class = {"<button>", 
                                  "<ship-cnt>(",
-                                 ")</ship-cnt></button><br><div class=\"content\">\n"};
+                                 ")</ship-cnt></button><br><con-tent>\n"};
     
-    html_template_3 new_type_link = {"<button type=\"button\"class=\"collapsible\"><a href=\"/ship?", 
+    html_template_3 new_type_link = {"<button><a href=\"/ship?", 
                                      "\">",
                                      "</a>"};
     html_template new_type = {"<ship-cnt>(",
-                              ")</ship-cnt></button><br><div class=\"content\">\n"};
+                              ")</ship-cnt></button><br><con-tent>\n"};
     
-    std::string_view close_type = "</div>\n";
-    std::string_view close_class = "</div>\n";
+    std::string_view close_type = "</con-tent>\n";
+    std::string_view close_class = "</con-tent>\n";
 
     html_template new_ship = {"", "<br>"};
     html_template_3 new_ship_link = {"<a href=\"/ship?id=", "\">", "</a>"};
-    html_template checkbox = {"<input type=\"checkbox\"ship=", "></input>"};
+    html_template checkbox = {"<input type=checkbox id=", "></input>"};
 };
 
 struct menu
