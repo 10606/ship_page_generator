@@ -16,6 +16,12 @@ struct ship
     // http://127.0.0.1:8080/ship?id=0&id=1&id=2&id=3
     void response (simple_string & answer, std::string_view query, piece_t title);
     
+    std::string_view menu_list = 
+    "<div class=\"menu_link tooltip\">\n"
+        "<a id=\"detail_compare_ships_button\" href=\"/ship/armament?\">детальное сравнение</a>\n"
+        "<span class=\"tooltiptext\">отмеченные галочками в заголовках таблиц</span>\n"
+    "</div>\n";
+    
 private:
     ship_armament & armament;
     
@@ -77,7 +83,7 @@ private:
             "\"><img src=\"/pictures_small/ship/",
         },
     };
-    
+
     static const constexpr std::string_view compare_ships = 
     "<script>\n"
         "function str_to_date (str)\n"
@@ -122,12 +128,10 @@ private:
                 "link += \"ship=\" + request_item.ship_id + \"&date=\" + request_item.date_str;\n"
                 "first = false;\n"
             "}\n"
-            "var compare_ships_buttons = document.getElementById(\"detail_compare_ships_button\");\n"
-            "compare_ships_buttons.setAttribute(\"href\", link);\n"
+            "var compare_ships_button = document.getElementById(\"detail_compare_ships_button\");\n"
+            "compare_ships_button.setAttribute(\"href\", link);\n"
         "}\n"
-    "</script>\n"
-    "<div class=\"menu_link\"><a id=\"detail_compare_ships_button\" href=\"/ship/armament?\">сравнение корабликов</a></div>\n";
-        
+    "</script>\n";
 };
 
 

@@ -144,8 +144,8 @@ html_template menu_item_template::menu_end =
                 "link += \"id=\" + ship_to_compare.getAttribute(\"id\").toString();\n"
                 "first = false;\n"
             "}\n"
-            "for (compare_ships_button of document.getElementsByName(\"compare_ships_button\"))\n"
-                "compare_ships_button.setAttribute(\"href\", link);\n"
+            "var compare_ships_button = document.getElementById(\"compare_ships_button\");\n"
+            "compare_ships_button.setAttribute(\"href\", link);\n"
         "}\n"
         
         // set listeners for menu
@@ -173,7 +173,10 @@ html_template menu_item_template::menu_end =
         "}\n"
     "</script>\n"
     "<br>\n"
-    "<div class=\"menu_link\"><a name=\"compare_ships_button\" href=\"/ship?\">сравнение корабликов</a></div>\n",
+    "<div class=\"menu_link tooltip\">\n"
+        "<a id=\"compare_ships_button\" href=\"/ship?\">сравнение корабликов</a>\n"
+        "<span class=\"tooltiptext\">отмеченные галочками в меню</span>\n"
+    "</div>\n",
     
 "</div>\n"
 };

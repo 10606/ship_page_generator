@@ -119,6 +119,27 @@ const html_template_3 style =
             "h2 { display: inline; }\n"
             "ship-cnt { float:right; }\n"
             "b-t { font-weight: bold; }\n"
+            
+            ".tooltip {\n"
+                "position: relative;\n"
+                "display: inline-block;\n"
+                "background-color: #222222;\n"
+            "}\n"
+            ".tooltip .tooltiptext {\n"
+                "visibility: hidden;\n"
+                "width: 200px;\n"
+                "background-color: #222222;\n"
+                "color: #ffffff;\n"
+                "padding: 5px 15px 5px 15px;\n"
+                "left: 105%;\n"
+
+                "position: absolute;\n"
+                "z-index: 1;\n"
+            "}\n"
+            ".tooltip:hover .tooltiptext {\n"
+                "visibility: visible;\n"
+            "}\n"
+
         "</style>\n"
         "<div class=\"wrapper\">\n",
 

