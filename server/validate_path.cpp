@@ -54,15 +54,20 @@ std::string filesystem_check (std::string_view path)
 {
     try
     {
+        std::string path_decoded = percent_dec(path, 0);
+        path = path_decoded;
         while (!path.empty() && path[0] == '/')
             path = path.substr(1);
-        std::string path_decoded = percent_dec(path, 0);
         
-        if (!simple_check(path_decoded))
+        if (!simple_check(path))
             return std::string();
         
         std::filesystem::path pwd = std::filesystem::current_path();
-        pwd.append("files").append(path_decoded);
+        std::filesystem::path file_path(path);
+        if (file_path.is_absolute() || file_path.has_root_name() || file_path.has_root_directory())
+            return std::string();
+        pwd.append("files");
+        pwd /= file_path;
         std::filesystem::file_status status = std::filesystem::status(pwd);
         
         if (status.type() != std::filesystem::file_type::regular)

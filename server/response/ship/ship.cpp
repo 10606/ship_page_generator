@@ -79,15 +79,26 @@ struct ship::add_event
         for (size_t i = 0; i != shift; ++i)
             answer.append(ship::shift);
         answer.append(ship::bold_text.begin);
-        if (events[index].date_from)
-            answer.append(to_string(*events[index].date_from));
+        if (events[index].date_from && events[index].date_to &&
+            events[index].date_from == events[index].date_to)
+        {
+            // print only one date if event continued 1 day
+            answer.append(same_date_around.begin)
+                  .append(to_string(*events[index].date_from))
+                  .append(same_date_around.end);
+        }
         else
-            answer.append(date_placeholder);
-        answer.append(" - ");
-        if (events[index].date_to)
-            answer.append(to_string(*events[index].date_to));
-        else
-            answer.append(date_placeholder);
+        {
+            if (events[index].date_from)
+                answer.append(to_string(*events[index].date_from));
+            else
+                answer.append(date_placeholder);
+            answer.append(" - ");
+            if (events[index].date_to)
+                answer.append(to_string(*events[index].date_to));
+            else
+                answer.append(date_placeholder);
+        }
         answer.append(ship::bold_text.end);
         answer.append(" ")
               .append(ship::text.begin);
@@ -152,6 +163,7 @@ private:
     std::vector <uint8_t> visited;
     
     static const constexpr std::string_view date_placeholder = "&ensp;&ensp;&nbsp;&ensp;&ensp;&nbsp;&ensp;&ensp;&ensp;&ensp;";
+    static const constexpr html_template same_date_around = {"&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&nbsp;", "&nbsp;&ensp;&ensp;&ensp;&ensp;&ensp;"};
 };
 
 
