@@ -89,6 +89,11 @@ struct ship_names_list
             answer.append(names[pos].answer);
         }
 
+        bool empty () const noexcept
+        {
+            return !old_pos.has_value();
+        }
+        
         void close ()
         {
             if (class_id)

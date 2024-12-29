@@ -291,7 +291,9 @@ int main ()
         // "/../../.,/", // error
         // "asdkjasldkjaslkdjlkasjdlkasjdlkasjdlkasjdlkkajslkdjaslkdjaslkdjalskjdlaksjdlkasjdlkasjdlkasjdlkajsdlkjaslkdjasldjaslkdjaslkdjalkjdlkasjdlkasjdlkasjdlkasjdlkasjlkdasjlkdajslkdjaslkdjaslkdjaslkjdaslkjasldkjdlaskjdlaks/../../.,/", // error
         // "/favicon.ico", // file
-        "/", // day events
+        // "/", // day events
+        "/search?search=terutsuki", // search
+        "/search?search=makadze", // search
     };
     /*
     std::vector <std::string_view> uris =

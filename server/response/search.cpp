@@ -3,6 +3,8 @@
 #include <set>
 #include <iostream>
 
+#include "dist_livenshtein.h"
+
 
 void search::response (simple_string & answer, std::string_view request_percent_enc, piece_t title)
 {
@@ -68,6 +70,43 @@ void search::response (simple_string & answer, std::string_view request_percent_
             }
         }
     }
+
+    if (add_ship.empty())
+    {
+        size_t min_dist = std::numeric_limits <size_t> ::max();
+        std::set <std::pair <size_t, size_t> > matched; // cost, index
+        for (size_t i = 0; i != names.size(); ++i)
+        {
+            size_t cur = dist_livenshtein(request, names[i].name_en);
+            if (cur > 30)
+                continue;
+            if (cur < min_dist)
+            {
+                min_dist = cur;
+                matched.insert({cur, i});
+                while (!matched.empty())
+                {
+                    std::set <std::pair <size_t, size_t> > ::iterator it = matched.end();
+                    it--;
+                    if (it->first <= min_dist + 10)
+                        break;
+                    matched.erase(it);
+                }
+            }
+            else if (cur <= min_dist + 10)
+                matched.insert({cur, i});
+        }
+       
+        std::vector <size_t> selected_ships;
+        selected_ships.reserve(matched.size());
+        for (auto ship : matched)
+            selected_ships.push_back(ship.second);
+        std::sort(selected_ships.begin(), selected_ships.end());
+        
+        for (size_t ship_id : selected_ships)
+            add_ship(ship_id);
+    }
+    
     add_ship.close();
 }
 

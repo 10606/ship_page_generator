@@ -126,6 +126,7 @@ add_executable(ship_server
     server/response/menu_html.cpp
     server/response/html_view_pictures.cpp
     server/response/search.cpp
+    server/response/dist_livenshtein.cpp
     server/response/ship/ship.cpp
     server/response/ship/date_order/nested_segments.cpp
     server/response/style.cpp
