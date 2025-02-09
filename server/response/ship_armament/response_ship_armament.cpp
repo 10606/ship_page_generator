@@ -8,7 +8,7 @@ void
 ships_responser <responser> ::response 
 (
     simple_string & answer,
-    std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year,
+    std::span <std::pair <int, std::chrono::year_month_day> const> ship_year,
     std::vector <uint8_t> const & modernization
 ) const
 {
@@ -301,19 +301,31 @@ std::vector <std::pair <int, std::chrono::year_month_day> > ship_armament::parse
 
 void ship_armament::response (simple_string & answer, std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year, bool add_checkbox)
 {
-    answer.append(table.begin);
-    std::vector <uint8_t> modernizations = names.response(answer, ship_year, add_checkbox);
+    size_t parts = ship_year.size() / 7 + 1;
     
-    add_armament(answer, general,       ship_year, modernizations);
-    add_armament(answer, guns,          ship_year, modernizations);
-    add_armament(answer, torpedo_tubes, ship_year, modernizations);
-    add_armament(answer, throwers,      ship_year, modernizations);
-    add_armament(answer, searchers,     ship_year, modernizations);
-    add_armament(answer, catapult,      ship_year, modernizations);
-    add_armament(answer, aircraft,      ship_year, modernizations);
-    add_armament(answer, propulsion,    ship_year, modernizations);
+    size_t begin = 0;
+    for (size_t i = 0; i != parts; ++i)
+    {
+        if (begin != 0)
+            answer.append(table.new_line);
+        size_t end = ship_year.size() * (i + 1) / parts;
+        std::span <std::pair <int, std::chrono::year_month_day> const> cur_ship_year(ship_year.begin() + begin, ship_year.begin() + end);
+        begin = end;
         
-    answer.append(table.end);
+        answer.append(table.begin);
+        std::vector <uint8_t> modernizations = names.response(answer, cur_ship_year, add_checkbox);
+        
+        add_armament(answer, general,       cur_ship_year, modernizations);
+        add_armament(answer, guns,          cur_ship_year, modernizations);
+        add_armament(answer, torpedo_tubes, cur_ship_year, modernizations);
+        add_armament(answer, throwers,      cur_ship_year, modernizations);
+        add_armament(answer, searchers,     cur_ship_year, modernizations);
+        add_armament(answer, catapult,      cur_ship_year, modernizations);
+        add_armament(answer, aircraft,      cur_ship_year, modernizations);
+        add_armament(answer, propulsion,    cur_ship_year, modernizations);
+            
+        answer.append(table.end);
+    }
 }
 
 void ship_armament::response (simple_string & answer, std::string_view query, piece_t title, bool add_checkbox)

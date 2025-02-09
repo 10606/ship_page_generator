@@ -7,7 +7,8 @@ set(CMAKE_CXX_COMPILER clang++)
 project(ship_server VERSION 1.0 LANGUAGES C CXX)
 
 set(release_flags
-    "-O3 --pedantic -flto -march=native -Wall -ftemplate-depth=10000 -std=c++20 -DNDEBUG"
+    "-O3 --pedantic -flto -march=native -Wall -ftemplate-depth=10000 -std=c++20 -DNDEBUG \
+     -fcf-protection=none -fno-stack-protector -fomit-frame-pointer"
 )
 
 set(compile_flags
@@ -24,6 +25,7 @@ if(debug)
     set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${compile_flags}")
 else()
     set(use_static TRUE)
+    set(link_flags "-no-pie -s")
     set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${release_flags}")
 endif()
 message("CMAKE_CXX_FLAGS" ${CMAKE_CXX_FLAGS})
@@ -143,7 +145,7 @@ add_executable(ship_server
 )
 
 target_link_libraries(ship_server
-    # -s
+    ${link_flags}
     ${static_flags}
     pqxx
     pq

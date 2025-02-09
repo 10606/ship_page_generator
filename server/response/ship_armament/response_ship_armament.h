@@ -134,7 +134,7 @@ struct ships_responser
     void response
     (
         simple_string & answer,
-        std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year,
+        std::span <std::pair <int, std::chrono::year_month_day> const> ship_year,
         std::vector <uint8_t> const & modernization
     ) const;
     
@@ -150,7 +150,7 @@ void add_armament
 (
     simple_string & answer,
     ships_responser <armament_type> const & armament, 
-    std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year,
+    std::span <std::pair <int, std::chrono::year_month_day> const> ship_year,
     std::vector <uint8_t> const & modernizations
 )
 {

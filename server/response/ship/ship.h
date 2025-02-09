@@ -68,7 +68,7 @@ private:
     
     static const constexpr std::string_view query_template = "ship=";
     static const constexpr std::string_view new_line = "<br>\n";
-    static const constexpr std::string_view shift = "&emsp;";
+    static const constexpr std::string_view shift = "&emsp;&emsp;";
     
     static const constexpr html_template_3 name = {"<b-t id=\"id_", "\">", "</b-t> "};
     static const constexpr html_template link = {"<a href=\"/ship/armament?", "\">вооружение</a>"};

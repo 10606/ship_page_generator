@@ -27,7 +27,7 @@ struct ship_names
     response
     (
         simple_string & answer, 
-        std::vector <std::pair <int, std::chrono::year_month_day> > ship_year, 
+        std::span <std::pair <int, std::chrono::year_month_day> const> ship_year, 
         bool add_checkbox = 0
     );
 

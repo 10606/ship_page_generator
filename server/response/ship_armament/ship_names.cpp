@@ -59,7 +59,7 @@ std::string ship_names::ship_info (ship_t const & ship)
 }
 
 std::vector <uint8_t> /* on modernization? */
-ship_names::response (simple_string & answer, std::vector <std::pair <int, std::chrono::year_month_day> > ship_year, bool add_checkbox)
+ship_names::response (simple_string & answer, std::span <std::pair <int, std::chrono::year_month_day> const> ship_year, bool add_checkbox)
 {
     std::vector <uint8_t> is_on_modernization (ship_year.size());
     answer.append(table.begin);
