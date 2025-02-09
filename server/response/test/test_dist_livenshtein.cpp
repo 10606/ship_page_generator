@@ -571,6 +571,8 @@ std::string_view requests [] =
     "Teruzuki",
     "Terudzuki",
     "ashi",
+    
+    "Nasi",
 };
 
 
@@ -578,12 +580,14 @@ int main ()
 {
     auto find_best = [] (std::string_view request) -> std::set <std::pair <size_t, size_t> >
     {
+        static const constexpr size_t threshold = 30;
+        static const constexpr size_t max_diff_cost = 10;
         size_t min_dist = std::numeric_limits <size_t> ::max();
         std::set <std::pair <size_t, size_t> > answer;
         for (size_t i = 0; i != std::extent_v <decltype(names)>; ++i)
         {
             size_t cur = dist_livenshtein(request, names[i]);
-            if (cur > 30)
+            if (cur > threshold)
                 continue;
             if (cur < min_dist)
             {
@@ -593,12 +597,12 @@ int main ()
                 {
                     std::set <std::pair <size_t, size_t> > ::iterator it = answer.end();
                     it--;
-                    if (it->first <= min_dist + 10)
+                    if (it->first <= min_dist + max_diff_cost)
                         break;
                     answer.erase(it);
                 }
             }
-            else if (cur <= min_dist + 10)
+            else if (cur <= min_dist + max_diff_cost)
                 answer.insert({cur, i});
         }
         return answer;
@@ -620,7 +624,7 @@ int main ()
         std::set <std::pair <size_t, size_t> > answer = find_best(request);
         std::cout << request << " -> " << std::endl;
         for (std::pair <size_t, size_t> matched : answer)
-            std::cout << "    " << names[matched.second] << std::endl;
+            std::cout << "    " << names[matched.second] << " (" << matched.first << ")" << std::endl;
     }
     
     /*
@@ -635,7 +639,8 @@ int main ()
     // std::cout << dist_livenshtein("lkjhgfd", "Akagi") << std::endl;
     // std::cout << dist_livenshtein("Terutsuki", "Teruzuki") << std::endl;
     // std::cout << dist_livenshtein("qwerty", "Tenryu") << std::endl;
-    std::cout << dist_livenshtein("kadze", "Isokaze") << std::endl;
+    // std::cout << dist_livenshtein("kadze", "Isokaze") << std::endl;
+    std::cout << dist_livenshtein("Nasi", "Nachi") << std::endl;
 }
 
 

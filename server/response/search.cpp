@@ -77,8 +77,17 @@ void search::response (simple_string & answer, std::string_view request_percent_
         std::set <std::pair <size_t, size_t> > matched; // cost, index
         for (size_t i = 0; i != names.size(); ++i)
         {
+            static const constexpr size_t max_diff_cost = 15;
+            size_t threshold = 30;
+            if (request.size() <= 2)
+                threshold = 10;
+            else if (request.size() == 3)
+                threshold = 15;
+            else if (request.size() == 4)
+                threshold = 20;
+            
             size_t cur = dist_livenshtein(request, names[i].name_en);
-            if (cur > 30)
+            if (cur > threshold)
                 continue;
             if (cur < min_dist)
             {
@@ -88,12 +97,12 @@ void search::response (simple_string & answer, std::string_view request_percent_
                 {
                     std::set <std::pair <size_t, size_t> > ::iterator it = matched.end();
                     it--;
-                    if (it->first <= min_dist + 10)
+                    if (it->first <= min_dist + max_diff_cost)
                         break;
                     matched.erase(it);
                 }
             }
-            else if (cur <= min_dist + 10)
+            else if (cur <= min_dist + max_diff_cost)
                 matched.insert({cur, i});
         }
        

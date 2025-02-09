@@ -42,7 +42,7 @@ size_t dist_livenshtein (std::string_view a, std::string_view b)
     // cost a -> b
     static const constexpr size_t insert_cost = 15;
     static const constexpr size_t remove_cost = 15;
-    static const constexpr size_t insert_begin = 1;
+    static const constexpr size_t insert_begin = 5;
     static const constexpr size_t remove_begin = 15;
 
     std::array <size_t, see_length> dp_0 = {0, 1 * remove_begin, 2 * remove_begin, 3 * remove_begin};
