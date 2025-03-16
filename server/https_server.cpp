@@ -86,7 +86,19 @@ struct connection_handler
 
     std::string_view get_host (std::string_view host_port)
     {
+        // 127.0.0.1
+        // 127.0.0.1:8080
+        // [::1]:80
         size_t pos = host_port.rfind(':');
+        if (pos >= host_port.size())
+            return host_port;
+        size_t i = pos + 1;
+        for (; i != host_port.size(); ++i)
+            if (!std::isdigit(host_port[i]))
+                break;
+        for (; i != host_port.size(); ++i)
+            if (!std::isspace(host_port[i]))
+                return host_port;
         return host_port.substr(0, pos);
     }
 
@@ -142,20 +154,20 @@ struct server_handler
     server_handler () :
         database(std::in_place),
         resp(*database),
-        ship_names(&(*database))
+        ship_names(*database)
     {
-        resp.reg <ship_armament>    ("/ship/armament",          &(*database));
-        resp.reg <torpedo>          ("/armament/torpedo",       &(*database));
-        resp.reg <guns>             ("/armament/guns",          &(*database));
-        resp.reg <torpedo_tubes>    ("/armament/torpedo_tubes", &(*database));
-        resp.reg <mines_charges>    ("/armament/mines_charges", &(*database));
-        resp.reg <catapult>         ("/armament/catapult",      &(*database));
-        resp.reg <searcher>         ("/armament/searcher",      &(*database));
-        resp.reg <aircraft>         ("/aircraft",               &(*database));
-        resp.reg <ship>             ("/ship",                   &(*database), resp.get_unsafe <ship_armament> ("/ship/armament"));
-        resp.reg <search>           ("/search",                 &(*database), ship_names);
-        resp.reg <document>         ("/documents",              &(*database));
-        resp.reg <day_events>       ("/",                       &(*database), ship_names);
+        resp.reg <ship_armament>    ("/ship/armament",          *database);
+        resp.reg <torpedo>          ("/armament/torpedo",       *database);
+        resp.reg <guns>             ("/armament/guns",          *database);
+        resp.reg <torpedo_tubes>    ("/armament/torpedo_tubes", *database);
+        resp.reg <mines_charges>    ("/armament/mines_charges", *database);
+        resp.reg <catapult>         ("/armament/catapult",      *database);
+        resp.reg <searcher>         ("/armament/searcher",      *database);
+        resp.reg <aircraft>         ("/aircraft",               *database);
+        resp.reg <ship>             ("/ship",                   *database, resp.get_unsafe <ship_armament> ("/ship/armament"));
+        resp.reg <search>           ("/search",                 *database, ship_names);
+        resp.reg <document>         ("/documents",              *database);
+        resp.reg <day_events>       ("/",                       *database, ship_names);
 
         database.reset();
         

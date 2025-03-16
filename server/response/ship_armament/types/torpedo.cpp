@@ -10,7 +10,7 @@
 #include "common.h"
 
 
-ship_torpedo_tubes::ship_torpedo_tubes (ship_requests * database, std::string_view _new_line) :
+ship_torpedo_tubes::ship_torpedo_tubes (ship_requests & database, std::string_view _new_line) :
     new_line(_new_line),
     group_name(armament_links::base("/armament/torpedo?group=caliber,in_service&sort=in_service", "торпедный аппарат"))
 {
@@ -24,8 +24,8 @@ ship_torpedo_tubes::ship_torpedo_tubes (ship_requests * database, std::string_vi
     >
     (
         *this, 
-        database->armament_info.get_torpedo_tubes(),
-        database->ship_armament_lt.get_torpedo_tubes(""),
+        database.armament_info.get_torpedo_tubes(),
+        database.ship_armament_lt.get_torpedo_tubes(""),
         &ship_tubes_list,
         
         [] (std::vector <tube_t> const & torpedo_tubes_full, std::vector <size_t> const & old_index)

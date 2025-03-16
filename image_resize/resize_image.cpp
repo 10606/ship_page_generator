@@ -33,7 +33,7 @@ bool is_exist (fs::path dst_path, bool force)
     fs::directory_entry dst_entry(dst_path);
     if (!force && dst_entry.exists())
     {
-        std::cout << dst_path << "\033[01;36m exist\033[0m\n";
+        // std::cout << dst_path << "\033[01;36m exist\033[0m\n";
         return 1;
     }
     return 0;

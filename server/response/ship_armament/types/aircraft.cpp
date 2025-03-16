@@ -13,11 +13,11 @@
 #include "common.h"
 
 
-ship_aircrafts::ship_aircrafts (ship_requests * database, std::string_view _new_line) :
+ship_aircrafts::ship_aircrafts (ship_requests & database, std::string_view _new_line) :
     new_line(_new_line)
 {
     std::vector <aircraft_class> aircraft_class_list =
-        database->aircraft_info.get_classes("");
+        database.aircraft_info.get_classes("");
     for (aircraft_class const & cur_class : aircraft_class_list)
         cache_class_names.insert
         (
@@ -37,8 +37,8 @@ ship_aircrafts::ship_aircrafts (ship_requests * database, std::string_view _new_
     >
     (
         *this, 
-        database->aircraft_info.get_list(""),
-        database->ship_armament_lt.get_aircraft(""),
+        database.aircraft_info.get_list(""),
+        database.ship_armament_lt.get_aircraft(""),
         &ship_aircrafts_list,
         
         [] (std::vector <aircraft_t> const & aircrafts_full, std::vector <size_t> const & old_index)

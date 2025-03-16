@@ -21,7 +21,7 @@ struct header_column
 
 struct ship_names
 {
-    ship_names (header_column _table, ship_requests * database);
+    ship_names (header_column _table, ship_requests & database);
 
     std::vector <uint8_t> /* on modernization? */
     response

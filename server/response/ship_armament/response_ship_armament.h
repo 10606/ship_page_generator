@@ -17,6 +17,7 @@
 #include "ship_names.h"
 #include "simple_string.h"
 
+#include "response.h"
 #include "general.h"
 #include "guns.h"
 #include "torpedo.h"
@@ -57,21 +58,57 @@ struct rows_table_template
     rowspan_t rowspan;
 };
 
+template <typename armament_type>
+concept armament_type_requirements = 
+    requires (armament_type resp)
+    {
+        typename armament_type::response_t;
+        
+        requires requires (armament_type::response_t value)
+        {
+            {value.group};
+            {value.compare};
+            std::totally_ordered <decltype (value.group)>;
+            std::totally_ordered <decltype (value.compare)>;
+        };
 
-template <typename responser>
+        { std::vector <typename armament_type::response_t> {} };
+
+        { resp.response(std::declval <int> (), std::declval <std::chrono::year_month_day> ()) } 
+            ->
+            std::convertible_to 
+            <
+                std::vector 
+                <
+                    typename armament_type::response_t,
+                    allocator_for_temp <typename armament_type::response_t>
+                >
+            >;
+    };
+
+template <armament_type_requirements armament_type>
 struct ships_responser
 {
     template <typename ... T>
+    requires std::constructible_from <armament_type, ship_requests &, T ...>
     ships_responser 
     (
         rows_table_template _table,
-        ship_requests * _database,
+        ship_requests & database,
         T && ... args
     ) :
         table(_table),
-        resp(_database, std::forward <T> (args) ...)
+        resp(database, std::forward <T> (args) ...)
     {}
     
+    void response
+    (
+        simple_string & answer,
+        std::span <std::pair <int, std::chrono::year_month_day> const> ship_year,
+        std::vector <uint8_t> const & modernization
+    ) const;
+    
+private:
     template <typename T, typename V>
     struct key_impl
     {
@@ -127,20 +164,12 @@ struct ships_responser
         std::strong_ordering operator <=> (key_impl const &) const = default; 
     };
     
-    using response_t = typename responser::response_t;
+    using response_t = typename armament_type::response_t;
     using key_t = key_impl <decltype(std::declval <response_t>().group),
                             decltype(std::declval <response_t>().compare)>;
 
-    void response
-    (
-        simple_string & answer,
-        std::span <std::pair <int, std::chrono::year_month_day> const> ship_year,
-        std::vector <uint8_t> const & modernization
-    ) const;
-    
-private:
     rows_table_template table;
-    responser resp;
+    armament_type resp;
 };
 
 
@@ -163,21 +192,21 @@ void add_armament
 }
 
 
-struct ship_armament
+struct ship_armament : response_base
 {
-    ship_armament (ship_requests * _database) :
-        names(header_column(), _database),
-        general      (rows_table_template("class=\"general\""     ), _database, table.new_line),
-        guns         (rows_table_template("class=\"guns\""        ), _database, table.new_line),
-        torpedo_tubes(rows_table_template("class=\"torpedo\""     ), _database, table.new_line),
-        throwers     (rows_table_template("class=\"throwers\""    ), _database, table.new_line),
-        searchers    (rows_table_template("class=\"searchers\""   ), _database, table.new_line),
-        catapult     (rows_table_template("class=\"catapult\""    ), _database, table.new_line),
-        aircraft     (rows_table_template("class=\"aircraft\""    ), _database, table.new_line),
-        propulsion   (rows_table_template("class=\"propulsion\""  ), _database, table.new_line),
+    ship_armament (ship_requests & database) :
+        names(header_column(), database),
+        general      (rows_table_template("class=\"general\""     ), database, table.new_line),
+        guns         (rows_table_template("class=\"guns\""        ), database, table.new_line),
+        torpedo_tubes(rows_table_template("class=\"torpedo\""     ), database, table.new_line),
+        throwers     (rows_table_template("class=\"throwers\""    ), database, table.new_line),
+        searchers    (rows_table_template("class=\"searchers\""   ), database, table.new_line),
+        catapult     (rows_table_template("class=\"catapult\""    ), database, table.new_line),
+        aircraft     (rows_table_template("class=\"aircraft\""    ), database, table.new_line),
+        propulsion   (rows_table_template("class=\"propulsion\""  ), database, table.new_line),
         default_date()
     {
-        std::vector <ship_requests::ship_info_t::list> ships_info = _database->ship_info.get_list();
+        std::vector <ship_requests::ship_info_t::list> ships_info = database.ship_info.get_list();
         for (ship_requests::ship_info_t::list const & value : ships_info)
             if (value.commissioned)
                 default_date.insert({value.ship_id, *value.commissioned});
@@ -189,8 +218,13 @@ struct ship_armament
     }
 
     // http://127.0.0.1:8080/ship/armament?ship=40&date=9.7.44&ship=42&date=14.7.44&ship=43&date=8.7.44&ship=50&date=30.1.39&date=9.7.44&ship=52&date=9.7.44&ship=54&date=23.7.45
-    void response (simple_string & answer, std::string_view query, piece_t title, bool add_checkbox = 0);
+    void response (simple_string & answer, std::string_view query, piece_t title, bool add_checkbox);
     void response (simple_string & answer, std::vector <std::pair <int, std::chrono::year_month_day> > const & ship_year, bool add_checkbox = 0);
+
+    virtual void response (simple_string & answer, std::string_view query, piece_t title) override
+    {
+        return response(answer, query, title, 0);
+    }
 
 private:
     struct table_template

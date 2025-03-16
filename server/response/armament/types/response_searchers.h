@@ -1,19 +1,20 @@
 #ifndef RESPONSE_SEARCHER_H
 #define RESPONSE_SEARCHER_H
 
+#include "response.h"
 #include "armament_info.h"
 #include "response_partial.h"
 #include "simple_string.h"
 #include "parse_query.h"
 
 
-struct searcher
+struct searcher : response_base
 {
-    searcher (ship_requests * database) :
+    searcher (ship_requests & database) :
         searchers_cache(),
         text_cache()
     {
-        std::vector <searcher_t> tmp = database->armament_info.get_searchers();
+        std::vector <searcher_t> tmp = database.armament_info.get_searchers();
         searchers_cache = partial::partial_response <searcher_t, searchers_partial> (tmp);
         text_cache = partial::text_response <searcher_t, searchers_text> (tmp);
         for (size_t i = 0; i != searchers_cache.size(); ++i)
@@ -22,7 +23,7 @@ struct searcher
             searchers_cache[i].name_en = text_cache[i].name_en;
         }
 
-        std::vector <picture_t> pictures_list = database->pictures.get_searcher();
+        std::vector <picture_t> pictures_list = database.pictures.get_searcher();
         pictures_cache = partial::pictures_response <searcher_t> (pictures_list, tmp);
     }
     
@@ -30,7 +31,7 @@ struct searcher
     typedef ship_requests::armament_info_t::searchers searcher_t;
  
     // https://127.0.0.1:8443/armament/searcher?sort=power,in_service&group=class&filter=in_service,3x,4x
-    void response (simple_string & answer, std::string_view query, piece_t title);
+    virtual void response (simple_string & answer, std::string_view query, piece_t title) override;
     
     struct searchers_text
     {

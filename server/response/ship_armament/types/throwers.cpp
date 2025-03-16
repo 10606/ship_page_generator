@@ -12,7 +12,7 @@
 #include "common.h"
 
 
-ship_throwers::ship_throwers (ship_requests * database, std::string_view _new_line) :
+ship_throwers::ship_throwers (ship_requests & database, std::string_view _new_line) :
     new_line(_new_line),
     group_name(armament_links::base("/armament/mines_charges?filter=class,4&sort=mass_ex", "противолодочное вооружение"))
 {
@@ -26,8 +26,8 @@ ship_throwers::ship_throwers (ship_requests * database, std::string_view _new_li
     >
     (
         *this, 
-        database->armament_info.get_throwers(),
-        database->ship_armament_lt.get_throwers(""),
+        database.armament_info.get_throwers(),
+        database.ship_armament_lt.get_throwers(""),
         &ship_throwers_list,
         
         [] (std::vector <throwers_t> const & throwers_full, std::vector <size_t> const & old_index)

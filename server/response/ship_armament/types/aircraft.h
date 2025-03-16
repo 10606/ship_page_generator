@@ -13,7 +13,7 @@
 
 struct ship_aircrafts
 {
-    ship_aircrafts (ship_requests * database, std::string_view _new_line);
+    ship_aircrafts (ship_requests & database, std::string_view _new_line);
 
     struct responses_common_t
     {

@@ -1,6 +1,7 @@
 #ifndef SHIP_H
 #define SHIP_H
 
+#include "response.h"
 #include "ship_event.h"
 #include "response_ship_armament.h"
 #include "simple_string.h"
@@ -9,18 +10,20 @@
 #include <map>
 
 
-struct ship
+struct ship : response_base
 {
-    ship (ship_requests * _database, ship_armament & _armament);
+    ship (ship_requests & database, ship_armament & _armament);
     
     // http://127.0.0.1:8080/ship?id=0&id=1&id=2&id=3
-    void response (simple_string & answer, std::string_view query, piece_t title);
+    virtual void response (simple_string & answer, std::string_view query, piece_t title) override;
     
-    std::string_view menu_list = 
-    "<div class=\"menu_link tooltip\">\n"
-        "<a id=\"detail_compare_ships_button\" href=\"/ship/armament?\">детальное сравнение</a>\n"
-        "<span class=\"tooltiptext\">отмеченные галочками в заголовках таблиц</span>\n"
-    "</div>\n";
+    virtual std::string_view additional_in_menu () const override
+    {
+        return  "<div class=\"menu_link tooltip\">\n"
+                    "<a id=\"detail_compare_ships_button\" href=\"/ship/armament?\">детальное сравнение</a>\n"
+                    "<span class=\"tooltiptext\">отмеченные галочками в заголовках таблиц</span>\n"
+                "</div>\n";
+    }
     
 private:
     ship_armament & armament;
@@ -88,7 +91,7 @@ private:
     "<script>\n"
         "function str_to_date (str)\n"
         "{\n"
-            "var pattern = /(\\d{2})\\.(\\d{2})\\.(\\d{4})/;\n"
+            "let pattern = /(\\d{2})\\.(\\d{2})\\.(\\d{4})/;\n"
             "return new Date(str.replace(pattern, \"$3-$2-$1\"));\n"
         "}\n"
         
@@ -99,10 +102,10 @@ private:
                 "detail_ships_to_compare.add(event.target);\n"
             "else\n"
                 "detail_ships_to_compare.delete(event.target);\n"
-            "var request = [];\n"
+            "let request = [];\n"
             "for (item of detail_ships_to_compare)\n"
             "{\n"
-                "var date = item.getAttribute(\"date\");\n"
+                "let date = item.getAttribute(\"date\");\n"
                 "request.push({\n" 
                     "ship_id:   item.getAttribute(\"ship\").toString(),\n"
                     "date_str:  date,\n"
@@ -119,8 +122,8 @@ private:
                     "return a.ship_id - b.ship_id;\n"
                 "}\n"
             ");\n"
-            "var link = \"/ship/armament?\";\n"
-            "var first = true;\n"
+            "let link = \"/ship/armament?\";\n"
+            "let first = true;\n"
             "for (request_item of request)\n"
             "{\n"
                 "if (!first)\n"
@@ -128,7 +131,7 @@ private:
                 "link += \"ship=\" + request_item.ship_id + \"&date=\" + request_item.date_str;\n"
                 "first = false;\n"
             "}\n"
-            "var compare_ships_button = document.getElementById(\"detail_compare_ships_button\");\n"
+            "let compare_ships_button = document.getElementById(\"detail_compare_ships_button\");\n"
             "compare_ships_button.setAttribute(\"href\", link);\n"
         "}\n"
     "</script>\n";

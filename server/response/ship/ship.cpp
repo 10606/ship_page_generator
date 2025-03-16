@@ -31,7 +31,7 @@ void ship::add_modernizations
     std::sort(segments.begin(), part, 
                 [] (segment const & a, segment const & b) -> bool 
                 { 
-                    return std::is_lt(compare_null_last(a.begin, b.begin)); 
+                    return std::is_lt(compare_null_last(a.end, b.end)); 
                 });
     
     std::vector <std::chrono::year_month_day> modernizations;
@@ -248,26 +248,26 @@ void ship::add_short_info
 
 
 
-ship::ship (ship_requests * database, ship_armament & _armament) :
+ship::ship (ship_requests & database, ship_armament & _armament) :
     armament(_armament),
     modernizations(),
     type_list(),
     ship_list_in_type()
 {
     std::vector <ship_requests::ship_event_t::event_lt_descr> events = 
-        database->ship_event.get_event_lt_descr();
+        database.ship_event.get_event_lt_descr();
     
     typedef ship_requests::ship_info_t::list list_t;
     std::vector <list_t> list =
-        database->ship_info.get_list("order by ship_list.commissioned");
+        database.ship_info.get_list("order by ship_list.commissioned");
 
     typedef ship_requests::pictures_t::picture picture_t;
     std::vector <picture_t> ship_pictures_list =
-        database->pictures.get_ship();
+        database.pictures.get_ship();
 
     typedef ship_requests::ship_info_t::types types_t;
     std::vector <types_t> ship_types_list =
-        database->ship_info.get_types();
+        database.ship_info.get_types();
 
     
     std::unordered_map <int, std::vector <segment> > ship_to_segment;

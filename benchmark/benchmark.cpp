@@ -292,6 +292,14 @@ int main ()
         // "asdkjasldkjaslkdjlkasjdlkasjdlkasjdlkasjdlkkajslkdjaslkdjaslkdjalskjdlaksjdlkasjdlkasjdlkasjdlkajsdlkjaslkdjasldjaslkdjaslkdjalkjdlkasjdlkasjdlkasjdlkasjdlkasjlkdasjlkdajslkdjaslkdjaslkdjaslkjdaslkjasldkjdlaskjdlaks/../../.,/", // error
         // "/favicon.ico", // file
         // "/", // day events
+        "/ship?type_id=18",
+        "/ship?type_id=21",
+        "/ship?type_id=14",
+        "/ship?type_id=15",
+        "/ship?type_id=17",
+        "/ship?type_id=18",
+        "/ship?type_id=19",
+        "/ship?type_id=3",
         "/search?search=terutsuki", // search
         "/search?search=makadze", // search
     };

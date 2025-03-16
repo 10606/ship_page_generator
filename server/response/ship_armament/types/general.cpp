@@ -10,12 +10,12 @@
 #include "ship_armament_utils.h"
 
 
-ship_general::ship_general (ship_requests * database, std::string_view _new_line) :
+ship_general::ship_general (ship_requests & database, std::string_view _new_line) :
     new_line(_new_line)
 {
     sunk_dates_t const & sunk_date = sunk_dates();
     std::vector <ship_requests::ship_info_t::general> general_list =
-        database->ship_info.get_general("");
+        database.ship_info.get_general("");
 
     for (general_t & general : general_list)
     {

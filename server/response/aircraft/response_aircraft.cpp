@@ -203,17 +203,17 @@ aircraft::aircraft_partial::aircraft_partial (aircraft_t const & value, size_t _
 
 void aircraft::fill_aircraft_armament
 (
-    ship_requests * database,
+    ship_requests & database,
     std::vector <aircraft_t> const & aircraft_list
 )
 {
     typedef ship_requests::armament_info_t::list gun_t;
     typedef ship_requests::aircraft_info_t::guns guns_raw_t;
     std::vector <gun_t> guns_list =
-        database->armament_info.get_list();
+        database.armament_info.get_list();
 
     std::vector <guns_raw_t> guns_raw =
-        database->aircraft_info.get_guns();
+        database.aircraft_info.get_guns();
     
     std::set <int> used;
     for (guns_raw_t const & gun : guns_raw)

@@ -8,10 +8,10 @@
 
 struct ship_names_list
 {
-    ship_names_list (ship_requests * database)
+    ship_names_list (ship_requests & database)
     {
         std::vector <ship_info_long> ship_names =
-            database->ship_info.get_list("order by ((select get_ancestor_by_id (ship_list.class_id)), ship_list.class_id, "
+            database.ship_info.get_list("order by ((select get_ancestor_by_id (ship_list.class_id)), ship_list.class_id, "
                                                     "ship_list.type_id, commissioned, ship_list.name_ru,  ship_list.id)");
 
         _names.reserve(ship_names.size());

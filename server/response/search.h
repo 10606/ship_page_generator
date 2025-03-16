@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include <string>
 #include <string_view>
+
+#include "response.h"
 #include "ship_names_list.h"
 #include "ship_requests.h"
 #include "ship_info.h"
@@ -15,9 +17,9 @@
 #include "parse_query.h"
 
 
-struct search
+struct search : response_base
 {
-    search (ship_requests *, ship_names_list const & _ship_names) :
+    search (ship_requests &, ship_names_list const & _ship_names) :
         ship_names(_ship_names)
     {
         std::vector <ship_names_list::ship_info_t> const & names = ship_names.names();
@@ -28,7 +30,7 @@ struct search
         }
     }
     
-    void response (simple_string & answer, std::string_view request, piece_t title);
+    virtual void response (simple_string & answer, std::string_view request, piece_t title) override;
 
     static std::string get_search_parameter (std::string_view request);
     
@@ -38,7 +40,6 @@ private:
     static const constexpr std::string_view search_keyword = "search=";
 
     friend struct add_ship_t;
-    typedef ship_requests::ship_info_t::list ship_info_long;
 
     struct position_t
     {

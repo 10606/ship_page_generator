@@ -6,11 +6,11 @@
 #include "date_to_str.h"
 
 
-ship_names::ship_names (header_column _table, ship_requests * database) :
+ship_names::ship_names (header_column _table, ship_requests & database) :
     table(_table)
 {
     std::vector <ship_t> ships =
-        database->ship_info.get_list();
+        database.ship_info.get_list();
     for (ship_t & ship : ships)   
     {
         int ship_id = ship.ship_id;
@@ -18,7 +18,7 @@ ship_names::ship_names (header_column _table, ship_requests * database) :
     }
     
     std::vector <event_t> events =
-        database->ship_event.get_event_lt("where class_id = 0 ");
+        database.ship_event.get_event_lt("where class_id = 0 ");
     for (event_t & event : events)
     {
         int ship_id = event.ship_id;

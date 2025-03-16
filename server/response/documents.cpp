@@ -23,10 +23,10 @@ struct document_template_t
     html_template link;
 };
 
-document::document (ship_requests * database)
+document::document (ship_requests & database)
 {
-    std::vector <group_t> group_list = database->documents.get_groups("order by id");
-    std::vector <document_t> document_list = database->documents.get_documents("order by (group_id, priority) nulls last");
+    std::vector <group_t> group_list = database.documents.get_groups("order by id");
+    std::vector <document_t> document_list = database.documents.get_documents("order by (group_id, priority) nulls last");
     
     std::map <int, std::pair <group_t, std::vector <document_t> > > documents_map;
     for (group_t & group : group_list)
@@ -56,8 +56,8 @@ document::document (ship_requests * database)
                     "{\n"
                         "for (css_rule of style_sheet.cssRules)\n"
                         "{\n"
-                            "var selector = css_rule.selectorText;\n"
-                            "var style_map = css_rule.styleMap\n;"
+                            "let selector = css_rule.selectorText;\n"
+                            "let style_map = css_rule.styleMap\n;"
                             "if (!event.target.checked)\n"
                             "{\n"
                                 "if (selector == \".main img\")\n"

@@ -12,7 +12,7 @@
 #include "common.h"
 
 
-ship_catapult::ship_catapult (ship_requests * database, std::string_view _new_line) :
+ship_catapult::ship_catapult (ship_requests & database, std::string_view _new_line) :
     new_line(_new_line),
     group_name(armament_links::base("/armament/catapult?group=class&sort=in_service", "катапульта"))
 {
@@ -26,8 +26,8 @@ ship_catapult::ship_catapult (ship_requests * database, std::string_view _new_li
     >
     (
         *this, 
-        database->armament_info.get_catapult(),
-        database->ship_armament_lt.get_catapult(""),
+        database.armament_info.get_catapult(),
+        database.ship_armament_lt.get_catapult(""),
         &ship_catapults_list,
         
         [] (std::vector <catapult_t> const & catapults_full, std::vector <size_t> const & old_index)

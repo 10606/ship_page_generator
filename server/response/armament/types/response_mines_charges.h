@@ -1,19 +1,20 @@
 #ifndef RESPONSE_MINES_CHARGES_H
 #define RESPONSE_MINES_CHARGES_H
 
+#include "response.h"
 #include "armament_info.h"
 #include "response_partial.h"
 #include "simple_string.h"
 #include "parse_query.h"
 
 
-struct mines_charges
+struct mines_charges : response_base
 {
-    mines_charges (ship_requests * database) :
+    mines_charges (ship_requests & database) :
         mines_charges_cache(),
         text_cache()
     {
-        std::vector <mines_charges_t> tmp = database->armament_info.get_mines_charges();
+        std::vector <mines_charges_t> tmp = database.armament_info.get_mines_charges();
         mines_charges_cache = partial::partial_response <mines_charges_t, mines_charges_partial> (tmp);
         text_cache = partial::text_response <mines_charges_t, mines_charges_text> (tmp);
         for (size_t i = 0; i != mines_charges_cache.size(); ++i)
@@ -26,7 +27,7 @@ struct mines_charges
     typedef ship_requests::armament_info_t::mines_charges mines_charges_t;
  
     // https://127.0.0.1:8443/armament/mines_charges?sort=in_service,mass_ex&group=class
-    void response (simple_string & answer, std::string_view query, piece_t title);
+    virtual void response (simple_string & answer, std::string_view query, piece_t title) override;
     
     struct mines_charges_text
     {

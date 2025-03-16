@@ -10,7 +10,7 @@
 
 struct ship_propulsion
 {
-    ship_propulsion (ship_requests * database, std::string_view _new_line);
+    ship_propulsion (ship_requests & database, std::string_view _new_line);
 
     struct responses_common_t
     {

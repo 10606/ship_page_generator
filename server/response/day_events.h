@@ -1,13 +1,14 @@
 #ifndef DAY_EVENTS_H
 #define DAY_EVENTS_H
 
+#include "response.h"
 #include "ship_names_list.h"
 #include "parse_query.h"
 
 
-struct day_events
+struct day_events : response_base
 {
-    day_events (ship_requests *, ship_names_list const & _ship_names) :
+    day_events (ship_requests &, ship_names_list const & _ship_names) :
         ship_names(_ship_names)
     {
         std::vector <ship_names_list::ship_info_t> const & names = ship_names.names();
@@ -20,7 +21,7 @@ struct day_events
         }
     }
 
-    void response (simple_string & answer, std::string_view query, piece_t title)
+    virtual void response (simple_string & answer, std::string_view query, piece_t title) override
     {
         static const constexpr std::string_view title_text = "судьба японских корабликов";
         answer.rewrite(title.position, title_text.substr(0, std::min(title_text.size(), title.size)));

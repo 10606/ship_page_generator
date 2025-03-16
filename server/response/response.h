@@ -13,6 +13,18 @@
 
 extern const html_template_3 style;
 
+struct response_base
+{
+    virtual ~response_base () = default;
+    
+    virtual void response (simple_string & answer, std::string_view query, piece_t title) = 0;
+    
+    virtual std::string_view additional_in_menu () const
+    {
+        return {};
+    }
+};
+
 struct responser
 {
     responser (ship_requests & database) :
@@ -20,75 +32,21 @@ struct responser
         resp()
     {}
     
-    struct resp_base
-    {
-        virtual void response (simple_string &, std::string_view, piece_t) = 0;
-        virtual ~resp_base () = default;
-        virtual std::string_view additional_in_menu () const = 0;
-    };
-    
     template <typename T>
     T & get (std::string_view uri);
     
     template <typename T>
     T & get_unsafe (std::string_view uri);
-
-    template <typename T>
-    struct resp_impl : resp_base
-    {
-        template <typename ... U>
-        resp_impl (U && ... args) :
-            value(std::forward <U> (args) ...)
-        {}
-
-        virtual void response (simple_string & answer, std::string_view query, piece_t title) override
-        {
-            value.response(answer, query, title);
-        }
-
-        virtual std::string_view additional_in_menu () const override
-        {
-            return additional_in_menu <T> (value);
-        }
-
-        virtual ~resp_impl () = default;
     
-        template <typename U>
-        friend U & responser::get (std::string_view uri);
-        
-        template <typename U>
-        friend U & responser::get_unsafe (std::string_view uri);
-        
-    private:
-        template <typename U>
-        static std::string_view additional_in_menu (U const &)
-        {
-            return {};
-        }
-        
-        template <typename U>
-        requires requires (U const & value)
-        {
-            {value.menu_list} -> std::convertible_to <std::string_view>;
-        }
-        static std::string_view additional_in_menu (U const & value)
-        {
-            return value.menu_list;
-        }
-        
-        T value;
-    };
-
-    
-    template <typename T, typename ... U>
+    template <std::derived_from <response_base> T, typename ... U>
     void reg (std::string_view name, U && ... args)
     {
-        resp.insert({name, std::make_unique <resp_impl <T> > (std::forward <U> (args) ...)});
+        resp.insert({name, std::make_unique <T> (std::forward <U> (args) ...)});
     }
     
     bool response (simple_string & answer, std::string_view uri, std::string_view query)
     {
-        std::unordered_map <std::string_view, std::unique_ptr <resp_base> > :: iterator it =
+        std::unordered_map <std::string_view, std::unique_ptr <response_base> > :: iterator it =
             resp.find(uri);
         if (it == resp.end())
             return 0;
@@ -109,25 +67,25 @@ struct responser
 
 private:
     menu ship_list;
-    std::unordered_map <std::string_view, std::unique_ptr <resp_base> > resp;
+    std::unordered_map <std::string_view, std::unique_ptr <response_base> > resp;
 };
 
 template <typename T>
 T & responser::get (std::string_view uri)
 {
-    std::unordered_map <std::string_view, std::unique_ptr <resp_base> > :: iterator it =
+    std::unordered_map <std::string_view, std::unique_ptr <response_base> > :: iterator it =
         resp.find(uri);
     if (it == resp.end())
         throw std::runtime_error("can't find responser");
-    resp_impl <T> & value_impl = dynamic_cast <resp_impl <T> &> (*it->second);
-    return value_impl.value;
+    T & value_impl = dynamic_cast <T &> (*it->second);
+    return value_impl;
 }
 
 template <typename T>
 T & responser::get_unsafe (std::string_view uri)
 {
-    resp_impl <T> & value_impl = static_cast <resp_impl <T> &> (*resp.find(uri)->second);
-    return value_impl.value;
+    T & value_impl = static_cast <T &> (*resp.find(uri)->second);
+    return value_impl;
 }
 
 

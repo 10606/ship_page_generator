@@ -3,9 +3,8 @@
 #include "allocator.h"
 
 
-template <typename responser>
-void
-ships_responser <responser> ::response 
+template <armament_type_requirements armament_type>
+void ships_responser <armament_type> ::response 
 (
     simple_string & answer,
     std::span <std::pair <int, std::chrono::year_month_day> const> ship_year,

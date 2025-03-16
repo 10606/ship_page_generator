@@ -1,20 +1,21 @@
 #ifndef RESPONSE_GUNS_H
 #define RESPONSE_GUNS_H
 
+#include "response.h"
 #include "armament_info.h"
 #include "response_partial.h"
 #include "simple_string.h"
 #include "parse_query.h"
 
 
-struct guns
+struct guns : response_base
 {
-    guns (ship_requests * database) :
+    guns (ship_requests & database) :
         guns_cache(),
         text_cache(),
         pictures_cache()
     {
-        std::vector <guns_t> tmp = database->armament_info.get_list();
+        std::vector <guns_t> tmp = database.armament_info.get_list();
         guns_cache = partial::partial_response <guns_t, guns_partial> (tmp);
         text_cache = partial::text_response <guns_t, guns_text> (tmp);
         for (size_t i = 0; i != guns_cache.size(); ++i)
@@ -23,7 +24,7 @@ struct guns
             guns_cache[i].name_en = text_cache[i].name_en;
         }
 
-        std::vector <picture_t> pictures_list = database->pictures.get_gun();
+        std::vector <picture_t> pictures_list = database.pictures.get_gun();
         pictures_cache = partial::pictures_response <guns_t> (pictures_list, tmp);
     }
     
@@ -31,7 +32,7 @@ struct guns
     typedef ship_requests::armament_info_t::list guns_t;
  
     // https://127.0.0.1:8443/armament/guns?sort=caliber,in_service&group=class&filter=in_service,2x,3x,4x
-    void response (simple_string &, std::string_view query, piece_t title);
+    virtual void response (simple_string &, std::string_view query, piece_t title) override;
     
     struct guns_text
     {

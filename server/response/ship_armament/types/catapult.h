@@ -13,7 +13,7 @@
 
 struct ship_catapult
 {
-    ship_catapult (ship_requests * database, std::string_view _new_line);
+    ship_catapult (ship_requests & database, std::string_view _new_line);
 
     struct responses_common_t
     {

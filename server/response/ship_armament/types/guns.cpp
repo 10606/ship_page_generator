@@ -13,13 +13,13 @@
 #include "common.h"
 
 
-ship_guns::ship_guns (ship_requests * database, std::string_view _new_line) :
+ship_guns::ship_guns (ship_requests & database, std::string_view _new_line) :
     ship_guns_list_segmented(),
     new_line(_new_line)
 {
     typedef ship_requests::armament_info_t::classes classes;
     std::vector <classes> gun_class_list =
-        database->armament_info.get_classes("");
+        database.armament_info.get_classes("");
     for (classes const & cur_class : gun_class_list)
         cache_class_names.insert
         (
@@ -41,8 +41,8 @@ ship_guns::ship_guns (ship_requests * database, std::string_view _new_line) :
     >
     (
         *this, 
-        database->armament_info.get_mount(),
-        database->ship_armament_lt.get_guns(""),
+        database.armament_info.get_mount(),
+        database.ship_armament_lt.get_guns(""),
         &ship_guns_list,
         
         [] (std::vector <mount_t> const & mounts_full, std::vector <size_t> const & old_index)

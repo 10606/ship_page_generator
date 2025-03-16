@@ -8,11 +8,11 @@
 #include "common.h"
 
 
-ship_propulsion::ship_propulsion (ship_requests * database, std::string_view _new_line) :
+ship_propulsion::ship_propulsion (ship_requests & database, std::string_view _new_line) :
     new_line(_new_line),
     group_name("силовая установка")
 {
-    ship_requests::propulsion_t::context storage(database->ship_propulsion);
+    ship_requests::propulsion_t::context storage(database.ship_propulsion);
     fill_data_structures
     <
         ship_propulsion,
@@ -23,8 +23,8 @@ ship_propulsion::ship_propulsion (ship_requests * database, std::string_view _ne
     >
     (
         *this, 
-        database->ship_propulsion.get_propulsion(storage),
-        database->ship_propulsion.get_ship_propulsion(),
+        database.ship_propulsion.get_propulsion(storage),
+        database.ship_propulsion.get_ship_propulsion(),
         &ship_propulsions_list,
         
         [] (std::vector <propulsion_t> const & propulsions_full, std::vector <size_t> const & old_index)

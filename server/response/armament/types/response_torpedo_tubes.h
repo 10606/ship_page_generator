@@ -1,19 +1,20 @@
 #ifndef RESPONSE_TORPEDO_TUBES_H
 #define RESPONSE_TORPEDO_TUBES_H
 
+#include "response.h"
 #include "armament_info.h"
 #include "response_partial.h"
 #include "simple_string.h"
 #include "parse_query.h"
 
 
-struct torpedo_tubes
+struct torpedo_tubes : response_base
 {
-    torpedo_tubes (ship_requests * database) :
+    torpedo_tubes (ship_requests & database) :
         torpedo_tubes_cache(),
         text_cache()
     {
-        std::vector <torpedo_tubes_t> tmp = database->armament_info.get_torpedo_tubes();
+        std::vector <torpedo_tubes_t> tmp = database.armament_info.get_torpedo_tubes();
         torpedo_tubes_cache = partial::partial_response <torpedo_tubes_t, torpedo_tubes_partial> (tmp);
         text_cache = partial::text_response <torpedo_tubes_t, torpedo_tubes_text> (tmp);
         for (size_t i = 0; i != torpedo_tubes_cache.size(); ++i)
@@ -26,7 +27,7 @@ struct torpedo_tubes
     typedef ship_requests::armament_info_t::torpedo_tubes torpedo_tubes_t;
  
     // https://127.0.0.1:8443/armament/torpedo_tubes?sort=in_service&group=caliber&filter=in_service,3x,4x&filter=caliber,450,533,610
-    void response (simple_string & answer, std::string_view query, piece_t title);
+    virtual void response (simple_string & answer, std::string_view query, piece_t title) override;
     
     struct torpedo_tubes_text
     {
